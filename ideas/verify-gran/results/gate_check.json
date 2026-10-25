@@ -1,0 +1,50 @@
+{
+  "n_segments": 64,
+  "n_positive": 18,
+  "n_prompts": 16,
+  "cost_model": {
+    "coarse": 2.0,
+    "fine": 6.0,
+    "rho_breakeven": 0.667
+  },
+  "target_err": 0.15,
+  "T2_auroc": {
+    "prior_block11": 0.7983091787439613,
+    "evidence_free_only": 0.7403381642512077,
+    "gate_prior+free_evidence": 0.78743961352657,
+    "gate_prior+free+disc(costly)": 0.788647342995169,
+    "reference": {
+      "selfaware_probe": 0.798,
+      "jev_text": 0.788,
+      "hand_crafted": 0.491,
+      "chance": 0.5
+    }
+  },
+  "T1_prior": {
+    "rho": 0.671875,
+    "error_among_accepted": 0.047619047619047616,
+    "feasible": true,
+    "cost_vs_fine": 4.688
+  },
+  "T1_evidence": {
+    "rho": 0.65625,
+    "error_among_accepted": 0.09090909090909091,
+    "feasible": true,
+    "cost_vs_fine": 4.625
+  },
+  "T1_gate": {
+    "rho": 0.6875,
+    "error_among_accepted": 0.05,
+    "feasible": true,
+    "cost_vs_fine": 4.75
+  },
+  "T3_power": {
+    "observed_gate_auroc": 0.78743961352657,
+    "note": "see script for n estimate"
+  },
+  "verdict": {
+    "T1_pass": false,
+    "T2_pass": false,
+    "go_for_gpu": false
+  }
+}
