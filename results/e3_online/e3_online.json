@@ -1,0 +1,109 @@
+{
+  "phase": "E3-online-matched",
+  "generated_utc": "2026-10-25T02:00:20.316242+00:00",
+  "gpu": "A100",
+  "prompts": 12,
+  "horizon": 57,
+  "arms": {
+    "expensive_c3_3_s4": {
+      "fixed_fine": {
+        "dit_s": 3.815,
+        "ref_l1": 0.2812,
+        "fine_fraction": 1.0,
+        "nfe": 16.0,
+        "switch": 0.0
+      },
+      "fixed_coarse": {
+        "dit_s": 4.434,
+        "ref_l1": 0.2874,
+        "fine_fraction": 0.0,
+        "nfe": 20.0,
+        "switch": 0.0
+      },
+      "fixed_hold": {
+        "dit_s": 0.76,
+        "ref_l1": 0.2824,
+        "fine_fraction": 0.0,
+        "nfe": 4.0,
+        "switch": 0.0
+      },
+      "random50": {
+        "dit_s": 4.12,
+        "ref_l1": 0.2868,
+        "fine_fraction": 0.5,
+        "nfe": 18.0,
+        "switch": 2.25
+      },
+      "alternating50": {
+        "dit_s": 4.123,
+        "ref_l1": 0.2868,
+        "fine_fraction": 0.5,
+        "nfe": 18.0,
+        "switch": 3.0
+      },
+      "adaptive_warp": {
+        "dit_s": 3.865,
+        "ref_l1": 0.282,
+        "fine_fraction": 0.917,
+        "nfe": 16.333333333333332,
+        "switch": 0.42
+      },
+      "adaptive_vs_fixed_fine": {
+        "ref_l1_rel": 0.0029197735909136345,
+        "dit_rel": 0.013119854449775797
+      }
+    },
+    "cheap_c3_3_s1": {
+      "fixed_fine": {
+        "dit_s": 3.947,
+        "ref_l1": 0.2832,
+        "fine_fraction": 1.0,
+        "nfe": 16.0,
+        "switch": 0.0
+      },
+      "fixed_coarse": {
+        "dit_s": 2.549,
+        "ref_l1": 0.2728,
+        "fine_fraction": 0.0,
+        "nfe": 8.0,
+        "switch": 0.0
+      },
+      "fixed_hold": {
+        "dit_s": 0.765,
+        "ref_l1": 0.2674,
+        "fine_fraction": 0.0,
+        "nfe": 4.0,
+        "switch": 0.0
+      },
+      "random50": {
+        "dit_s": 3.243,
+        "ref_l1": 0.2789,
+        "fine_fraction": 0.5,
+        "nfe": 12.0,
+        "switch": 2.25
+      },
+      "alternating50": {
+        "dit_s": 3.248,
+        "ref_l1": 0.2784,
+        "fine_fraction": 0.5,
+        "nfe": 12.0,
+        "switch": 3.0
+      },
+      "adaptive_warp": {
+        "dit_s": 2.846,
+        "ref_l1": 0.2733,
+        "fine_fraction": 0.208,
+        "nfe": 9.666666666666666,
+        "switch": 0.08
+      },
+      "adaptive_vs_fixed_fine": {
+        "ref_l1_rel": -0.03507736980676052,
+        "dit_rel": -0.27893863953325515
+      }
+    }
+  },
+  "coarse_cheaper_online": {
+    "expensive_c3_3_s4": false,
+    "cheap_c3_3_s1": true
+  }
+}

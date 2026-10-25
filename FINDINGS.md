@@ -14,6 +14,23 @@ mode-cost sweeps. Rule: coarse is cheaper iff `s_per_nfe_coarse/s_per_nfe_fine <
 
 Artifacts: `results/e1_breakeven/`, figure `assets/figures/fig_e1_breakeven.png`.
 
+## E3 — Matched A100 online factorial (POSITIVE, operating-point)
+Same A100, same 12 prompts (manifest a100-01), same horizon. Only the coarse step differs:
+prior arm A2 v1 = expensive `c3-3 s4`; arm A2 v2 = cheap `c3-3 s1`.
+
+| policy | exp s4 DiT (s) | exp refL1 | cheap s1 DiT (s) | cheap refL1 |
+|---|---|---|---|---|
+| fixed_fine | 3.81 | 0.2812 | 3.95 | 0.2832 |
+| fixed_coarse | 4.43 | 0.2874 | **2.55** | **0.2728** |
+| adaptive_warp | 3.87 (92% fine) | 0.2820 | **2.85 (21% fine)** | **0.2733** |
+
+- EXPENSIVE s4: coarse **not** cheaper online (4.43 > 3.81) → adaptive forced to 92% fine.
+- CHEAP s1: coarse **is** cheaper (2.55 < 3.95) → adaptive uses 21% fine and beats fixed_fine.
+**Finding: the adaptive result flips with the coarse operating point alone** — this is the confound
+in the prior paper (T4 used expensive coarse, A100 used cheap coarse) now isolated.
+
+Artifacts: `results/e3_online/`.
+
 ## E2 — Image-Jev vs text-Jev signal (NEGATIVE)
 Paired, same 80 segments, same questions. Arms: text-1.13 (prior), text-1.14, image-1.14, hybrid-1.14.
 
@@ -56,11 +73,11 @@ Offline policy simulation on the 80 segments (0 GPU). Confidence-gating vs diffi
 Artifacts: `results/e7_confidence/`, figure `assets/figures/fig_e7_frontier.png`.
 
 ## Pending (need GPU / external auth)
-- **E3** matched online factorial on A100 (both coarse modes, same prompts) — Colab, ~3 A100-h.
-- **E4** recovery+hysteresis + semantic seam — A100, ~1 h.
-- **E8** stability-gated recalibration — A100, ~2 h.
-- **E6** matched T4 boundary — Kaggle, free.
+- **E4** recovery+hysteresis + semantic seam — re-analyze prior rq3 arms + optional A100 (~1 h).
+- **E6** matched T4 boundary — re-analyze `f1_mode_cost` (E1 covers the timing) + optional Kaggle arm.
+- **E8** stability-gated recalibration — needs new A100 generation (Colab, ~2 h).
 - **E9** claim-to-artifact audit + manuscript.
+- **GitHub push blocked**: fine-grained PAT is read-only for JevGAG (contents PUT → 403).
 
 ## Honest headline so far
 The image capability is **not** a better routing signal, but it **is** a validated independent
