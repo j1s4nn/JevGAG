@@ -1,0 +1,53 @@
+{
+  "n_segments": 64,
+  "n_positive": 15,
+  "n_jev_ok": 64,
+  "jev_mean": {
+    "discontinuity": 0.6039062482304871,
+    "plausible": 0.6014062482863665
+  },
+  "tests": {
+    "jev_discontinuity": {
+      "auroc": 0.4965986394557823,
+      "ci": [
+        0.3589408233276158,
+        0.6438848980402543
+      ],
+      "perm_p": 0.52
+    },
+    "jev_plausible": {
+      "auroc": 0.5142857142857142,
+      "ci": [
+        0.3720997422406463,
+        0.6478269094945012
+      ],
+      "perm_p": 0.417
+    },
+    "jev_plausible_inverted": {
+      "auroc": 0.4857142857142857,
+      "ci": [
+        0.352173090505499,
+        0.6279002577593539
+      ],
+      "perm_p": 0.588
+    },
+    "jev_disc+inv_plaus": {
+      "auroc": 0.5,
+      "ci": [
+        0.36665464743589743,
+        0.635239448051948
+      ],
+      "perm_p": 0.511
+    }
+  },
+  "corr_disc_plaus": -0.7740406342333298,
+  "reference": {
+    "chance": 0.5,
+    "hand_crafted": 0.491,
+    "jev_text_base_paper": 0.788,
+    "selfaware_probe": 0.792,
+    "crv_ratio_t4": 0.752
+  },
+  "best": "jev_plausible",
+  "verdict": "H6_refuted"
+}
