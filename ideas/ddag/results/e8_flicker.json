@@ -1,0 +1,70 @@
+{
+  "n_segments": 32,
+  "variants": {
+    "none": {
+      "seam": 0.6138384342193604,
+      "fidelity": 0.7606805562973022
+    },
+    "blend0.25": {
+      "seam": 0.46037882566452026,
+      "fidelity": 0.7544499635696411
+    },
+    "blend0.5": {
+      "seam": 0.3069192171096802,
+      "fidelity": 0.7589555978775024
+    },
+    "blend0.75": {
+      "seam": 0.1534596085548401,
+      "fidelity": 0.7742186784744263
+    },
+    "anchor": {
+      "seam": 0.0,
+      "fidelity": 0.7990131378173828
+    }
+  },
+  "seam_delta_blend0.25": -0.1534596085548401,
+  "fidelity_delta_blend0.25": -0.006230592727661133,
+  "fidelity_delta_ci_blend0.25": [
+    -0.008367503993213177,
+    -0.003906636033207178
+  ],
+  "flicker": {
+    "fine": {
+      "mean": 0.01889913246850483,
+      "ci": [
+        0.01680067494744435,
+        0.02111286353538162
+      ]
+    },
+    "none": {
+      "mean": 0.014768498454941437,
+      "ci": [
+        0.0124413480709336,
+        0.017208134059183068
+      ]
+    },
+    "blend0.25": {
+      "mean": 0.021842832793481648,
+      "ci": [
+        0.019621146461577154,
+        0.02412092835365911
+      ]
+    }
+  },
+  "flicker_delta_none_minus_fine": -0.0041306340135633945,
+  "flicker_delta_none_minus_fine_ci": [
+    -0.0062815290395519694,
+    -0.001882953026506584
+  ],
+  "flicker_delta_blend_minus_none": 0.007074334338540211,
+  "flicker_delta_blend_minus_none_ci": [
+    0.005891629782490781,
+    0.008336116345526536
+  ],
+  "verdict": {
+    "seam_reduced": true,
+    "fidelity_not_worse": true,
+    "coarse_flickers_more_than_fine": false,
+    "blend_reduces_flicker": false
+  }
+}
