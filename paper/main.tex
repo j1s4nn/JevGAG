@@ -1,0 +1,55 @@
+% JevGAG manuscript skeleton — fill from FINDINGS.md and results/
+\documentclass[journal]{IEEEtran}
+\usepackage{graphicx,booktabs,amsmath,amssymb,url,xcolor,microtype}
+\usepackage[hidelinks]{hyperref}
+\graphicspath{{../assets/figures/}}
+\title{Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation:\\
+An Image-Grounded Off-Device Oracle with Recovery, Recalibration, and an Independent Endpoint}
+\author{Hossen Md Jisan\\Department of Artificial Intelligence, NUIST\\Email: jisanahammed1952@gmail.com}
+\begin{document}
+\maketitle
+\begin{abstract}
+Adaptive temporal granularity for causal video generation requires three preconditions: a real
+mode-dependent cost gap, a pre-generation signal, and an endpoint independent of the compared
+modes. We audit all three with an off-device, image-grounded System One oracle (Jev 1.14).
+We contribute (i) a matched break-even predictor over hardware and operating point, (ii) an
+honest test of image-grounded versus text-grounded routing signals, and (iii) a validated
+independent image-grounded endpoint. \emph{(results to be inserted)}
+\end{abstract}
+
+\section{Introduction}
+\emph{TODO: motivation; cite prior preprint (10.5281/zenodo.23395414, under review).}
+
+\section{Preconditions}
+P1 Cost (hardware and operating-point conditional). P2 Signal (pre-generation, image-grounded).
+P3 Endpoint (independent of compared modes). P4 Calibration.
+
+\section{Method}
+Off-device Jev 1.14 oracle (image assets, \texttt{TypeSafe-Danger-Zone-Images}); break-even
+predictor; recovery+hysteresis controller; stability-gated recalibration; image endpoint.
+
+\section{Results}
+\subsection{E1 Break-even is hardware- and operating-point-conditional}
+Figure~\ref{fig:e1}.
+\begin{figure}[t]\centering\includegraphics[width=\linewidth]{fig_e1_breakeven.png}\caption{}\label{fig:e1}\end{figure}
+
+\subsection{E2 Image-grounded Jev does not beat text Jev as a signal}
+Figure~\ref{fig:e2}.
+\begin{figure}[t]\centering\includegraphics[width=\linewidth]{fig_e2_signal.png}\caption{}\label{fig:e2}\end{figure}
+
+\subsection{E5 Image-grounded Jev is a validated independent endpoint}
+Figure~\ref{fig:e5}.
+\begin{figure}[t]\centering\includegraphics[width=\linewidth]{fig_e5_endpoint.png}\caption{}\label{fig:e5}\end{figure}
+
+\subsection{E7 Confidence-gating is neutral}
+Figure~\ref{fig:e7}.
+\begin{figure}[t]\centering\includegraphics[width=\linewidth]{fig_e7_frontier.png}\caption{}\label{fig:e7}\end{figure}
+
+\subsection{E3/E4/E6/E8 Online, controller, T4 boundary, recalibration}
+\emph{TODO: A100 + Kaggle results.}
+
+\section{Discussion and Limitations}
+\emph{TODO: honest negatives; image path is Dreamer-ready; n=80 for the signal test.}
+
+\bibliographystyle{IEEEtran}\bibliography{references}
+\end{document}

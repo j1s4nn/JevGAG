@@ -1,0 +1,98 @@
+{
+  "phase": "E9-claim-audit",
+  "generated_utc": "2026-10-25T02:03:27.235412+00:00",
+  "n_checks": 18,
+  "n_pass": 18,
+  "checks": [
+    {
+      "claim": "E1: T4 coarse_s4 is never cheaper than any fine mode",
+      "pass": true,
+      "detail": "3 T4 s4 pairs, all not cheaper"
+    },
+    {
+      "claim": "E1: A100 coarse_s1 beats all three fine modes",
+      "pass": true,
+      "detail": "3 A100 s1 pairs all cheaper"
+    },
+    {
+      "claim": "E1: T4 coarse_s1 beats fine_s2 and fine_s4 but not fine_s1",
+      "pass": true,
+      "detail": "operating-point effect present"
+    },
+    {
+      "claim": "E2: image-1.14 <= text-1.14 for jev_difficulty",
+      "pass": true,
+      "detail": "delta=-0.110"
+    },
+    {
+      "claim": "E2: image-1.14 <= text-1.14 for jev_drift",
+      "pass": true,
+      "detail": "delta=-0.108"
+    },
+    {
+      "claim": "E2: image-1.14 <= text-1.14 for jev_motion",
+      "pass": true,
+      "detail": "delta=-0.195"
+    },
+    {
+      "claim": "E2: motion deficit is significant (P<0.05)",
+      "pass": true,
+      "detail": "P(image>text)=0.006"
+    },
+    {
+      "claim": "E2: text-1.13 ~ text-1.14 (version not the cause)",
+      "pass": true,
+      "detail": "0.788 vs 0.777"
+    },
+    {
+      "claim": "E3: expensive coarse NOT cheaper online on A100",
+      "pass": true,
+      "detail": "fixed_coarse 4.43 > fixed_fine 3.81"
+    },
+    {
+      "claim": "E3: cheap coarse IS cheaper online on A100",
+      "pass": true,
+      "detail": "fixed_coarse 2.55 < fixed_fine 3.95"
+    },
+    {
+      "claim": "E3: adaptive uses far fewer fine decisions with cheap coarse",
+      "pass": true,
+      "detail": "cheap 0.21 < expensive 0.92"
+    },
+    {
+      "claim": "E4 (T4): recovery+hysteresis reduces switches",
+      "pass": true,
+      "detail": "0.50 -> 0.38"
+    },
+    {
+      "claim": "E4 (T4): seam exists (switch L1 > interior L1)",
+      "pass": true,
+      "detail": "ratio 1.18"
+    },
+    {
+      "claim": "E4 (A100): recovery+hysteresis reduces switches",
+      "pass": true,
+      "detail": "0.50 -> 0.42"
+    },
+    {
+      "claim": "E4 (A100): seam exists (switch L1 > interior L1)",
+      "pass": true,
+      "detail": "ratio 1.98"
+    },
+    {
+      "claim": "E5: image-Jev endpoint agrees with CLIP (same-subject)",
+      "pass": true,
+      "detail": "rho=+1.000"
+    },
+    {
+      "claim": "E5: image-Jev consistency agrees with CLIP",
+      "pass": true,
+      "detail": "rho=+0.943"
+    },
+    {
+      "claim": "E7: confidence-gating is neutral (|delta|<0.005)",
+      "pass": true,
+      "detail": "max |delta|=0.0013"
+    }
+  ]
+}
