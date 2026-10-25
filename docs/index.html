@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JevGAG — Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation</title>
+<meta name="description" content="JevGAG: an image-grounded, off-device System One oracle (Jev 1.14) for adaptive temporal granularity in causal video generation. Matched T4/A100 break-even law, recovery+hysteresis control, and a validated independent endpoint.">
+<meta name="keywords" content="Jev, adaptive granularity, temporal granularity, causal video generation, video world models, autoregressive diffusion, off-device oracle, System One, efficient inference">
+<meta property="og:title" content="JevGAG — Jev-Grounded Adaptive Temporal Granularity">
+<meta property="og:description" content="Image-grounded off-device oracle for adaptive temporal granularity in causal video generation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://j1s4nn.github.io/JevGAG/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"JevGAG","description":"Jev-grounded adaptive temporal granularity for causal video generation","codeRepository":"https://github.com/j1s4nn/JevGAG","license":"https://opensource.org/licenses/MIT","author":{"@type":"Person","name":"Md Jisan Hossen"}}
+</script>
+<style>
+body{font-family:system-ui,Segoe UI,Arial,sans-serif;max-width:820px;margin:2rem auto;padding:0 1rem;line-height:1.6;color:#1a1a1a}
+h1{font-size:1.6rem}h2{margin-top:1.8rem;border-bottom:1px solid #eee;padding-bottom:.2rem}
+code,pre{background:#f6f8fa;border-radius:6px}code{padding:.1rem .3rem}pre{padding:.8rem;overflow:auto}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:.4rem;text-align:left;font-size:.92rem}
+.muted{color:#666;font-size:.9rem}
+</style>
+</head>
+<body>
+<h1>JevGAG — Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation</h1>
+<p class="muted">Md Jisan Hossen · NUIST · 2026</p>
+
+<h2>Summary</h2>
+<p>JevGAG studies <strong>adaptive temporal granularity</strong> in <strong>causal video generation</strong>:
+when to generate one frame at a time (fine) versus several frames per chunk (coarse). It uses
+<strong>Jev 1.14</strong> as an <strong>off-device, image-grounded System One oracle</strong>, adds a
+matched <strong>break-even law</strong> over hardware and operating point, a <strong>recovery + hysteresis</strong>
+controller, and a <strong>validated independent endpoint</strong>.</p>
+
+<h2>Key results</h2>
+<table>
+<tr><th>Experiment</th><th>Finding</th></tr>
+<tr><td>E1 break-even</td><td>Coarse is cheaper only for some (fine,coarse) pairs and GPUs; T4 <code>c3-3 s4</code> never wins</td></tr>
+<tr><td>E2 signal</td><td>Image-Jev does <em>not</em> beat text-Jev as a routing signal (honest negative)</td></tr>
+<tr><td>E3 matched online (A100)</td><td>Adaptive result flips with the coarse operating point alone</td></tr>
+<tr><td>E4 controller</td><td>Recovery+hysteresis cuts switches without worse regret; a switch seam exists</td></tr>
+<tr><td>E5 endpoint</td><td>Image-Jev endpoint agrees with CLIP subject consistency at <strong>rho = +1.000</strong></td></tr>
+<tr><td>E7 confidence</td><td>Confidence-gating is neutral</td></tr>
+<tr><td>E9 audit</td><td>Claim-to-artifact audit 18/18 PASS</td></tr>
+</table>
+
+<h2>Cite</h2>
+<pre>@software{jisan2026jevGAG,
+  title  = {JevGAG: Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation},
+  author = {Hossen, Md Jisan},
+  year   = {2026},
+  url    = {https://github.com/j1s4nn/JevGAG}
+}</pre>
+
+<p><a href="https://github.com/j1s4nn/JevGAG">GitHub repository</a></p>
+</body>
+</html>
