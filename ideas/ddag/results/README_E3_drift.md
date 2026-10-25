@@ -68,6 +68,28 @@ rollout.** Error propagation is real → a *lookahead* controller has something 
 - The A100 drift metric is latent-L1 to a *fine* reference, which flatters coarse on A100; a decoded-pixel
   endpoint is the natural follow-up (E8/F4).
 
+## E4 — error-propagation model (the model DALG would plan with)
+
+Transition dataset: `(d_t, next mode, position, chain) -> d_{t+1}` (480 transitions on T4, n=32).
+
+| model | T4 R² | A100 R² |
+|---|---|---|
+| M0 persistence (`d_{t+1}=d_t`) | 0.905 | 0.865 |
+| M1 current drift only | **0.944** | **0.891** |
+| M2 drift + next mode | 0.943 | 0.893 |
+| M3 full | 0.945 | 0.899 |
+| M4 increment from mode/position/chain | **0.008** | **0.077** |
+
+**Verdict: the drift LEVEL is highly predictable (R²≈0.94) but only because drift is a smooth
+self-predicting trajectory; the granularity choice adds essentially nothing (M2 ≈ M1), and the
+increment is not predictable from the policy (M4 R²≈0.01).**
+
+**Consequence for DALG:** the lookahead premise is weak. Drift moves by only +0.035 ± 0.041 per segment
+(T4) and the mode barely shifts that increment, so a receding-horizon controller has very little headroom
+over a persistence baseline. DALG is therefore **demoted** from a headline method to a bounded,
+honestly-reported component; the paper's weight shifts to the **regime map + cost model** (E11) and the
+**robust intrinsic probe** (E2).
+
 ## Files
 
 | File | What |

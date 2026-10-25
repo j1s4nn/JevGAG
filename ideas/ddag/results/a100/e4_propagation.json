@@ -1,0 +1,17 @@
+{
+  "n_transitions": 120,
+  "n_prompts": 8,
+  "n_segments": 6,
+  "M0_persistence_r2": 0.8647682287501843,
+  "M1_current_drift_r2": 0.8914181142390801,
+  "M2_drift_plus_mode_r2": 0.8926230181068924,
+  "M3_full_r2": 0.8986978815380838,
+  "increment_mean": 0.024429210523764292,
+  "increment_std": 0.04544399875033349,
+  "M4_increment_from_mode_r2": 0.07667773593425531,
+  "verdict": {
+    "next_drift_predictable": true,
+    "mode_matters_beyond_drift": false,
+    "increment_predictable": false
+  }
+}
