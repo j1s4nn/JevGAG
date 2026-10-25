@@ -1,4 +1,4 @@
-"""SelfAware-DiT capture kernel.
+﻿"""SelfAware-DiT capture kernel.
 
 Runs the verified Causal-rCM causal rollout on a Kaggle GPU and captures, for every
 rollout segment, the DiT's OWN internal activations at the decision point
@@ -51,7 +51,7 @@ DECODE_PIXELS = False  # SA_DECODE  (T4 VAE decode dominates wall-clock and OOMs
 BLOCK_RE = re.compile(r"blocks\.\d+$")
 RCM_DIR = Path("/tmp/rcm")
 
-OUT_DIR = Path("/kaggle/working/results/selfaware_dit")
+OUT_DIR = Path(os.environ.get("SA_OUT_ROOT", "/kaggle/working")) + "/results/selfaware_dit"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 FEATURES = OUT_DIR / "features.npz"
 MANIFEST = OUT_DIR / "manifest.json"
@@ -214,7 +214,7 @@ def main():
         T["clone_s"] = round(time.time() - t, 1)
         manifest["upstream_rcm_commit"] = subprocess.check_output(["git", "-C", str(RCM_DIR), "rev-parse", "HEAD"], text=True).strip()
 
-        inp = Path("/kaggle/input")
+        inp = Path(os.environ.get("SA_INPUT_ROOT", "/kaggle/input"))
         paths = {
             "fine": find_under(inp, "Causal_rCM_Wan2.1_T2V_1.3B_480p_TF-dCM-init_SF-DMD_c1-1_step2.pt"),
             "reference": find_under(inp, "Causal_rCM_Wan2.1_T2V_1.3B_480p_TF-dCM-init_SF-DMD_c1-1_step4.pt"),
@@ -535,3 +535,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
