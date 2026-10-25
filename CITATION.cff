@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use JevGAG, please cite it as below."
+title: "JevGAG: Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation"
+abstract: >-
+  An image-grounded, off-device System One oracle (Jev 1.14) for adaptive temporal
+  granularity in causal video generation, with a matched hardware/operating-point
+  break-even law, recovery+hysteresis control, and a validated independent endpoint.
+authors:
+  - family-names: Hossen
+    given-names: Md Jisan
+    email: jisanahammed1952@gmail.com
+    affiliation: "Department of Artificial Intelligence, NUIST"
+type: software
+license: MIT
+version: 0.1.0
+date-released: 2026-10-25
+repository-code: "https://github.com/j1s4nn/JevGAG"
+url: "https://j1s4nn.github.io/JevGAG/"
+keywords:
+  - adaptive granularity
+  - temporal granularity
+  - causal video generation
+  - video world models
+  - autoregressive diffusion
+  - off-device oracle
+  - System One
+  - efficient inference
+references:
+  - type: article
+    title: "Hardware-Conditional Adaptive Temporal Granularity for Causal Video World Models: A Cost, Quality, and Uncertainty Audit"
+    authors:
+      - family-names: Hossen
+        given-names: Md Jisan
+    year: 2026
+    doi: 10.5281/zenodo.23395414
+    notes: "Preprint; manuscript under review at IEEE TCSVT."
