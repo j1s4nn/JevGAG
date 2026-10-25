@@ -39,7 +39,7 @@ def oof_scores(X, y, groups, C=0.05):
             scores[te] = 0.0
             continue
         sc = StandardScaler().fit(X[tr])
-        clf = LogisticRegression(penalty="l2", C=C, max_iter=5000, class_weight="balanced")
+        clf = LogisticRegression(C=C, max_iter=5000, class_weight="balanced")
         clf.fit(sc.transform(X[tr]), y[tr])
         scores[te] = clf.decision_function(sc.transform(X[te]))
     return scores

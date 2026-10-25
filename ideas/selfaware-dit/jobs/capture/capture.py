@@ -47,6 +47,7 @@ MID = [15 / 16, 5 / 6, 5 / 8]
 N_REF_STEPS = 4
 N_FINE_STEPS = 2
 N_COARSE_STEPS = 2
+DECODE_PIXELS = False  # SA_DECODE  (T4 VAE decode dominates wall-clock and OOMs when batched)
 BLOCK_RE = re.compile(r"blocks\.\d+$")
 RCM_DIR = Path("/tmp/rcm")
 
@@ -189,8 +190,9 @@ def main():
             "seed": SEED, "horizon": HORIZON, "limit": LIMIT,
             "n_ref_steps": N_REF_STEPS, "n_fine_steps": N_FINE_STEPS, "n_coarse_steps": N_COARSE_STEPS,
             "fine_ckpt": "c1-1_step2", "coarse_ckpt": "c3-3_step2", "ref_ckpt": "c1-1_step4",
-            "label": "coarse_unsafe = 1[ refL1_coarse > refL1_fine ] (pixel)",
-            "labels": ["labels(pixel)", "labels_latent", "labels_smooth(pixel jitter)"],
+            "label": "coarse_unsafe = 1[ refL1_coarse > refL1_fine ]",
+            "label_space": "pixel" if DECODE_PIXELS else "latent",
+            "labels": ["labels(primary)", "labels_latent", "labels_smooth(jitter)"],
         },
         "records": [],
         "status": "running",
@@ -258,7 +260,7 @@ def main():
         latent_c = tokenizer.latent_ch
         manifest["latent"] = {"frames": int(latent_frames), "h": int(latent_h), "w": int(latent_w), "c": int(latent_c)}
 
-        def encode_prompt(prompt):
+        def encode_prompts(prompts):
             model = umt5_xxl(encoder_only=True).eval().requires_grad_(False).to(dtype=torch.float16)
             ckpt = easy_io.load(str(paths["t5"]), backend_args=None, file_format="pt", map_location="cuda", weights_only=False)
             for k in list(ckpt.keys()):
@@ -266,21 +268,26 @@ def main():
                     ckpt[k] = ckpt[k].to(torch.float16)
             model.load_state_dict(ckpt, strict=False, assign=True)
             del ckpt
+            gc.collect()
             tok = HuggingfaceTokenizer(name=str(paths["tokenizer"]), seq_len=512, clean="whitespace")
-            ids, mask = tok(prompt, return_mask=True, add_special_tokens=True)
-            ids, mask = ids.cuda(), mask.cuda()
-            ctx = model(ids, mask)
-            lengths = mask.gt(0).sum(dim=1).long()
-            padded = []
-            for item, ln in zip(ctx, lengths):
-                ln = int(ln)
-                padded.append(item[:512] if ln > 512 else torch.cat([item[:ln], torch.zeros(512 - ln, item.shape[1], device=item.device, dtype=item.dtype)], dim=0))
-            emb = torch.stack(padded).to(torch.float16)
-            del model, tok, ids, mask, ctx, padded
+            out = []
+            for prompt in prompts:
+                ids, mask = tok(prompt, return_mask=True, add_special_tokens=True)
+                ids, mask = ids.cuda(), mask.cuda()
+                ctx = model(ids, mask)
+                lengths = mask.gt(0).sum(dim=1).long()
+                padded = []
+                for item, ln in zip(ctx, lengths):
+                    ln = int(ln)
+                    padded.append(item[:512] if ln > 512 else torch.cat([item[:ln], torch.zeros(512 - ln, item.shape[1], device=item.device, dtype=item.dtype)], dim=0))
+                out.append(torch.stack(padded).to(torch.float16).cpu())
+                del ids, mask, ctx, padded
+                torch.cuda.empty_cache()
+            del model, tok
             clear_umt5_memory()
             gc.collect()
             torch.cuda.empty_cache()
-            return emb
+            return out
 
         NETS = {}
 
@@ -314,15 +321,20 @@ def main():
         names = None
         feat_prefill, feat_gen, feat_meta = [], [], []
         labels, labels_latent, labels_smooth = [], [], []
+        N = min(LIMIT, len(PROMPTS))
+        log(f"encoding {N} prompts (T5 loaded once)...")
+        t = time.time()
+        EMBS = encode_prompts([PROMPTS[i]["prompt"] for i in range(N)])
+        T["encode_s"] = round(time.time() - t, 1)
+        log(f"encoded in {T['encode_s']}s")
         t4 = time.time()
 
-        for pi in range(min(LIMIT, len(PROMPTS))):
+        for pi in range(N):
             spec = PROMPTS[pi]
             prompt = spec["prompt"]
             tp = time.time()
             log(f"=== prompt {pi}: {prompt}")
-            emb = encode_prompt(prompt)
-            condition = {"crossattn_emb": emb.to(**TENSOR_KWARGS)}
+            condition = {"crossattn_emb": EMBS[pi].to(**TENSOR_KWARGS)}
             gen0 = torch.Generator(device="cuda").manual_seed(SEED)
             noise = torch.randn(1, latent_c, latent_frames, latent_h, latent_w, dtype=torch.float32, device="cuda", generator=gen0).cpu()
 
@@ -341,9 +353,11 @@ def main():
             ref_latent = causal_rollout_sampling(net, noise.cuda(), steps, sched, None, condition, None, 1.0, 1, 1, False, generator=gen).detach().cpu()
             net.cpu()
             torch.cuda.empty_cache()
-            t = time.time()
-            ref_frames = decode(ref_latent)
-            T["ref_decode_s"] = round(T.get("ref_decode_s", 0.0) + time.time() - t, 1)
+            ref_frames = None
+            if DECODE_PIXELS:
+                t = time.time()
+                ref_frames = decode(ref_latent)
+                T["ref_decode_s"] = round(T.get("ref_decode_s", 0.0) + time.time() - t, 1)
             del sched, counts
             gc.collect()
             torch.cuda.empty_cache()
@@ -403,29 +417,29 @@ def main():
                                  "n_fine_calls": len(fine_calls), "n_coarse_calls": len(coarse_calls)})
                 boundary = fine_lat[:, :, -1:]
 
-            # --- ONE batched decode for all 8 segment latents ---
-            t = time.time()
-            lat_list = []
-            for s in seg_data:
-                lat_list.append(s["fine_lat"])
-                lat_list.append(s["coarse_lat"])
-            frames_list = decode_batch(lat_list)
-            T["seg_decode_s"] = round(T.get("seg_decode_s", 0.0) + time.time() - t, 1)
+            frames_list = None
+            if DECODE_PIXELS:
+                t = time.time()
+                frames_list = [decode(s["fine_lat"]) for s in seg_data] + [decode(s["coarse_lat"]) for s in seg_data]
+                T["seg_decode_s"] = round(T.get("seg_decode_s", 0.0) + time.time() - t, 1)
 
             for i, s in enumerate(seg_data):
                 g = s["g"]
-                seg_range = slice(4 * (3 + 3 * (g - 1)), 4 * (3 + 3 * g))
-                l1_fine, k = seg_l1(frames_list[2 * i], ref_frames, seg_range)
-                l1_coarse, _ = seg_l1(frames_list[2 * i + 1], ref_frames, seg_range)
-                y = int(l1_coarse > l1_fine)
-
-                def jitter(fr):
-                    a = fr[:k].astype(np.float32) / 255.0
-                    return float(np.mean(np.abs(np.diff(a, axis=0)))) if k > 1 else 0.0
-                j_fine, j_coarse = jitter(frames_list[2 * i]), jitter(frames_list[2 * i + 1])
-                ys = int(j_coarse > j_fine)
                 yl = int(s["ll1_coarse"] > s["ll1_fine"])
                 yls = int(s["lj_coarse"] > s["lj_fine"])
+                if DECODE_PIXELS:
+                    seg_range = slice(4 * (3 + 3 * (g - 1)), 4 * (3 + 3 * g))
+                    l1_fine, k = seg_l1(frames_list[i], ref_frames, seg_range)
+                    l1_coarse, _ = seg_l1(frames_list[len(seg_data) + i], ref_frames, seg_range)
+
+                    def jitter(fr):
+                        a = fr[:k].astype(np.float32) / 255.0
+                        return float(np.mean(np.abs(np.diff(a, axis=0)))) if k > 1 else 0.0
+                    j_fine, j_coarse = jitter(frames_list[i]), jitter(frames_list[len(seg_data) + i])
+                    y, ys = int(l1_coarse > l1_fine), int(j_coarse > j_fine)
+                else:
+                    l1_fine, l1_coarse, j_fine, j_coarse = s["ll1_fine"], s["ll1_coarse"], s["lj_fine"], s["lj_coarse"]
+                    y, ys = yl, yls
 
                 fine_calls = s["fine_calls"]
                 _, pre_mat = stack_call(fine_calls[0], names)
@@ -449,7 +463,7 @@ def main():
                 })
                 log(f"  seg{g}: l1f={l1_fine:.4f} l1c={l1_coarse:.4f} y={y} | ll1f={s['ll1_fine']:.4f} ll1c={s['ll1_coarse']:.4f} yl={yl}")
 
-            del seg_data, frames_list, lat_list, ref_frames, prefix, boundary
+            del seg_data, frames_list, ref_frames, prefix, boundary
             gc.collect()
             torch.cuda.empty_cache()
             manifest["records"].extend(feat_meta[-4:])

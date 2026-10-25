@@ -9,6 +9,7 @@ number can be independently checked ("prove the output").
 | Dataset | Slug | Contents |
 |---|---|---|
 | JevGAG: Audited Results and Figures | [`ajjisan/jevgag-results`](https://www.kaggle.com/datasets/ajjisan/jevgag-results) | audited `results/` files (E1–E9) and publication `figures/` |
+| JevGAG SelfAware-DiT probes | [`ajjisan/jevgag-selfaware-dit`](https://www.kaggle.com/datasets/ajjisan/jevgag-selfaware-dit) | Causal-rCM DiT activations + intrinsic granularity-safety probe results (idea 03) |
 
 ## Convention
 
