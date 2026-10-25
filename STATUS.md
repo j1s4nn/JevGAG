@@ -20,8 +20,8 @@ and a validated independent endpoint. Reuse the prior project (`../idea_05_.../0
 | **P2 Matched re-analysis** | E3 matched A100 online · E4 controller+seam · E6 T4 boundary | ✅ **DONE** |
 | **P3 Claim audit** | E9 claim-to-artifact audit (18/18 PASS) | ✅ **DONE** |
 | **P4 GPU experiments** | E8 recalibration on **A100 (done, negative)** + **Kaggle T4 (done, negative)** | ✅ **DONE** |
-| **P5 Figures & tables** | E1/E2/E5/E7 figures done; E3/E4/E8 tables done; E8 figure pending | 🔄 **PARTIAL** |
-| **P6 Manuscript** | `paper/main.tex` skeleton exists; needs full write-up | 🔄 **SKELETON** |
+| **P5 Figures & tables** | 5 figures (E1/E2/E5/E7/E8) + all audit tables | ✅ **DONE** |
+| **P6 Manuscript** | `paper/main.tex` full draft (all E1–E9) + `references.bib` | ✅ **DRAFT** |
 | **P7 Release** | Zenodo DOI, git tag v0.1.0, Pages polish, final PRs | ⏳ **WAITING** |
 
 ## Experiments inventory
