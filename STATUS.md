@@ -19,8 +19,8 @@ and a validated independent endpoint. Reuse the prior project (`../idea_05_.../0
 | **P1 0-GPU core** | E1 break-even · E2 image-vs-text signal · E5 image endpoint · E7 confidence | ✅ **DONE** |
 | **P2 Matched re-analysis** | E3 matched A100 online · E4 controller+seam · E6 T4 boundary | ✅ **DONE** |
 | **P3 Claim audit** | E9 claim-to-artifact audit (18/18 PASS) | ✅ **DONE** |
-| **P4 GPU experiments** | E8 recalibration on **A100 (running)** + **Kaggle T4 (running)** | 🔄 **RUNNING** |
-| **P5 Figures & tables** | E1/E2/E5/E7 figures done; E3/E4/E8 tables done/partial | 🔄 **PARTIAL** |
+| **P4 GPU experiments** | E8 recalibration on **A100 (done, negative)** + **Kaggle T4 (done, negative)** | ✅ **DONE** |
+| **P5 Figures & tables** | E1/E2/E5/E7 figures done; E3/E4/E8 tables done; E8 figure pending | 🔄 **PARTIAL** |
 | **P6 Manuscript** | `paper/main.tex` skeleton exists; needs full write-up | 🔄 **SKELETON** |
 | **P7 Release** | Zenodo DOI, git tag v0.1.0, Pages polish, final PRs | ⏳ **WAITING** |
 
@@ -35,7 +35,7 @@ and a validated independent endpoint. Reuse the prior project (`../idea_05_.../0
 | E5 | Image-Jev independent endpoint (ρ=+1.000) | ✅ | `results/e5_endpoint/`, `fig_e5_endpoint.png` |
 | E6 | Matched T4 boundary (derived) | ✅ | `results/e6_t4_boundary/` |
 | E7 | Confidence-gated routing (neutral) | ✅ | `results/e7_confidence/`, `fig_e7_frontier.png` |
-| E8 | Stability-gated recalibration | 🔄 A100 + T4 running | `results/e8_a100/`, `results/e8_recalibration/` |
+| E8 | Stability-gated recalibration | ✅ (negative, A100 + T4) | `results/e8_a100/`, `results/e8_recalibration/` |
 | E9 | Claim-to-artifact audit (18/18 PASS) | ✅ | `results/e9_audit/` |
 
 ## Achieved (summary)
@@ -48,15 +48,13 @@ and a validated independent endpoint. Reuse the prior project (`../idea_05_.../0
 - 18/18 claim-to-artifact audit PASS. Repo + SEO + Pages live; 7 PRs merged, PR #6 open.
 
 ## Waiting / in flight
-- **E8 on A100** (`colab exec` on session `jevgag`, background `bgp_1714a9f040019r1tncAL1FFDlU`).
-- **E8 on Kaggle T4** (`ajjisan/e8-recalibration`).
-- Then: E8 audit + figure, FINDINGS update, commit/PR, **stop the A100 VM** to stop billing.
+- **None running.** All E1–E9 complete (E8 negative on both GPUs).
+- A100 VM `jevgag` **stopped** (balance ~261.8 units, 0 units/hr).
 
 ## Next actions (in order)
-1. Poll E8 A100 + T4; download results; audit + figure; commit.
+1. E8 figure + fold E8 into the E3/E4 figures pass.
 2. Write the manuscript into `paper/` (all E1–E9 sections).
-3. Final figures pass + tables for the paper.
-4. Release: git tag `v0.1.0`, Zenodo-ready bundle, Pages update, merge remaining PRs.
+3. Release: git tag `v0.1.0`, Zenodo-ready bundle, Pages update.
 
 ## Environment & credentials
 **All keys, accounts, expiry and re-auth steps live in**
