@@ -1,0 +1,31 @@
+{
+  "phase": "E8-A100",
+  "generated_utc": "2026-10-25T07:24:59.725572+00:00",
+  "n_prompts": 12,
+  "controllers": {
+    "threshold_only": {
+      "mean_reference_l1": 0.2767,
+      "mean_fine_fraction": 0.5,
+      "mean_switch_count": 0.5,
+      "mean_dit_s": 3.27,
+      "mean_total_s": 29.46,
+      "mean_peak_vram_gb": 4.3
+    },
+    "full": {
+      "mean_reference_l1": 0.2772,
+      "mean_fine_fraction": 0.521,
+      "mean_switch_count": 0.417,
+      "mean_dit_s": 3.314,
+      "mean_total_s": 29.82,
+      "mean_peak_vram_gb": 4.3
+    },
+    "recalibrate": {
+      "mean_reference_l1": 0.2884,
+      "mean_fine_fraction": 0.5,
+      "mean_switch_count": 0.5,
+      "mean_dit_s": 5.352,
+      "mean_total_s": 31.9,
+      "mean_peak_vram_gb": 4.3
+    }
+  }
+}

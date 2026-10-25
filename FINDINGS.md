@@ -107,9 +107,28 @@ adaptive routing cannot save wall-clock regardless of the signal → the T4 nega
 ## E9 — claim-to-artifact audit (18/18 PASS)
 Every headline number re-derived from the stored result files. Artifacts: `results/e9_audit/`.
 
+## E8 — Stability-gated recalibration (NEGATIVE on A100)
+A100, 12 prompts × 3 controllers (36/36 PASS). `recalibrate` = inject a high-step fine segment
+(`c1-1 s4`) when the drift signal fires, else coarse.
+
+| controller | mean refL1 | fine frac | switches | DiT s |
+|---|---|---|---|---|
+| threshold_only | 0.2767 | 0.50 | 0.50 | 3.27 |
+| full (recovery+hysteresis) | 0.2772 | 0.52 | 0.42 | 3.31 |
+| recalibrate | 0.2884 | 0.50 | 0.50 | 5.35 |
+
+**Finding: recalibration does NOT help** — recalibrate minus full = refL1 **+0.0112**, DiT **+2.04 s**
+(worse quality at higher cost). High-step injection on drift is not justified.
+Artifacts: `results/e8_a100/`.
+
+**E8 (Kaggle T4, 8 prompts):** also negative — recalibrate vs adaptive_warp = refL1 **+0.0202**,
+DiT **+12.73 s** (recalibrate's gate fired 0 times on T4, degenerating to all-coarse: 0.3151 ≈
+fixed_coarse 0.3186; adaptive_warp 0.2949 at 75% fine). Artifacts: `results/e8_recalibration/`.
+
+**E8 conclusion: stability-gated high-step recalibration is NOT beneficial on either GPU.**
+
 ## Still pending
-- **E8** stability-gated recalibration — the only experiment needing new A100 generation (Colab, ~2 h).
-- **GitHub push** — blocked on the token (read-only for JevGAG).
+- Manuscript write-up (P6), release (P7).
 
 ## Honest headline so far
 The image capability is **not** a better routing signal, but it **is** a validated independent
