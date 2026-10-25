@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JevGAG — Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation</title>
+<title>JevGAG — Adaptive Temporal Granularity for Causal Video World Models</title>
 
 <!-- SEO -->
-<meta name="description" content="JevGAG studies adaptive temporal granularity in causal video generation and video world models: fine per-frame vs coarse multi-frame chunks, routed by an off-device Jev System One oracle, with a matched T4/A100 break-even law, recovery+hysteresis control, and a validated independent endpoint.">
-<meta name="keywords" content="Jev, adaptive granularity, temporal granularity, causal video generation, video world models, autoregressive diffusion, off-device oracle, System One, efficient inference, adaptive compute, uncertainty quantification, Causal-rCM, Wan2.1">
+<meta name="description" content="JevGAG research repository: adaptive temporal granularity for causal video generation and interactive video world models. Papers: JevGAG (audited) and DDAG (deadline- and drift-aware control), with intrinsic signals, seam repair, drift-aware lookahead, deadline scheduling, and a Jev critic, evaluated on T4 and A100.">
+<meta name="keywords" content="Jev, adaptive granularity, temporal granularity, causal video generation, video world models, autoregressive diffusion, deadline scheduling, drift control, adaptive compute, efficient inference, Causal-rCM, Wan2.1">
 <meta name="author" content="Md Jisan Hossen">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://j1s4nn.github.io/JevGAG/">
@@ -51,6 +51,7 @@
   <div class="nav-inner">
     <a class="brand" href="#top">JevGAG</a>
     <nav class="nav-links">
+      <a href="#papers">Papers</a>
       <a href="#abstract">Abstract</a>
       <a href="#results">Results</a>
       <a href="#research">Research</a>
@@ -75,7 +76,7 @@
     <div class="cta">
       <a class="btn primary" href="https://github.com/j1s4nn/JevGAG">Code</a>
       <a class="btn" href="#cite">Cite</a>
-      <a class="btn" href="https://github.com/j1s4nn/JevGAG/tree/main/results">Results</a>
+      <a class="btn" href="https://github.com/j1s4nn/JevGAG/tree/main/papers/jevgag/results">Results</a>
       <a class="btn" href="https://www.kaggle.com/datasets/ajjisan/jevgag-results">Data</a>
       <a class="btn" href="#reproduce">Reproduce</a>
     </div>
@@ -96,6 +97,30 @@
       preregistered held-out test (AUROC 0.491) while an off-device System One oracle succeeds (AUROC
       0.788 in 0.67 s); the internal reference flips direction between GPUs, so independent endpoints are
       mandatory. Negative and failed experiments are preserved as evidence.</p>
+  </section>
+
+  <section id="papers" class="section">
+    <h2>Papers</h2>
+    <div class="grid">
+      <div class="card">
+        <span class="k">JevGAG &middot; complete, audited</span>
+        <p><strong>Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation.</strong>
+          An audit of the three preconditions &mdash; cost, signal, endpoint &mdash; on Causal-rCM, with a
+          matched T4/A100 break-even law, recovery + hysteresis control, and a validated independent
+          endpoint.</p>
+        <p><a href="https://github.com/j1s4nn/JevGAG/tree/main/papers/jevgag">Artifacts</a> &middot;
+          <a href="https://github.com/j1s4nn/JevGAG/tree/main/papers/jevgag/paper">Paper (LaTeX)</a></p>
+      </div>
+      <div class="card">
+        <span class="k">DDAG &middot; in progress</span>
+        <p><strong>Deadline- and Drift-Aware Adaptive Temporal Granularity for Interactive Causal Video
+          World Models.</strong> A deployable controller: drift-aware lookahead (DALG), convergence-residual
+          verification (CRV), hard-deadline scheduling (DCG), a typed Jev critic (JCD), and a compiled
+          runtime-free policy (SDGP). Evaluated on T4 and A100.</p>
+        <p><a href="https://github.com/j1s4nn/JevGAG/tree/main/ideas">Development</a> &middot;
+          <a href="https://github.com/j1s4nn/JevGAG/blob/main/STATUS.md">Status</a></p>
+      </div>
+    </div>
   </section>
 
   <section id="results" class="section">
@@ -175,7 +200,8 @@
 
   <section id="reproduce" class="section">
     <h2>Reproduce (0 GPU)</h2>
-    <pre><code>python scripts/e1_breakeven.py
+    <pre><code>cd papers/jevgag
+python scripts/e1_breakeven.py
 python scripts/e2_image_signal.py &amp;&amp; python scripts/e2_text14.py &amp;&amp; python scripts/e2_hybrid.py &amp;&amp; python scripts/e2_audit.py
 python scripts/e3_online_matched.py
 python scripts/e4_rq3_seam.py
