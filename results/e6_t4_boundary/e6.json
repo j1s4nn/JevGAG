@@ -1,0 +1,20 @@
+{
+  "phase": "E6-t4-boundary",
+  "generated_utc": "2026-10-25T02:04:11.399529+00:00",
+  "gpu": "T4",
+  "fine_mode": "fine_c1_1_s1",
+  "coarse_s1_vs_fine_s1": {
+    "coarse_cheaper": false,
+    "dit_saved_s": -4.566
+  },
+  "coarse_s1_vs_fine_s2": {
+    "coarse_cheaper": true,
+    "dit_saved_s": 7.011
+  },
+  "coarse_s1_vs_fine_s4": {
+    "coarse_cheaper": true,
+    "dit_saved_s": 29.7
+  },
+  "prior_t4_online_arm": "C:\\Users\\jisan\\OneDrive\\Desktop\\research\\idea_05_adaptive_granularity_WM\\04_Experiment\\results\\f4lite",
+  "verdict": "T4 boundary is NEGATIVE for fine_c1_1_s1: coarse c3-3 s1 saves -4.57 s (i.e. is slower), so adaptive routing cannot save wall-clock time regardless of the signal. The T4 negative is an operating-point boundary, not a signal failure. Coarse only wins on T4 once fine uses >=2 steps."
+}
