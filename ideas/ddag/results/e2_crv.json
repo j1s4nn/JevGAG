@@ -1,0 +1,176 @@
+{
+  "n_segments": 64,
+  "n_positive": 18,
+  "n_prompts": 16,
+  "r_conv_stats": {
+    "mean": 676.689697265625,
+    "std": 44.491111755371094,
+    "corr_with_label": 0.2816591910284425
+  },
+  "auroc": {
+    "r_conv_alone": {
+      "auroc": 0.6207729468599034,
+      "ci": [
+        0.39417604617604624,
+        0.783791461916462
+      ]
+    },
+    "probe_alone": {
+      "auroc": 0.7922705314009661,
+      "ci": [
+        0.6261258116883116,
+        0.9127674932065217
+      ]
+    },
+    "probe+r_conv": {
+      "auroc": 0.7620772946859904,
+      "ci": [
+        0.5781163194444444,
+        0.8913176033934253
+      ]
+    },
+    "r_conv+free_evidence": {
+      "auroc": 0.7270531400966183,
+      "ci": [
+        0.5263645458183274,
+        0.8711001223844311
+      ]
+    },
+    "probe+r_conv+evidence": {
+      "auroc": 0.7657004830917875,
+      "ci": [
+        0.5912492340686275,
+        0.8917778167778169
+      ]
+    }
+  },
+  "calibration": [
+    {
+      "quantile": 0.05,
+      "tau": 608.0777191162109,
+      "rho": 0.9375,
+      "error_among_accepted": 0.0
+    },
+    {
+      "quantile": 0.1,
+      "tau": 628.3276794433593,
+      "rho": 0.890625,
+      "error_among_accepted": 0.14285714285714285
+    },
+    {
+      "quantile": 0.15,
+      "tau": 639.6692962646484,
+      "rho": 0.84375,
+      "error_among_accepted": 0.1
+    },
+    {
+      "quantile": 0.2,
+      "tau": 644.3783203125,
+      "rho": 0.796875,
+      "error_among_accepted": 0.23076923076923078
+    },
+    {
+      "quantile": 0.25,
+      "tau": 649.0875091552734,
+      "rho": 0.75,
+      "error_among_accepted": 0.1875
+    },
+    {
+      "quantile": 0.3,
+      "tau": 654.6384643554687,
+      "rho": 0.703125,
+      "error_among_accepted": 0.15789473684210525
+    },
+    {
+      "quantile": 0.35,
+      "tau": 656.4169647216797,
+      "rho": 0.640625,
+      "error_among_accepted": 0.17391304347826086
+    },
+    {
+      "quantile": 0.39999999999999997,
+      "tau": 658.6443969726563,
+      "rho": 0.59375,
+      "error_among_accepted": 0.19230769230769232
+    },
+    {
+      "quantile": 0.44999999999999996,
+      "tau": 666.6691589355469,
+      "rho": 0.546875,
+      "error_among_accepted": 0.1724137931034483
+    },
+    {
+      "quantile": 0.49999999999999994,
+      "tau": 669.1387329101562,
+      "rho": 0.5,
+      "error_among_accepted": 0.1875
+    },
+    {
+      "quantile": 0.5499999999999999,
+      "tau": 673.3290283203125,
+      "rho": 0.453125,
+      "error_among_accepted": 0.2
+    },
+    {
+      "quantile": 0.6,
+      "tau": 677.8543701171875,
+      "rho": 0.40625,
+      "error_among_accepted": 0.21052631578947367
+    },
+    {
+      "quantile": 0.65,
+      "tau": 680.659780883789,
+      "rho": 0.359375,
+      "error_among_accepted": 0.21951219512195122
+    },
+    {
+      "quantile": 0.7,
+      "tau": 688.9352050781249,
+      "rho": 0.296875,
+      "error_among_accepted": 0.2222222222222222
+    },
+    {
+      "quantile": 0.75,
+      "tau": 705.9355926513672,
+      "rho": 0.25,
+      "error_among_accepted": 0.22916666666666666
+    },
+    {
+      "quantile": 0.7999999999999999,
+      "tau": 719.2867797851562,
+      "rho": 0.203125,
+      "error_among_accepted": 0.21568627450980393
+    },
+    {
+      "quantile": 0.85,
+      "tau": 732.0205261230468,
+      "rho": 0.15625,
+      "error_among_accepted": 0.2222222222222222
+    },
+    {
+      "quantile": 0.9,
+      "tau": 746.9111999511719,
+      "rho": 0.109375,
+      "error_among_accepted": 0.22807017543859648
+    },
+    {
+      "quantile": 0.95,
+      "tau": 754.4269592285157,
+      "rho": 0.0625,
+      "error_among_accepted": 0.26666666666666666
+    }
+  ],
+  "feasible_at_target": false,
+  "best_feasible": null,
+  "reference": {
+    "chance": 0.5,
+    "hand_crafted": 0.491,
+    "jev_text": 0.788,
+    "selfaware_probe": 0.798
+  },
+  "verdict": {
+    "H1_supported": false,
+    "beats_probe": false,
+    "cost_win_feasible": false
+  }
+}

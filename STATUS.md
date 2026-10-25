@@ -29,6 +29,7 @@ _Last updated: 2026-10-25._
 | A3 | Free post-generation evidence **0.725**; closed loop **0.690 → 0.737** | `ideas/closedloop-gran` |
 | A4 | **Cost model, not the signal, is the binding constraint** (4.8% error at ρ=0.672 vs break-even 0.667) | `ideas/verify-gran` |
 | A5 | Reusable substrate: matched capture + DiT hooks + audits + public datasets | whole repo |
+| A6 | **Convergence-residual verification (CRV):** free, training-free `step_last/step_first` ratio **0.752**; **probe + ratio = 0.842 AUROC** (best in project) | `ideas/ddag/results/README_E2_T4.md` |
 
 ## Gaps (being addressed by DDAG)
 
