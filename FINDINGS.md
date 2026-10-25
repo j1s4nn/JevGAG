@@ -90,16 +90,26 @@ Offline policy simulation on the 80 segments (0 GPU). Confidence-gating vs diffi
 
 Artifacts: `results/e7_confidence/`, figure `assets/figures/fig_e7_frontier.png`.
 
-## Pending (need GPU / external auth)
-- **E6** matched T4 boundary — timing covered by E1; a fresh matched T4 *online* arm needs a Kaggle run.
-- **E8** stability-gated recalibration — needs new A100 generation (Colab, ~2 h).
-- **E9** claim-to-artifact audit + manuscript (partly done: `paper/main.tex` skeleton).
-- **GitHub push blocked**: fine-grained PAT is read-only for JevGAG (contents PUT → 403).
-- **Colab A100** requires the user to open the notebook and select A100.
+## Status
+7 of 9 experiments complete (E1-E7, E9) with audited results and figures; E6 derived; **E8 pending Colab**.
 
 ## Done (0 GPU, all committed locally)
 E1 break-even · E2 image-vs-text signal · E3 matched A100 online · E4 controller+seam ·
-E5 image endpoint (rho=+1.0) · E7 confidence-gating · figures · FINDINGS · paper skeleton.
+E5 image endpoint (rho=+1.0) · E6 T4 boundary (derived) · E7 confidence-gating · E9 claim audit (18/18) ·
+figures · FINDINGS · paper skeleton.
+
+## E6 — matched T4 boundary (DERIVED, negative)
+On T4 with fine `c1-1 s1` (the online fine mode), coarse `c3-3 s1` saves **-4.57 s** (slower), so
+adaptive routing cannot save wall-clock regardless of the signal → the T4 negative is an
+**operating-point boundary**, not a signal failure. Coarse only wins on T4 once fine uses ≥2 steps
+(vs fine_s2: +7.01 s; vs fine_s4: +29.70 s). Artifacts: `results/e6_t4_boundary/`.
+
+## E9 — claim-to-artifact audit (18/18 PASS)
+Every headline number re-derived from the stored result files. Artifacts: `results/e9_audit/`.
+
+## Still pending
+- **E8** stability-gated recalibration — the only experiment needing new A100 generation (Colab, ~2 h).
+- **GitHub push** — blocked on the token (read-only for JevGAG).
 
 ## Honest headline so far
 The image capability is **not** a better routing signal, but it **is** a validated independent
