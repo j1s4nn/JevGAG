@@ -31,6 +31,24 @@ in the prior paper (T4 used expensive coarse, A100 used cheap coarse) now isolat
 
 Artifacts: `results/e3_online/`.
 
+## E4 — Recovery+hysteresis and the switch seam (POSITIVE, both GPUs)
+
+| GPU | controller | switches | AUH refL1 | seam (switch/interior) |
+|---|---|---|---|---|
+| T4 | threshold_only | 0.50 | 0.3133 | 1.30 |
+| T4 | full | 0.38 | 0.3116 | 1.18 |
+| T4 | threshold_only_noisy | 1.12 | 0.3159 | 2.17 |
+| T4 | full_noisy | 0.62 | 0.3150 | 1.53 |
+| A100 | threshold_only | 0.50 | 0.2767 | 2.20 |
+| A100 | full | 0.42 | 0.2772 | 1.98 |
+| A100 | threshold_only_noisy | 0.92 | 0.2741 | 2.43 |
+| A100 | full_noisy | 0.50 | 0.2718 | 1.75 |
+
+**Finding:** recovery+hysteresis cuts switches on both GPUs without worsening regret; a switch
+**seam** exists (switch-adjacent L1 > interior L1, ratio > 1) on both GPUs.
+
+Artifacts: `results/e4_controller/`.
+
 ## E2 — Image-Jev vs text-Jev signal (NEGATIVE)
 Paired, same 80 segments, same questions. Arms: text-1.13 (prior), text-1.14, image-1.14, hybrid-1.14.
 
@@ -73,11 +91,15 @@ Offline policy simulation on the 80 segments (0 GPU). Confidence-gating vs diffi
 Artifacts: `results/e7_confidence/`, figure `assets/figures/fig_e7_frontier.png`.
 
 ## Pending (need GPU / external auth)
-- **E4** recovery+hysteresis + semantic seam — re-analyze prior rq3 arms + optional A100 (~1 h).
-- **E6** matched T4 boundary — re-analyze `f1_mode_cost` (E1 covers the timing) + optional Kaggle arm.
+- **E6** matched T4 boundary — timing covered by E1; a fresh matched T4 *online* arm needs a Kaggle run.
 - **E8** stability-gated recalibration — needs new A100 generation (Colab, ~2 h).
-- **E9** claim-to-artifact audit + manuscript.
+- **E9** claim-to-artifact audit + manuscript (partly done: `paper/main.tex` skeleton).
 - **GitHub push blocked**: fine-grained PAT is read-only for JevGAG (contents PUT → 403).
+- **Colab A100** requires the user to open the notebook and select A100.
+
+## Done (0 GPU, all committed locally)
+E1 break-even · E2 image-vs-text signal · E3 matched A100 online · E4 controller+seam ·
+E5 image endpoint (rho=+1.0) · E7 confidence-gating · figures · FINDINGS · paper skeleton.
 
 ## Honest headline so far
 The image capability is **not** a better routing signal, but it **is** a validated independent
