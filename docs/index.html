@@ -1,9 +1,9 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JevGAG — Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation</title>
+<title>JevGAG 鈥?Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation</title>
 
 <!-- SEO -->
 <meta name="description" content="JevGAG studies adaptive temporal granularity in causal video generation and video world models: fine per-frame vs coarse multi-frame chunks, routed by an off-device Jev System One oracle, with a matched T4/A100 break-even law, recovery+hysteresis control, and a validated independent endpoint.">
@@ -15,14 +15,14 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="JevGAG">
-<meta property="og:title" content="JevGAG — Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation">
+<meta property="og:title" content="JevGAG 鈥?Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation">
 <meta property="og:description" content="Off-device System One oracle for adaptive temporal granularity in causal video generation, with a matched T4/A100 break-even law and a validated independent endpoint.">
 <meta property="og:url" content="https://j1s4nn.github.io/JevGAG/">
 <meta property="og:image" content="https://j1s4nn.github.io/JevGAG/assets/og.png">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="JevGAG — Adaptive Temporal Granularity for Causal Video Generation">
+<meta name="twitter:title" content="JevGAG 鈥?Adaptive Temporal Granularity for Causal Video Generation">
 <meta name="twitter:description" content="Jev-grounded adaptive temporal granularity with a matched hardware break-even law and an independent endpoint.">
 <meta name="twitter:image" content="https://j1s4nn.github.io/JevGAG/assets/og.png">
 
@@ -33,7 +33,7 @@
 <meta name="citation_technical_report_institution" content="Nanjing University of Information Science and Technology">
 <meta name="citation_language" content="en">
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>馃幀</text></svg>">
 <link rel="stylesheet" href="assets/styles.css">
 
 <script type="application/ld+json">
@@ -53,20 +53,20 @@
     <nav class="nav-links">
       <a href="#abstract">Abstract</a>
       <a href="#results">Results</a>
-      <a href="#figures">Figures</a>
+      <a href="#research">Research</a><a href="#figures">Figures</a>
       <a href="#method">Method</a>
       <a href="#reproduce">Reproduce</a>
       <a href="#cite">Cite</a>
-      <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme">◐</button>
+      <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme">鈼?/button>
     </nav>
   </div>
 </header>
 
 <main id="top">
   <section class="hero">
-    <p class="eyebrow">Research · Causal Video World Models</p>
+    <p class="eyebrow">Research 路 Causal Video World Models</p>
     <h1>JevGAG: Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation</h1>
-    <p class="authors">Md Jisan Hossen <span class="aff">· Department of Artificial Intelligence, NUIST</span></p>
+    <p class="authors">Md Jisan Hossen <span class="aff">路 Department of Artificial Intelligence, NUIST</span></p>
     <p class="tagline">When should a causal video generator spend fine per-frame compute, and when is a
       cheaper coarse chunk enough? JevGAG answers with an <strong>off-device System One oracle</strong>,
       a <strong>hardware-conditioned break-even law</strong>, and a <strong>validated independent
@@ -100,29 +100,54 @@
   <section id="results" class="section">
     <h2>Headline results</h2>
     <div class="grid">
-      <div class="card"><span class="k">E1 · break-even</span><p>Coarse is cheaper only for some
+      <div class="card"><span class="k">E1 路 break-even</span><p>Coarse is cheaper only for some
         <code>(fine,coarse)</code> pairs and GPUs; on T4 <code>c3-3 s4</code> is never cheaper.</p></div>
-      <div class="card"><span class="k">E2 · signal</span><p>Image-Jev does <em>not</em> beat text-Jev as
+      <div class="card"><span class="k">E2 路 signal</span><p>Image-Jev does <em>not</em> beat text-Jev as
         a routing signal (honest negative).</p></div>
-      <div class="card"><span class="k">E3 · matched online</span><p>The adaptive result flips with the
+      <div class="card"><span class="k">E3 路 matched online</span><p>The adaptive result flips with the
         coarse operating point alone (21% vs 92% fine).</p></div>
-      <div class="card"><span class="k">E4 · controller</span><p>Recovery+hysteresis cuts switches
+      <div class="card"><span class="k">E4 路 controller</span><p>Recovery+hysteresis cuts switches
         without worse regret; a switch seam exists.</p></div>
-      <div class="card"><span class="k">E5 · endpoint</span><p>Image-Jev endpoint agrees with CLIP subject
-        consistency at <strong>ρ = +1.000</strong>.</p></div>
-      <div class="card"><span class="k">E9 · audit</span><p>Claim-to-artifact audit
+      <div class="card"><span class="k">E5 路 endpoint</span><p>Image-Jev endpoint agrees with CLIP subject
+        consistency at <strong>蟻 = +1.000</strong>.</p></div>
+      <div class="card"><span class="k">E9 路 audit</span><p>Claim-to-artifact audit
         <strong>18/18 PASS</strong>.</p></div>
+    </div>
+  </section>
+
+  <section id="research" class="section">
+    <h2>Research</h2>
+    <p class="muted">Follow-on studies built on the audited base result. Each ships code, an audited
+      result bundle, and a public dataset.</p>
+    <div class="grid">
+      <div class="card">
+        <span class="k">Idea 03 路 SelfAware-DiT</span>
+        <p>An <strong>intrinsic, pre-generation</strong> probe on the DiT's own activations predicts
+          coarse-unsafe segments at <strong>AUROC 0.798</strong> (block 11) 鈥?matching the external
+          Jev text oracle (0.788) and far above hand-crafted context signals (0.491). No external
+          oracle required.</p>
+        <p><a href="https://github.com/j1s4nn/JevGAG/tree/main/ideas/selfaware-dit">Code</a> 路
+          <a href="https://www.kaggle.com/datasets/ajjisan/jevgag-selfaware-dit">Dataset</a></p>
+      </div>
+      <div class="card">
+        <span class="k">Idea 04 路 SeamControl</span>
+        <p>Switching to a coarse chunk produces a boundary discontinuity <strong>2.9脳</strong> larger
+          than fine's. A training-free <strong>25% latent blend</strong> cuts the seam by 25%
+          (0.614鈫?.460) <em>and</em> slightly improves fidelity.</p>
+        <p><a href="https://github.com/j1s4nn/JevGAG/tree/main/ideas/seamcontrol">Code</a> 路
+          <a href="https://www.kaggle.com/datasets/ajjisan/jevgag-seamcontrol">Dataset</a></p>
+      </div>
     </div>
   </section>
 
   <section id="figures" class="section">
     <h2>Figures</h2>
     <div class="gallery">
-      <figure><img src="assets/figures/fig_e1_breakeven.png" alt="Break-even predictor across hardware and operating point" loading="lazy"><figcaption>E1 — matched break-even across hardware and operating point.</figcaption></figure>
-      <figure><img src="assets/figures/fig_e2_signal.png" alt="Image-Jev versus text-Jev signal AUROC" loading="lazy"><figcaption>E2 — image/hybrid vs text Jev as a routing signal.</figcaption></figure>
-      <figure><img src="assets/figures/fig_e5_endpoint.png" alt="Image-Jev endpoint versus CLIP" loading="lazy"><figcaption>E5 — image-Jev as an independent endpoint.</figcaption></figure>
-      <figure><img src="assets/figures/fig_e7_frontier.png" alt="Confidence-gated routing frontier" loading="lazy"><figcaption>E7 — confidence-gated routing frontier.</figcaption></figure>
-      <figure><img src="assets/figures/fig_e8_recalibration.png" alt="Stability-gated recalibration" loading="lazy"><figcaption>E8 — stability-gated recalibration.</figcaption></figure>
+      <figure><img src="assets/figures/fig_e1_breakeven.png" alt="Break-even predictor across hardware and operating point" loading="lazy"><figcaption>E1 鈥?matched break-even across hardware and operating point.</figcaption></figure>
+      <figure><img src="assets/figures/fig_e2_signal.png" alt="Image-Jev versus text-Jev signal AUROC" loading="lazy"><figcaption>E2 鈥?image/hybrid vs text Jev as a routing signal.</figcaption></figure>
+      <figure><img src="assets/figures/fig_e5_endpoint.png" alt="Image-Jev endpoint versus CLIP" loading="lazy"><figcaption>E5 鈥?image-Jev as an independent endpoint.</figcaption></figure>
+      <figure><img src="assets/figures/fig_e7_frontier.png" alt="Confidence-gated routing frontier" loading="lazy"><figcaption>E7 鈥?confidence-gated routing frontier.</figcaption></figure>
+      <figure><img src="assets/figures/fig_e8_recalibration.png" alt="Stability-gated recalibration" loading="lazy"><figcaption>E8 鈥?stability-gated recalibration.</figcaption></figure>
     </div>
   </section>
 
@@ -133,9 +158,9 @@
       (<code>c3-3 s4</code>), or <strong>hold</strong>, driven by an off-device Jev oracle reading the
       actual context, stabilized by recovery + hysteresis, and certified by an independent image-grounded
       endpoint.</p>
-    <pre><code>context ──► Jev oracle (text, off-GPU, 0.672 s) ──► typed difficulty / drift / motion
-       └──► controller: threshold τ + hysteresis Λ + recovery R
-                 └──► action ∈ { fine c1-1 | coarse c3-3 | hold } ──► causal rollout</code></pre>
+    <pre><code>context 鈹€鈹€鈻?Jev oracle (text, off-GPU, 0.672 s) 鈹€鈹€鈻?typed difficulty / drift / motion
+       鈹斺攢鈹€鈻?controller: threshold 蟿 + hysteresis 螞 + recovery R
+                 鈹斺攢鈹€鈻?action 鈭?{ fine c1-1 | coarse c3-3 | hold } 鈹€鈹€鈻?causal rollout</code></pre>
   </section>
 
   <section id="reproduce" class="section">
@@ -148,7 +173,7 @@ python scripts/e5_endpoint.py &amp;&amp; python scripts/e5_audit.py
 python scripts/e6_t4_boundary.py
 python scripts/e7_confidence_gate.py
 python scripts/e9_claim_audit.py</code></pre>
-    <p class="muted">Backbone: Causal-rCM Wan2.1-T2V-1.3B (commit <code>ed3cb14</code>) · GPUs: Tesla T4 and A100-SXM4-80GB · Jev <code>jev-1.14.0</code>.</p>
+    <p class="muted">Backbone: Causal-rCM Wan2.1-T2V-1.3B (commit <code>ed3cb14</code>) 路 GPUs: Tesla T4 and A100-SXM4-80GB 路 Jev <code>jev-1.14.0</code>.</p>
   </section>
 
   <section id="cite" class="section">
@@ -166,9 +191,9 @@ python scripts/e9_claim_audit.py</code></pre>
 </main>
 
 <footer class="footer">
-  <p>© 2026 Md Jisan Hossen · NUIST · MIT License</p>
-  <p class="muted"><a href="https://github.com/j1s4nn/JevGAG">GitHub</a> ·
-    <a href="https://github.com/j1s4nn/JevGAG/blob/main/LICENSE">License</a> ·
+  <p>漏 2026 Md Jisan Hossen 路 NUIST 路 MIT License</p>
+  <p class="muted"><a href="https://github.com/j1s4nn/JevGAG">GitHub</a> 路
+    <a href="https://github.com/j1s4nn/JevGAG/blob/main/LICENSE">License</a> 路
     <a href="https://github.com/j1s4nn/JevGAG/blob/main/CONTRIBUTING.md">Contributing</a></p>
 </footer>
 
