@@ -1,4 +1,4 @@
-"""Push a SelfAware-DiT Kaggle kernel, watch it tightly, and download outputs.
+﻿"""Push a SelfAware-DiT Kaggle kernel, watch it tightly, and download outputs.
 
 Usage:
   python ideas/selfaware-dit/scripts/kaggle_run.py --job capture --limit 2  --slug ajjisan/jevgag-selfaware-capture-smoke --out /tmp/sa_smoke
@@ -19,7 +19,11 @@ import time
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[3]
-JOB_DIR = REPO / "ideas" / "selfaware-dit" / "jobs"
+
+
+def job_dir(job):
+    p = Path(job)
+    return p if p.is_absolute() else REPO / p
 
 
 def run(cmd, cwd=None, check=True):
@@ -34,6 +38,7 @@ def run(cmd, cwd=None, check=True):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--job", required=True)
+    ap.add_argument("--code", default="capture.py", help="code file in the job dir")
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--slug", required=True)
     ap.add_argument("--out", required=True)
@@ -42,18 +47,18 @@ def main():
     ap.add_argument("--no-wait", action="store_true")
     args = ap.parse_args()
 
-    src = JOB_DIR / args.job
+    src = job_dir(args.job)
     stage = Path(tempfile.mkdtemp(prefix="sa_job_"))
     for f in src.iterdir():
         if f.is_file():
             shutil.copy(f, stage / f.name)
 
     if args.limit is not None:
-        code = stage / "capture.py"
+        code = stage / args.code
         txt = code.read_text(encoding="utf-8")
         txt2, nsub = re.subn(r"^LIMIT = .*# SA_LIMIT$", f"LIMIT = {args.limit}  # SA_LIMIT", txt, flags=re.M)
         if nsub == 0:
-            raise SystemExit("LIMIT marker not found in capture.py")
+            raise SystemExit(f"LIMIT marker not found in {args.code}")
         code.write_text(txt2, encoding="utf-8")
 
     meta = json.loads((stage / "kernel-metadata.json").read_text(encoding="utf-8"))
