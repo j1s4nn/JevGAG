@@ -1,0 +1,181 @@
+{
+  "n_segments": 64,
+  "n_positive": 10,
+  "n_prompts": 16,
+  "r_conv_stats": {
+    "mean": 677.435791015625,
+    "std": 39.42514419555664,
+    "corr_with_label": 0.3345444899148411
+  },
+  "auroc": {
+    "r_conv_alone": {
+      "auroc": 0.4925925925925926,
+      "ci": [
+        0.19039548022598868,
+        0.7799477507327641
+      ]
+    },
+    "probe_alone": {
+      "auroc": 0.8333333333333334,
+      "ci": [
+        0.5816483803552769,
+        0.9787434613780045
+      ]
+    },
+    "probe+r_conv": {
+      "auroc": 0.7425925925925927,
+      "ci": [
+        0.39995711835334474,
+        0.967741935483871
+      ]
+    },
+    "r_conv+free_evidence": {
+      "auroc": 0.35185185185185186,
+      "ci": [
+        0.12477904040404039,
+        0.6034673548277474
+      ]
+    },
+    "probe+r_conv+evidence": {
+      "auroc": 0.638888888888889,
+      "ci": [
+        0.314917976760082,
+        0.8990868147656941
+      ]
+    }
+  },
+  "calibration": [
+    {
+      "quantile": 0.05,
+      "tau": 628.1004943847656,
+      "rho": 0.9375,
+      "error_among_accepted": 0.0
+    },
+    {
+      "quantile": 0.1,
+      "tau": 633.9480041503906,
+      "rho": 0.890625,
+      "error_among_accepted": 0.0
+    },
+    {
+      "quantile": 0.15,
+      "tau": 640.4793853759766,
+      "rho": 0.84375,
+      "error_among_accepted": 0.0
+    },
+    {
+      "quantile": 0.2,
+      "tau": 651.7448852539062,
+      "rho": 0.796875,
+      "error_among_accepted": 0.0
+    },
+    {
+      "quantile": 0.25,
+      "tau": 655.0050506591797,
+      "rho": 0.75,
+      "error_among_accepted": 0.125
+    },
+    {
+      "quantile": 0.3,
+      "tau": 660.3369506835937,
+      "rho": 0.703125,
+      "error_among_accepted": 0.15789473684210525
+    },
+    {
+      "quantile": 0.35,
+      "tau": 661.585009765625,
+      "rho": 0.640625,
+      "error_among_accepted": 0.13043478260869565
+    },
+    {
+      "quantile": 0.39999999999999997,
+      "tau": 664.8616943359375,
+      "rho": 0.59375,
+      "error_among_accepted": 0.11538461538461539
+    },
+    {
+      "quantile": 0.44999999999999996,
+      "tau": 666.6360961914063,
+      "rho": 0.546875,
+      "error_among_accepted": 0.10344827586206896
+    },
+    {
+      "quantile": 0.49999999999999994,
+      "tau": 669.7253723144531,
+      "rho": 0.5,
+      "error_among_accepted": 0.09375
+    },
+    {
+      "quantile": 0.5499999999999999,
+      "tau": 671.5810302734375,
+      "rho": 0.453125,
+      "error_among_accepted": 0.11428571428571428
+    },
+    {
+      "quantile": 0.6,
+      "tau": 673.6256469726562,
+      "rho": 0.40625,
+      "error_among_accepted": 0.10526315789473684
+    },
+    {
+      "quantile": 0.65,
+      "tau": 682.8572204589844,
+      "rho": 0.359375,
+      "error_among_accepted": 0.12195121951219512
+    },
+    {
+      "quantile": 0.7,
+      "tau": 688.3345031738281,
+      "rho": 0.296875,
+      "error_among_accepted": 0.1111111111111111
+    },
+    {
+      "quantile": 0.75,
+      "tau": 692.3680114746094,
+      "rho": 0.25,
+      "error_among_accepted": 0.10416666666666667
+    },
+    {
+      "quantile": 0.7999999999999999,
+      "tau": 702.0351928710937,
+      "rho": 0.203125,
+      "error_among_accepted": 0.09803921568627451
+    },
+    {
+      "quantile": 0.85,
+      "tau": 720.0204071044922,
+      "rho": 0.15625,
+      "error_among_accepted": 0.1111111111111111
+    },
+    {
+      "quantile": 0.9,
+      "tau": 738.8863891601562,
+      "rho": 0.109375,
+      "error_among_accepted": 0.10526315789473684
+    },
+    {
+      "quantile": 0.95,
+      "tau": 757.2031555175781,
+      "rho": 0.0625,
+      "error_among_accepted": 0.11666666666666667
+    }
+  ],
+  "feasible_at_target": true,
+  "best_feasible": {
+    "quantile": 0.35,
+    "tau": 661.585009765625,
+    "rho": 0.640625,
+    "error_among_accepted": 0.13043478260869565
+  },
+  "reference": {
+    "chance": 0.5,
+    "hand_crafted": 0.491,
+    "jev_text": 0.788,
+    "selfaware_probe": 0.798
+  },
+  "verdict": {
+    "H1_supported": false,
+    "beats_probe": false,
+    "cost_win_feasible": true
+  }
+}
