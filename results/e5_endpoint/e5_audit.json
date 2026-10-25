@@ -1,0 +1,39 @@
+{
+  "phase": "E5-endpoint",
+  "generated_utc": "2026-10-25T01:57:03.149741+00:00",
+  "n_videos": 48,
+  "policies": [
+    "adaptive_warp",
+    "alternating50",
+    "fixed_coarse",
+    "fixed_fine",
+    "random50",
+    "reference"
+  ],
+  "jev_consistency": {
+    "adaptive_warp": 2.08125,
+    "alternating50": 1.62625,
+    "fixed_coarse": 1.775,
+    "fixed_fine": 2.15125,
+    "random50": 1.9775,
+    "reference": 3.46125
+  },
+  "jev_same_subject": {
+    "adaptive_warp": 0.41,
+    "alternating50": 0.2675,
+    "fixed_coarse": 0.23,
+    "fixed_fine": 0.41625,
+    "random50": 0.28625,
+    "reference": 0.89375
+  },
+  "clip_subject_consistency": {
+    "adaptive_warp": 0.9802963957190514,
+    "alternating50": 0.9591004624962807,
+    "fixed_coarse": 0.9490222558379173,
+    "fixed_fine": 0.9839731082320213,
+    "random50": 0.9645732417702675,
+    "reference": 0.9898440390825272
+  },
+  "spearman_jev_consistency_vs_clip": 0.9428571428571428,
+  "spearman_jev_same_vs_clip": 1.0
+}
