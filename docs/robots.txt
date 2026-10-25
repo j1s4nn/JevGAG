@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+
 Sitemap: https://j1s4nn.github.io/JevGAG/sitemap.xml
