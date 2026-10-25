@@ -1,0 +1,32 @@
+# secrets (never commit)
+*.env
+*kaggle.json
+github.env
+typesafe*
+
+# large media / artifacts (hosted on Kaggle)
+*.mp4
+*.mov
+*.avi
+*.pt
+*.pth
+*.safetensors
+*.ckpt
+*.tar.gz
+*.zip
+
+# python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# scratch / big dirs
+tmp/
+results/**/videos/
+logs/
+
+# os
+Thumbs.db
+.DS_Store
