@@ -1,0 +1,31 @@
+{
+  "phase": "E8-Kaggle-T4",
+  "generated_utc": "2026-10-25T07:27:33.646621+00:00",
+  "n_prompts": 8,
+  "policies": {
+    "fixed_coarse": {
+      "mean_reference_l1": 0.3186,
+      "mean_fine_fraction": 0.0,
+      "mean_switch_count": 0.0,
+      "mean_dit_s": 38.82
+    },
+    "fixed_fine": {
+      "mean_reference_l1": 0.2998,
+      "mean_fine_fraction": 1.0,
+      "mean_switch_count": 0.0,
+      "mean_dit_s": 19.87
+    },
+    "adaptive_warp": {
+      "mean_reference_l1": 0.2949,
+      "mean_fine_fraction": 0.75,
+      "mean_switch_count": 0.0,
+      "mean_dit_s": 24.05
+    },
+    "recalibrate": {
+      "mean_reference_l1": 0.3151,
+      "mean_fine_fraction": 0.0,
+      "mean_switch_count": 0.0,
+      "mean_dit_s": 36.78
+    }
+  }
+}
