@@ -2,24 +2,26 @@
   "n_segments": 64,
   "n_positive": 18,
   "n_prompts": 16,
+  "probe_block11_direct_auroc": 0.7983091787439613,
   "r_conv_stats": {
     "mean": 676.689697265625,
     "std": 44.491111755371094,
     "corr_with_label": 0.2816591910284425
   },
   "auroc": {
+    "probe_alone": {
+      "auroc": 0.7983091787439613,
+      "ci": [
+        0.6385667388167389,
+        0.9155844155844155
+      ],
+      "note": "direct AUROC of the block-11 probe score"
+    },
     "r_conv_alone": {
       "auroc": 0.6207729468599034,
       "ci": [
         0.39417604617604624,
         0.783791461916462
-      ]
-    },
-    "probe_alone": {
-      "auroc": 0.7922705314009661,
-      "ci": [
-        0.6261258116883116,
-        0.9127674932065217
       ]
     },
     "probe+r_conv": {

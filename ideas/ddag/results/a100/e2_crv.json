@@ -2,24 +2,26 @@
   "n_segments": 64,
   "n_positive": 10,
   "n_prompts": 16,
+  "probe_block11_direct_auroc": 0.14259259259259258,
   "r_conv_stats": {
     "mean": 677.435791015625,
     "std": 39.42514419555664,
     "corr_with_label": 0.3345444899148411
   },
   "auroc": {
+    "probe_alone": {
+      "auroc": 0.14259259259259258,
+      "ci": [
+        0.017541114990229006,
+        0.36789171203871746
+      ],
+      "note": "direct AUROC of the block-11 probe score"
+    },
     "r_conv_alone": {
       "auroc": 0.4925925925925926,
       "ci": [
         0.19039548022598868,
         0.7799477507327641
-      ]
-    },
-    "probe_alone": {
-      "auroc": 0.8333333333333334,
-      "ci": [
-        0.5816483803552769,
-        0.9787434613780045
       ]
     },
     "probe+r_conv": {
@@ -175,7 +177,7 @@
   },
   "verdict": {
     "H1_supported": false,
-    "beats_probe": false,
+    "beats_probe": true,
     "cost_win_feasible": true
   }
 }

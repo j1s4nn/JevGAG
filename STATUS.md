@@ -30,7 +30,8 @@ _Last updated: 2026-10-25._
 | A4 | **Cost model, not the signal, is the binding constraint** (4.8% error at ρ=0.672 vs break-even 0.667) | `ideas/verify-gran` |
 | A5 | Reusable substrate: matched capture + DiT hooks + audits + public datasets | whole repo |
 | A6 | **Convergence-residual verification (CRV):** free, training-free `step_last/step_first` ratio **0.752**; **probe + ratio = 0.842 AUROC** (best in project) | `ideas/ddag/results/README_E2_T4.md` |
-| A7 | **Cross-hardware (T4 vs A100):** the CRV ratio is **hardware-conditional** (0.752 → 0.485, chance) while the intrinsic probe is **robust** (0.792 → **0.833**) | `ideas/ddag/results/README_E2_crosshw.md` |
+| A7 | **Cross-hardware (T4 vs A100) — CORRECTED:** both signals are hardware-conditional. Probe **0.798 (T4) → 0.143 (A100, inverted)**; CRV ratio 0.752 → 0.485. An earlier "probe is robust (0.833)" was an analysis artifact (single-score logistic re-learns the sign). | `ideas/ddag/results/README_E2_crosshw.md` |
+| A11 | **Regime map (E5):** adaptive granularity is **unnecessary at both extremes** — T4: coarse +3% dearer & worse → **fixed fine**; A100: coarse −46% cheaper & closer → **fixed coarse**. Adaptivity pays only in the intermediate band. | `ideas/ddag/results/README_E5_regime_map.md` |
 | A8 | **Drift propagation (E3):** on T4 one coarse segment leaves a **significant persistent** elevation (4/5 tail segments, +0.021..+0.031); on A100 the comparison **reverses**; drift is linear, not predictable | `ideas/ddag/results/README_E3_drift.md` |
 | A9 | **Jev critic (E7/JCD):** a typed Jev critic on two raw frames is at **chance** (0.497/0.514) → H6 **refuted**; framing/context matters more than the model | `ideas/ddag/results/README_E7_jcd.md` |
 | A10 | **Independent endpoint (E8):** seam repair reproduces (−25% seam, +0.6% fidelity) but the **flicker endpoint exposes a trade-off** (blend raises interior flicker) | `ideas/ddag/results/README_E8_flicker.md` |
