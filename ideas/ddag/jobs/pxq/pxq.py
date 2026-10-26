@@ -116,9 +116,11 @@ def patch_file(path, repl):
 
 
 def to_frames(video):
+    # always return [T, H, W, C] -- dropping the batch dim is essential: callers index by frame,
+    # and a leading batch dim would make ref_frames[seg_range] slice the batch and return empty.
     px = (1 + video.float().cpu().clamp(-1, 1)) / 2
     if px.ndim == 5:
-        return (px.permute(0, 2, 3, 4, 1).numpy() * 255).astype(np.uint8)
+        px = px[0]
     return (px.permute(1, 2, 3, 0).numpy() * 255).astype(np.uint8)
 
 
