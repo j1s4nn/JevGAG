@@ -76,3 +76,12 @@ figure.wide{margin:0 0 1rem}
 figure.wide img{width:100%;border:1px solid var(--line);border-radius:var(--radius);background:#fff;display:block}
 figure.wide figcaption{margin-top:.6rem;color:var(--muted);font-size:.9rem}
 .citeblock{border-left:3px solid var(--accent);padding:.35rem 0 .35rem .9rem;color:var(--fg)}
+
+/* --- tables for the data / full-results sections --- */
+.tbl{width:100%;border-collapse:collapse;margin:.6rem 0 1.4rem;font-size:.9rem}
+.tbl th,.tbl td{border:1px solid var(--line);padding:.42rem .6rem;text-align:left;vertical-align:top}
+.tbl thead th{background:var(--bg-soft);color:var(--fg);font-weight:700}
+.tbl tbody tr:nth-child(even){background:color-mix(in srgb,var(--bg-soft) 45%,transparent)}
+.tbl a{color:var(--accent)}
+.tbl-wrap{overflow-x:auto}
+h3{font-size:1.02rem;margin:1.4rem 0 .4rem;color:var(--fg)}

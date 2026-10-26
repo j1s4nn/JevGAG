@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Site](https://img.shields.io/badge/site-j1s4nn.github.io%2FJevGAG-2ea44f)](https://j1s4nn.github.io/JevGAG/)
+[![Data](https://img.shields.io/badge/data-Kaggle%20%287%20public%20datasets%29-20beff)](DATA.md)
 [![Audited](https://img.shields.io/badge/claim--to--artifact%20audit-18%2F18%20PASS-brightgreen)](jevgag/results/e9_audit/)
 [![GPU](https://img.shields.io/badge/GPUs-Tesla%20T4%20%C2%B7%20A100--80GB-6f42c1)](#hardware)
 
@@ -14,6 +15,17 @@ cheaper chunked mode enough?
 
 > **Keywords:** causal video generation · video world models · autoregressive diffusion · adaptive compute
 > · temporal granularity · efficient inference · System One / Jev · regime map · boundary analysis.
+
+---
+
+## Contents
+
+- [Prior work](#prior-work) · [The programme in one figure](#the-programme-in-one-figure)
+- [Part 1 · JevGAG — the report](#part-1--jevgag--the-report)
+- [Part 2 · DDAG — the method](#part-2--ddag--the-method)
+- [Full results](#full-results) · [Datasets (public)](#datasets-public) · [Figures and videos](#figures-and-videos)
+- [Achieved · boundary · open](#achieved--boundary--open) · [Repository layout](#repository-layout)
+- [Hardware](#hardware) · [Reproduce](#reproduce) · [Citation](#citation)
 
 ---
 
@@ -71,7 +83,149 @@ set of calibrated components, each validated by its own experiment.
 
 ![regime map](assets/figures/fig_regime_map.png)
 
-→ Method, eleven numbered experiments and results: [`ddag/`](ddag/)
+→ Method, twelve numbered experiments and results: [`ddag/`](ddag/)
+
+---
+
+## Full results
+
+Everything below is re-derivable from the public result files (see [Datasets](#datasets-public)).
+Confidence intervals are prompt-grouped bootstrap (2{,}000–4{,}000 resamples); AUROCs use
+leave-one-prompt-out cross-validation grouped by prompt.
+
+### R1 · Signals for coarse-unsafe segments (direct AUROC)
+
+| signal | Tesla T4 | A100-80GB | notes |
+|---|---|---|---|
+| chance | 0.500 | 0.500 | reference |
+| hand-crafted context statistics | 0.491 | — | the preregistered formulation; fails |
+| **Jev text oracle** (prior report) | **0.788** | — | off-device, 0.672 s/decision |
+| **intrinsic prefill probe** (block 11) | **0.798** | **0.143** | *inverts* on A100 |
+| convergence residual `v_S/v_1` | 0.752 | 0.485 | CI [0.623, 0.863], perm $p$ = 0.000 on T4 |
+| **probe + residual** | **0.842** | — | strongest signal measured |
+| naive final-step residual | 0.621 | 0.493 | weaker than the ratio |
+| `step_std` / `step_range` | 0.507 | 0.674 | chance on T4 |
+
+### R2 · Cost (DiT seconds per segment, wall-clock, synchronised)
+
+| operating point | fine | coarse | ratio | break-even | coarse cheaper? |
+|---|---|---|---|---|---|
+| T4, fine $s_2$ / coarse $s_2$ | 4.394 | 4.526 | **1.030** | 2.33 | ❌ no |
+| T4, fine $s_2$ / coarse $s_1$ | 4.686 | 3.411 | **0.728** | 4.08 | ✅ yes (−27%) |
+| A100, fine $s_2$ / coarse $s_2$ | 1.279 | 0.685 | **0.536** | 2.33 | ✅ yes (−46%) |
+
+### R3 · Quality by endpoint (lower is better)
+
+| endpoint | T4 fine | T4 coarse | A100 fine | A100 coarse |
+|---|---|---|---|---|
+| latent $L_1$ to $s_4$ reference | 0.807 | **0.752** | 0.780 | **0.721** |
+| decoded-pixel $L_1$ | 0.2686 | **0.2511** | — | — |
+| temporal flicker | 0.0254 | **0.0213** | — | — |
+
+### R4 · Seam repair (T4, 32 matched segments)
+
+| variant | boundary seam | fidelity | temporal flicker |
+|---|---|---|---|
+| none | 0.614 | 0.761 | 0.0213 |
+| **blend 0.25** | **0.460** (−25%) | **0.754** (better) | 0.0218 |
+| blend 0.50 | 0.307 | 0.759 | — |
+| blend 0.75 | 0.153 | 0.774 | — |
+| anchor (hard) | 0.000 | 0.799 | — |
+| fine (no switch) | 0.215 | 0.807 | 0.0254 |
+
+### R5 · Drift propagation (81 frames, 6 segments)
+
+| GPU | chain | drift trajectory (segments 1 → 6) |
+|---|---|---|
+| T4 ($n{=}32$) | all fine | 0.789 0.826 0.867 0.899 0.929 0.954 |
+| T4 ($n{=}32$) | all coarse | 0.783 0.804 0.834 0.910 0.911 0.947 |
+| T4 ($n{=}32$) | one coarse, then fine | 0.783 **0.857 0.898 0.920 0.953 0.975** |
+| A100 ($n{=}8$) | all fine | 0.822 0.858 0.892 0.917 0.949 0.952 |
+| A100 ($n{=}8$) | all coarse | 0.756 0.812 0.812 **0.800 0.802 0.812** |
+
+**Propagation on T4** (one-coarse chain minus all-fine), with 95% CIs:
+seg 2 **+0.0313** [+0.010, +0.052] · seg 3 **+0.0304** [+0.009, +0.051] ·
+seg 4 **+0.0208** [+0.000, +0.042] · seg 5 **+0.0241** [+0.003, +0.045] · seg 6 +0.0212 [−0.004, +0.046].
+**Significant at four of five tail segments.** On A100 the coarse chain lies *below* the fine chain: the
+comparison reverses.
+
+### R6 · Policies (the regime map)
+
+| operating point | policy | DiT total (s) | quality | verdict |
+|---|---|---|---|---|
+| T4, $s_2/s_2$ | fixed fine | 281.2 | 0.807 | **dominant** |
+| T4, $s_2/s_2$ | fixed coarse | 289.6 | 0.752 | dearer |
+| T4, $s_2/s_1$ | fixed fine | 299.9 | 0.806 | — |
+| T4, $s_2/s_1$ | fixed coarse | **218.3** | **0.755** | **dominant** |
+| A100, $s_2/s_2$ | fixed fine | 81.9 | 0.780 | — |
+| A100, $s_2/s_2$ | fixed coarse | **43.9** | **0.721** | **dominant** |
+
+### R7 · Jev critic (typed questions on raw frames, T4, 64 segments)
+
+| question | AUROC | 95% CI | perm $p$ |
+|---|---|---|---|
+| `discontinuity` | 0.497 | [0.359, 0.644] | 0.520 |
+| `plausible` | 0.514 | [0.372, 0.648] | 0.417 |
+| combined | 0.500 | [0.367, 0.635] | 0.511 |
+
+### R8 · Error-propagation model
+
+| model | T4 $R^2$ | A100 $R^2$ |
+|---|---|---|
+| persistence ($d_{t+1}=d_t$) | 0.905 | 0.865 |
+| current drift only | **0.944** | **0.891** |
+| current drift + next mode | 0.943 | 0.893 |
+| increment from policy/position | **0.008** | **0.077** |
+
+### R9 · Closed-loop evidence and the escalation gate
+
+| experiment | result |
+|---|---|
+| free post-generation evidence alone | AUROC **0.725** |
+| closed loop (prior + previous-segment evidence) | 0.690 → **0.737** (CIs overlap; bounded) |
+| calibrated escalation gate (0-GPU) | **NO-GO** — the cost model, not the signal, binds |
+
+---
+
+## Datasets (public)
+
+Every result, figure and media bundle is published on Kaggle. Nothing is private except the API-key store.
+
+| # | Dataset | Link | Contents | Size |
+|---|---|---|---|---|
+| 1 | **DDAG — all experiments (consolidated)** | [`ajjisan/ddag-experiments`](https://www.kaggle.com/datasets/ajjisan/ddag-experiments) | results of experiments 01–11 + publication figures (PDF + PNG) | 59 MB |
+| 2 | **DDAG — matched granularity frames** | [`ajjisan/ddag-matched-frames`](https://www.kaggle.com/datasets/ajjisan/ddag-matched-frames) | 54 decoded frames: fine / coarse / seam-repaired, matched boundary + noise, plus the composed grid | 28 MB |
+| 3 | **JevGAG report — audited results** | [`ajjisan/jevgag-results`](https://www.kaggle.com/datasets/ajjisan/jevgag-results) | the report's `results/` (E1–E9) + figures | 0.4 MB |
+| 4 | **JevGAG report — result videos** | [`ajjisan/jev-adaptive-granularity-videos`](https://www.kaggle.com/datasets/ajjisan/jev-adaptive-granularity-videos) | rendered rollout videos for the report's policy arms | 412 MB |
+| 5 | **JevGAG report — result figures** | [`ajjisan/jev-adaptive-granularity-figures`](https://www.kaggle.com/datasets/ajjisan/jev-adaptive-granularity-figures) | figure bundle for the report | 13 MB |
+| 6 | **Intrinsic probe (exp 01)** | [`ajjisan/jevgag-selfaware-dit`](https://www.kaggle.com/datasets/ajjisan/jevgag-selfaware-dit) | DiT activations + probe results | 11 MB |
+| 7 | **Seam repair (exp 02)** | [`ajjisan/jevgag-seamcontrol`](https://www.kaggle.com/datasets/ajjisan/jevgag-seamcontrol) | boundary-seam measurements + repair ablation | 0.06 MB |
+| 8 | **Closed-loop evidence (exp 03)** | [`ajjisan/jevgag-closedloop-gran`](https://www.kaggle.com/datasets/ajjisan/jevgag-closedloop-gran) | intrinsic prior + free post-generation evidence | 11 MB |
+
+**Backbone and reproducibility assets** (used by the kernels; not results):
+[`ajjisan/causal-rcm-ckpts`](https://www.kaggle.com/datasets/ajjisan/causal-rcm-ckpts) (13 GB) ·
+[`ajjisan/wan21-causal-rcm-matched`](https://www.kaggle.com/datasets/ajjisan/wan21-causal-rcm-matched) (4.4 GB).
+
+---
+
+## Figures and videos
+
+All figures are **vector PDF** (for the manuscript) with **PNG** renders (for this README and the site).
+They were drawn in LaTeX (TikZ / pgfplots) and each one was visually checked for overlap and density.
+
+| Figure | File | What it shows |
+|---|---|---|
+| Architecture | [`assets/figures/fig_architecture.pdf`](assets/figures/fig_architecture.pdf) | the two-part programme; one row per precondition; Jev thread highlighted |
+| Regime map | [`assets/figures/fig_regime_map.pdf`](assets/figures/fig_regime_map.pdf) | cost ratio vs quality gap; the *adaptive pays* quadrant is empty |
+| Signals | [`assets/figures/fig_signal.pdf`](assets/figures/fig_signal.pdf) | AUROC per signal on T4 vs A100 |
+| Drift | [`assets/figures/fig_drift.pdf`](assets/figures/fig_drift.pdf) | propagation on T4, reversal on A100 |
+| Seam + flicker | [`assets/figures/fig_seam.pdf`](assets/figures/fig_seam.pdf) | repair frontier and the independent endpoint |
+| Qualitative | [`assets/figures/fig_qualitative.png`](assets/figures/fig_qualitative.png) | matched fine / coarse / repaired + amplified difference |
+
+**Media:** the rollout videos are on Kaggle
+([`ajjisan/jev-adaptive-granularity-videos`](https://www.kaggle.com/datasets/ajjisan/jev-adaptive-granularity-videos),
+412 MB) and the matched decoded frames are on Kaggle
+([`ajjisan/ddag-matched-frames`](https://www.kaggle.com/datasets/ajjisan/ddag-matched-frames), 28 MB).
 
 ---
 
@@ -85,14 +239,13 @@ each one either has a resolution or defines the next experiment.
 | cheap context statistics do not predict hard segments (0.491) | intrinsic pre-generation probe (**0.798**) | **resolved** |
 | the switch seam is a real cost | training-free seam repair (**−25%** seam, better fidelity) | **resolved** |
 | one coarse segment leaves a persistent drift elevation on T4 | drift propagation measured and bounded (linear, not compounding) | **characterised** |
-| verification signals **do not transfer** across GPUs (probe 0.798 → 0.143) | the regime map — signals are **regime properties** | **open** |
-| a typed Jev critic on raw frames is at chance (0.497) | decision-model critics need **context**, not pixels (reproduces JEVQA) | **open** |
-| the repair trades a boundary seam for a small interior flicker | independent endpoint exposes the trade; multi-endpoint protocol required | **open** |
+| verification signals **do not transfer** across GPUs (0.798 → 0.143) | the regime map — signals are **regime properties** | **open** |
+| a typed Jev critic on raw frames is at chance (0.497) | decision-model critics need **context**, not pixels | **open** |
+| the repair trades a boundary seam for a small interior flicker | multi-endpoint protocol required | **open** |
 
 **The programme's honest headline:** across two GPUs and every endpoint measured (latent, decoded-pixel,
 temporal flicker), the cheap mode was **never worse** — so the optimal policy is a *fixed* mode, and the
-regime map states **exactly where** a router becomes worth deploying. That is a design rule, not a
-negative result.
+regime map states **exactly where** a router becomes worth deploying.
 
 ---
 
@@ -107,7 +260,7 @@ jevgag/        Part 1 — the report
 └─ compute/      kernel / notebook definitions (colab/, jobs/)
 
 ddag/          Part 2 — the method
-├─ experiments/  01_intrinsic_probe … 11_flicker_endpoint
+├─ experiments/  01_intrinsic_probe … 12_qualitative
 ├─ analysis/     shared analysis scripts
 ├─ results/      consolidated machine-readable results
 └─ compute/      Colab A100 runners
@@ -123,17 +276,18 @@ archive/       legacy notes (kept for provenance, not authoritative)
 Tesla T4 (Kaggle) and NVIDIA A100-SXM4-80GB (Colab). Backbone: **Causal-rCM Wan2.1-T2V-1.3B**
 (`ed3cb14`). Oracle: **Jev `jev-1.14.0`**.
 
-## Data
-
-Audited result files live in-repo; large media and full bundles are published as **public Kaggle
-datasets** — see [`DATA.md`](DATA.md). Every headline number re-derives from a stored result file.
-
-## Reproduce (0 GPU)
+## Reproduce
 
 ```bash
-cd jevgag && python code/e9_claim_audit.py          # report audit
+# the report's claim-to-artifact audit (0 GPU)
+cd jevgag && python code/e9_claim_audit.py
+
+# the method's signal study (0 GPU, on the published features)
 cd ../ddag && python analysis/crv_analysis.py --features results/features_t4.npz --out results
 ```
+
+Full commands per experiment are in each `ddag/experiments/*/` folder; the Kaggle kernels and Colab
+runners are in `*/compute/`.
 
 ## Citation
 
