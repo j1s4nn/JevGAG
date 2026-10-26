@@ -18,7 +18,15 @@ import tempfile
 import time
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[3]
+def _repo_root():
+    p = Path(__file__).resolve()
+    for parent in p.parents:
+        if (parent / ".git").exists():
+            return parent
+    return p.parents[3]
+
+
+REPO = _repo_root()
 
 
 def job_dir(job):
