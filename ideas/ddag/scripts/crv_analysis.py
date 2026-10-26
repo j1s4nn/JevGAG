@@ -84,20 +84,29 @@ def main():
     rconv_f = final_step_norm(d["vn_fine"]).reshape(-1, 1)
     ev = np.stack([d["seam_coarse"], d["interior_coarse"]], axis=1).astype(np.float32)
     prior = oof(pre[:, 11, :], y, groups)
+    # NOTE: a logistic trained on a *single* score (e.g. oof(prior)) re-learns the sign and would
+    # report max(AUROC, 1-AUROC), hiding an inverted signal. Always report the DIRECT AUROC.
+    prior_auroc = auroc(y, prior)
 
     rep = {"n_segments": int(n), "n_positive": int(y.sum()), "n_prompts": int(len(np.unique(groups))),
+           "probe_block11_direct_auroc": prior_auroc,
            "r_conv_stats": {"mean": float(rconv.mean()), "std": float(rconv.std()),
                             "corr_with_label": float(np.corrcoef(rconv[:, 0], y)[0, 1])},
            "auroc": {}}
 
     tests = {
         "r_conv_alone": rconv,
-        "probe_alone": prior.reshape(-1, 1),
+        "probe_alone": None,  # reported directly above (avoid the sign-flip artifact)
         "probe+r_conv": np.hstack([prior.reshape(-1, 1), rconv]),
         "r_conv+free_evidence": np.hstack([rconv, ev]),
         "probe+r_conv+evidence": np.hstack([prior.reshape(-1, 1), rconv, ev]),
     }
+    rep["auroc"]["probe_alone"] = {"auroc": prior_auroc, "ci": boot_ci(y, prior, groups),
+                                   "note": "direct AUROC of the block-11 probe score"}
+    print(f"{'probe_alone(direct)':26s} AUROC={prior_auroc:.3f}")
     for name, X in tests.items():
+        if X is None:
+            continue
         s = oof(X, y, groups)
         rep["auroc"][name] = {"auroc": auroc(y, s), "ci": boot_ci(y, s, groups)}
         print(f"{name:26s} AUROC={rep['auroc'][name]['auroc']:.3f} CI={rep['auroc'][name]['ci']}")
