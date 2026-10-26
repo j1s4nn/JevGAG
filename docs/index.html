@@ -197,10 +197,12 @@
         <tr><td>chance</td><td>0.500</td><td>0.500</td><td>reference</td></tr>
         <tr><td>hand-crafted context statistics</td><td>0.491</td><td>—</td><td>preregistered formulation; fails</td></tr>
         <tr><td><strong>Jev text oracle</strong> (prior report)</td><td><strong>0.788</strong></td><td>—</td><td>off-device, 0.672 s/decision</td></tr>
-        <tr><td><strong>intrinsic prefill probe</strong></td><td><strong>0.798</strong></td><td><strong>0.143</strong></td><td>inverts on A100</td></tr>
-        <tr><td>convergence residual <code>v_S/v_1</code></td><td>0.752</td><td>0.485</td><td>CI [0.623, 0.863], p = 0.000 on T4</td></tr>
-        <tr><td><strong>probe + residual</strong></td><td><strong>0.842</strong></td><td>—</td><td>strongest signal measured</td></tr>
-        <tr><td>naive final-step residual</td><td>0.621</td><td>0.493</td><td>weaker than the ratio</td></tr>
+        <tr><td><strong>intrinsic prefill probe</strong></td><td><strong>0.798</strong> [0.639, 0.916]</td><td><strong>0.143</strong> [0.018, 0.368]</td><td>inverts on A100</td></tr>
+        <tr><td>convergence residual <code>v1/vS</code></td><td>0.760 [0.629, 0.870]</td><td>0.404 [0.223, 0.603]</td><td>p = 0.000 on T4</td></tr>
+        <tr><td>reciprocal <code>vS/v1</code> (first guess)</td><td>0.240 [0.130, 0.371]</td><td>0.596</td><td><strong>inverted</strong> — the sign must be measured</td></tr>
+        <tr><td><strong>probe + residual</strong> (multi-feature)</td><td><strong>0.842</strong> [0.680, 0.938]</td><td><strong>0.833</strong> [0.605, 0.971]</td><td>the only signal that transfers</td></tr>
+        <tr><td>first-step magnitude <code>v1</code></td><td>0.710 [0.487, 0.855]</td><td>0.633</td><td>strongest single residual</td></tr>
+        <tr><td>naive final-step residual</td><td>0.662</td><td>0.683</td><td>weaker than the ratio</td></tr>
       </tbody>
     </table>
 
@@ -228,12 +230,12 @@
     <table class="tbl">
       <thead><tr><th>variant</th><th>boundary seam</th><th>fidelity</th><th>temporal flicker</th></tr></thead>
       <tbody>
-        <tr><td>none</td><td>0.614</td><td>0.761</td><td>0.0213</td></tr>
+        <tr><td>none</td><td>0.614</td><td>0.761</td><td>0.0148</td></tr>
         <tr><td><strong>blend 0.25</strong></td><td><strong>0.460</strong> (−25%)</td><td><strong>0.754</strong></td><td>0.0218</td></tr>
         <tr><td>blend 0.50</td><td>0.307</td><td>0.759</td><td>—</td></tr>
         <tr><td>blend 0.75</td><td>0.153</td><td>0.774</td><td>—</td></tr>
         <tr><td>anchor (hard)</td><td>0.000</td><td>0.799</td><td>—</td></tr>
-        <tr><td>fine (no switch)</td><td>0.215</td><td>0.807</td><td>0.0254</td></tr>
+        <tr><td>fine (no switch)</td><td>0.215</td><td>0.807</td><td>0.0189</td></tr>
       </tbody>
     </table>
 
