@@ -1,0 +1,49 @@
+% Drift accumulation on two GPUs: all-fine vs all-coarse vs one-coarse-then-fine.
+\documentclass[border=6pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
+\usepackage{xcolor}
+\definecolor{finec}{HTML}{1668D6}
+\definecolor{coarsec}{HTML}{B26A00}
+\definecolor{mixc}{HTML}{0F9D76}
+\definecolor{mut}{HTML}{5A6B80}
+
+\begin{document}
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=1.5cm},
+  width=7.0cm, height=5.6cm,
+  xlabel={segment}, ylabel={drift (latent L1 to $s_4$ ref)},
+  xmin=1, xmax=6, xtick={1,2,3,4,5,6},
+  tick label style={font=\small,color=mut},
+  label style={font=\small,color=mut},
+  axis line style={draw=mut!60},
+  grid=major, grid style={draw=mut!12},
+  legend style={font=\scriptsize,at={(0.03,0.97)},anchor=north west,draw=mut!40,fill=white},
+]
+
+\nextgroupplot[title={\small\bfseries Tesla T4 \; ($n=32$)},ymin=0.74,ymax=1.00]
+\addplot[color=finec,mark=*,mark size=1.7pt,line width=0.9pt] coordinates {
+  (1,0.7891)(2,0.8261)(3,0.8673)(4,0.8994)(5,0.9290)(6,0.9542)};
+\addplot[color=coarsec,mark=square*,mark size=1.5pt,line width=0.9pt] coordinates {
+  (1,0.7834)(2,0.8041)(3,0.8344)(4,0.9102)(5,0.9112)(6,0.9466)};
+\addplot[color=mixc,mark=triangle*,mark size=1.9pt,line width=0.9pt] coordinates {
+  (1,0.7834)(2,0.8574)(3,0.8977)(4,0.9202)(5,0.9531)(6,0.9754)};
+\legend{all fine, all coarse, one coarse, then fine}
+
+\nextgroupplot[title={\small\bfseries A100-80GB \; ($n=8$)},ymin=0.74,ymax=1.00]
+\addplot[color=finec,mark=*,mark size=1.7pt,line width=0.9pt] coordinates {
+  (1,0.8220)(2,0.8578)(3,0.8919)(4,0.9173)(5,0.9489)(6,0.9523)};
+\addplot[color=coarsec,mark=square*,mark size=1.5pt,line width=0.9pt] coordinates {
+  (1,0.7555)(2,0.8123)(3,0.8116)(4,0.8000)(5,0.8017)(6,0.8123)};
+\addplot[color=mixc,mark=triangle*,mark size=1.9pt,line width=0.9pt] coordinates {
+  (1,0.7555)(2,0.8225)(3,0.8609)(4,0.8824)(5,0.9157)(6,0.9348)};
+
+\end{groupplot}
+\end{tikzpicture}
+\end{document}
