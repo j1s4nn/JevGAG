@@ -3,31 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JevGAG — Adaptive Temporal Granularity for Causal Video World Models</title>
+<title>JevGAG · DDAG — Adaptive Temporal Granularity for Causal Video World Models</title>
 
 <!-- SEO -->
-<meta name="description" content="JevGAG research repository: adaptive temporal granularity for causal video generation and interactive video world models. Papers: JevGAG (audited) and DDAG (deadline- and drift-aware control), with intrinsic signals, seam repair, drift-aware lookahead, deadline scheduling, and a Jev critic, evaluated on T4 and A100.">
-<meta name="keywords" content="Jev, adaptive granularity, temporal granularity, causal video generation, video world models, autoregressive diffusion, deadline scheduling, drift control, adaptive compute, efficient inference, Causal-rCM, Wan2.1">
-<meta name="author" content="Md Jisan Hossen">
+<meta name="description" content="A two-part research programme on adaptive temporal granularity for causal video generation and video world models: the JevGAG report (a two-GPU audit of the cost, signal and endpoint preconditions) and the DDAG method (regime-aware control), with a measured regime map and an explicit boundary analysis.">
+<meta name="keywords" content="Jev, adaptive granularity, temporal granularity, causal video generation, video world models, autoregressive diffusion, regime map, adaptive compute, efficient inference, System One, Causal-rCM, Wan2.1">
+<meta name="author" content="Hossen Md Jisan">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://j1s4nn.github.io/JevGAG/">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="JevGAG">
-<meta property="og:title" content="JevGAG — Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation">
-<meta property="og:description" content="Off-device System One oracle for adaptive temporal granularity in causal video generation, with a matched T4/A100 break-even law and a validated independent endpoint.">
+<meta property="og:site_name" content="JevGAG · DDAG">
+<meta property="og:title" content="JevGAG · DDAG — Adaptive Temporal Granularity for Causal Video World Models">
+<meta property="og:description" content="Two-GPU audit and regime-aware method for adaptive temporal granularity in causal video world models.">
 <meta property="og:url" content="https://j1s4nn.github.io/JevGAG/">
-<meta property="og:image" content="https://j1s4nn.github.io/JevGAG/assets/og.png">
+<meta property="og:image" content="https://j1s4nn.github.io/JevGAG/assets/figures/thumbnail.png">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="JevGAG — Adaptive Temporal Granularity for Causal Video Generation">
-<meta name="twitter:description" content="Jev-grounded adaptive temporal granularity with a matched hardware break-even law and an independent endpoint.">
-<meta name="twitter:image" content="https://j1s4nn.github.io/JevGAG/assets/og.png">
+<meta name="twitter:title" content="JevGAG · DDAG — Adaptive Temporal Granularity">
+<meta name="twitter:description" content="Two-GPU audit and regime-aware method for causal video world models.">
+<meta name="twitter:image" content="https://j1s4nn.github.io/JevGAG/assets/figures/thumbnail.png">
 
 <!-- Google Scholar -->
-<meta name="citation_title" content="JevGAG: Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation">
+<meta name="citation_title" content="JevGAG + DDAG: Adaptive Temporal Granularity for Causal Video World Models">
 <meta name="citation_author" content="Hossen, Md Jisan">
 <meta name="citation_publication_date" content="2026">
 <meta name="citation_technical_report_institution" content="Nanjing University of Information Science and Technology">
@@ -38,26 +38,24 @@
 
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"ScholarlyArticle",
- "headline":"JevGAG: Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation",
- "author":{"@type":"Person","name":"Md Jisan Hossen","affiliation":"Nanjing University of Information Science and Technology"},
- "datePublished":"2026","inLanguage":"en",
- "url":"https://j1s4nn.github.io/JevGAG/",
- "keywords":"Jev, adaptive granularity, temporal granularity, causal video generation, video world models, autoregressive diffusion, System One, efficient inference",
+ "headline":"JevGAG + DDAG: Adaptive Temporal Granularity for Causal Video World Models",
+ "author":{"@type":"Person","name":"Hossen Md Jisan","affiliation":"Nanjing University of Information Science and Technology","identifier":"https://orcid.org/0009-0004-9571-1450"},
+ "datePublished":"2026","inLanguage":"en","url":"https://j1s4nn.github.io/JevGAG/",
+ "keywords":"adaptive granularity, temporal granularity, causal video generation, video world models, regime map",
  "isPartOf":{"@type":"SoftwareSourceCode","name":"JevGAG","codeRepository":"https://github.com/j1s4nn/JevGAG","license":"https://opensource.org/licenses/MIT"}}
 </script>
 </head>
 <body>
 <header class="nav">
   <div class="nav-inner">
-    <a class="brand" href="#top">JevGAG</a>
+    <a class="brand" href="#top">JevGAG &middot; DDAG</a>
     <nav class="nav-links">
-      <a href="#papers">Papers</a>
-      <a href="#abstract">Abstract</a>
-      <a href="#results">Results</a>
-      <a href="#research">Research</a>
-      <a href="#figures">Figures</a>
+      <a href="#prior">Prior work</a>
+      <a href="#programme">Programme</a>
+      <a href="#report">Report</a>
       <a href="#method">Method</a>
-      <a href="#reproduce">Reproduce</a>
+      <a href="#figures">Figures</a>
+      <a href="#boundaries">Boundaries</a>
       <a href="#cite">Cite</a>
       <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme">&#9686;</button>
     </nav>
@@ -66,157 +64,107 @@
 
 <main id="top">
   <section class="hero">
+    <img class="heroimg" src="assets/figures/thumbnail.png" alt="JevGAG and DDAG — adaptive temporal granularity for causal video world models">
     <p class="eyebrow">Research &middot; Causal Video World Models</p>
-    <h1>JevGAG: Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation</h1>
-    <p class="authors">Md Jisan Hossen <span class="aff">&middot; Department of Artificial Intelligence, NUIST</span></p>
-    <p class="tagline">When should a causal video generator spend fine per-frame compute, and when is a
-      cheaper coarse chunk enough? JevGAG answers with an <strong>off-device System One oracle</strong>,
-      a <strong>hardware-conditioned break-even law</strong>, and a <strong>validated independent
-      endpoint</strong>.</p>
+    <h1>Adaptive Temporal Granularity for Causal Video World Models</h1>
+    <p class="authors">Hossen Md Jisan <span class="aff">&middot; Department of Artificial Intelligence, NUIST, Nanjing</span></p>
+    <p class="tagline">A two-part programme: an <strong>audit</strong> of the preconditions that adaptive
+      granularity silently assumes, and a <strong>regime-aware method</strong> that turns them into a
+      deployable rule — measured on <strong>T4 and A100</strong> across latent, pixel and flicker endpoints.</p>
     <div class="cta">
       <a class="btn primary" href="https://github.com/j1s4nn/JevGAG">Code</a>
       <a class="btn" href="#cite">Cite</a>
-      <a class="btn" href="https://github.com/j1s4nn/JevGAG/tree/main/papers/jevgag/results">Results</a>
       <a class="btn" href="https://www.kaggle.com/datasets/ajjisan/jevgag-results">Data</a>
-      <a class="btn" href="#reproduce">Reproduce</a>
+      <a class="btn" href="https://doi.org/10.5281/zenodo.23395414">Prior work</a>
     </div>
   </section>
 
-  <section id="abstract" class="section">
-    <h2>Abstract</h2>
-    <p>Causal video generators produce a rollout one temporal chunk at a time, which invites a simple
-      efficiency idea: spend fine per-frame computation only where a segment is hard, and use cheaper
-      coarse chunks, or even reuse, elsewhere. Realizing this idea requires three preconditions that are
-      usually assumed rather than measured: a mode that is genuinely cheaper on the deployment hardware,
-      a signal that predicts hard segments before generation, and an independent endpoint that certifies
-      the trade. JevGAG audits all three on <strong>Causal-rCM</strong>, a Wan2.1-1.3B causal diffusion
-      model, pairing a frame-wise mode with a chunk-3 mode and a near-zero-cost hold mode, routed by a
-      two-threshold controller with hysteresis and forced recovery.</p>
-    <p class="muted">The result is a <strong>hardware-conditional trade-off</strong>, not universal
-      dominance. The cost precondition holds only on some GPUs; the hand-crafted signal fails a
-      preregistered held-out test (AUROC 0.491) while an off-device System One oracle succeeds (AUROC
-      0.788 in 0.67 s); the internal reference flips direction between GPUs, so independent endpoints are
-      mandatory. Negative and failed experiments are preserved as evidence.</p>
+  <section id="prior" class="section">
+    <h2>Prior work</h2>
+    <p>This programme builds directly on the earlier study:</p>
+    <p class="citeblock">Hossen Md Jisan. <em>Jev-Routed Temporal Granularity with Recovery and Hysteresis
+      for Causal Video Generation.</em> Preprint, 2026.
+      <a href="https://doi.org/10.5281/zenodo.23395414">https://doi.org/10.5281/zenodo.23395414</a></p>
+    <p class="muted">That study framed adaptive granularity as resting on <strong>three preconditions</strong>
+      — cost, signal and endpoint — and found the trade-off to be <em>conditional</em>. This repository
+      audits those preconditions, then turns them into a rule.</p>
   </section>
 
-  <section id="papers" class="section">
-    <h2>Papers</h2>
+  <section id="programme" class="section">
+    <h2>The programme in one figure</h2>
+    <figure class="wide">
+      <img src="assets/figures/fig_architecture.png" alt="Two-part programme: prior study, JevGAG report, DDAG method">
+      <figcaption>One row per precondition: the boundary found in the earlier study, the audit that measures
+        it, and the component that resolves it. The <strong>Jev thread</strong> is highlighted.</figcaption>
+    </figure>
+  </section>
+
+  <section id="report" class="section">
+    <h2>Part 1 &middot; JevGAG — the report</h2>
+    <p>A measured audit of the three preconditions on two GPUs, with a matched design, an independent
+      endpoint protocol and a claim-to-artifact audit.</p>
     <div class="grid">
-      <div class="card">
-        <span class="k">JevGAG &middot; complete, audited</span>
-        <p><strong>Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation.</strong>
-          An audit of the three preconditions &mdash; cost, signal, endpoint &mdash; on Causal-rCM, with a
-          matched T4/A100 break-even law, recovery + hysteresis control, and a validated independent
-          endpoint.</p>
-        <p><a href="https://github.com/j1s4nn/JevGAG/tree/main/papers/jevgag">Artifacts</a> &middot;
-          <a href="https://github.com/j1s4nn/JevGAG/tree/main/papers/jevgag/paper">Paper (LaTeX)</a></p>
-      </div>
-      <div class="card">
-        <span class="k">DDAG &middot; in progress</span>
-        <p><strong>Deadline- and Drift-Aware Adaptive Temporal Granularity for Interactive Causal Video
-          World Models.</strong> A deployable controller: drift-aware lookahead (DALG), convergence-residual
-          verification (CRV), hard-deadline scheduling (DCG), a typed Jev critic (JCD), and a compiled
-          runtime-free policy (SDGP). Evaluated on T4 and A100.</p>
-        <p><a href="https://github.com/j1s4nn/JevGAG/tree/main/ideas">Development</a> &middot;
-          <a href="https://github.com/j1s4nn/JevGAG/blob/main/STATUS.md">Status</a></p>
-      </div>
+      <div class="card"><span class="k">cost</span><p>The same mode pair sits on <strong>opposite sides</strong>
+        of the NFE break-even inequality on T4 and A100.</p></div>
+      <div class="card"><span class="k">signal</span><p>Cheap context statistics reach only <strong>0.491</strong>
+        AUROC; an off-device <strong>Jev</strong> text oracle reaches <strong>0.788</strong>.</p></div>
+      <div class="card"><span class="k">endpoint</span><p>The internal reference <strong>flips</strong> between
+        GPUs, so an endpoint independent of the compared modes is mandatory.</p></div>
     </div>
+    <p class="muted">Also established: hysteresis + forced recovery stabilise switching, and a measurable
+      <strong>seam</strong> appears at every switch boundary. → <a href="https://github.com/j1s4nn/JevGAG/tree/main/jevgag">jevgag/</a></p>
   </section>
 
-  <section id="results" class="section">
-    <h2>Headline results</h2>
+  <section id="method" class="section">
+    <h2>Part 2 &middot; DDAG — the method</h2>
+    <p><strong>D</strong>eadline- and <strong>D</strong>rift-<strong>A</strong>ware <strong>G</strong>ranularity
+      turns the preconditions into a <strong>regime map</strong> plus calibrated components, each validated by
+      its own experiment.</p>
     <div class="grid">
-      <div class="card"><span class="k">E1 &middot; break-even</span><p>Coarse is cheaper only for some
-        <code>(fine,coarse)</code> pairs and GPUs; on T4 <code>c3-3 s4</code> is never cheaper.</p></div>
-      <div class="card"><span class="k">E2 &middot; signal</span><p>Image-Jev does <em>not</em> beat text-Jev as
-        a routing signal (honest negative).</p></div>
-      <div class="card"><span class="k">E3 &middot; matched online</span><p>The adaptive result flips with the
-        coarse operating point alone (21% vs 92% fine).</p></div>
-      <div class="card"><span class="k">E4 &middot; controller</span><p>Recovery+hysteresis cuts switches
-        without worse regret; a switch seam exists.</p></div>
-      <div class="card"><span class="k">E5 &middot; endpoint</span><p>Image-Jev endpoint agrees with CLIP subject
-        consistency at <strong>&rho; = +1.000</strong>.</p></div>
-      <div class="card"><span class="k">E9 &middot; audit</span><p>Claim-to-artifact audit
-        <strong>18/18 PASS</strong>.</p></div>
+      <div class="card"><span class="k">intrinsic probe</span><p><strong>0.798 AUROC</strong> from the
+        generator's own prefill activations — no external oracle.</p></div>
+      <div class="card"><span class="k">convergence residual</span><p><strong>0.752</strong> on T4;
+        <strong>probe + residual = 0.842</strong>, the strongest signal in the programme.</p></div>
+      <div class="card"><span class="k">seam repair</span><p>A <strong>25% latent blend</strong> cuts the
+        seam <strong>25%</strong> and improves fidelity — training-free.</p></div>
+      <div class="card"><span class="k">regime map</span><p>Adaptivity pays only when the cheap mode is
+        <strong>cheaper <em>and</em> worse</strong>.</p></div>
     </div>
-  </section>
-
-  <section id="research" class="section">
-    <h2>Research</h2>
-    <p class="muted">Follow-on studies built on the audited base result. Each ships code, an audited
-      result bundle, and a public dataset.</p>
-    <div class="grid">
-      <div class="card">
-        <span class="k">Idea 03 &middot; SelfAware-DiT</span>
-        <p>An <strong>intrinsic, pre-generation</strong> probe on the DiT's own activations predicts
-          coarse-unsafe segments at <strong>AUROC 0.798</strong> (block 11) &mdash; matching the external
-          Jev text oracle (0.788) and far above hand-crafted context signals (0.491). No external
-          oracle required.</p>
-        <p><a href="https://github.com/j1s4nn/JevGAG/tree/main/ideas/selfaware-dit">Code</a> &middot;
-          <a href="https://www.kaggle.com/datasets/ajjisan/jevgag-selfaware-dit">Dataset</a></p>
-      </div>
-      <div class="card">
-        <span class="k">Idea 04 &middot; SeamControl</span>
-        <p>Switching to a coarse chunk produces a boundary discontinuity <strong>2.9&times;</strong> larger
-          than fine's. A training-free <strong>25% latent blend</strong> cuts the seam by 25%
-          (0.614&rarr;0.460) <em>and</em> slightly improves fidelity.</p>
-        <p><a href="https://github.com/j1s4nn/JevGAG/tree/main/ideas/seamcontrol">Code</a> &middot;
-          <a href="https://www.kaggle.com/datasets/ajjisan/jevgag-seamcontrol">Dataset</a></p>
-      </div>
-      <div class="card">
-        <span class="k">Idea 01 &middot; ClosedLoop-Gran</span>
-        <p>Free <strong>post-generation evidence</strong> (boundary seam, interior jitter) from the
-          segment just generated predicts the next segment's coarse-unsafety at
-          <strong>AUROC 0.725</strong>; closing the loop lifts the open loop from 0.690 to
-          <strong>0.737</strong>. Positive but CIs overlap at 48 causal pairs.</p>
-        <p><a href="https://github.com/j1s4nn/JevGAG/tree/main/ideas/closedloop-gran">Code</a> &middot;
-          <a href="https://www.kaggle.com/datasets/ajjisan/jevgag-closedloop-gran">Dataset</a></p>
-      </div>
-    </div>
+    <p class="muted">→ <a href="https://github.com/j1s4nn/JevGAG/tree/main/ddag">ddag/</a> (eleven numbered experiments)</p>
   </section>
 
   <section id="figures" class="section">
     <h2>Figures</h2>
     <div class="gallery">
-      <figure><img src="assets/figures/fig_e1_breakeven.png" alt="Break-even predictor across hardware and operating point" loading="lazy"><figcaption>E1 &mdash; matched break-even across hardware and operating point.</figcaption></figure>
-      <figure><img src="assets/figures/fig_e2_signal.png" alt="Image-Jev versus text-Jev signal AUROC" loading="lazy"><figcaption>E2 &mdash; image/hybrid vs text Jev as a routing signal.</figcaption></figure>
-      <figure><img src="assets/figures/fig_e5_endpoint.png" alt="Image-Jev endpoint versus CLIP" loading="lazy"><figcaption>E5 &mdash; image-Jev as an independent endpoint.</figcaption></figure>
-      <figure><img src="assets/figures/fig_e7_frontier.png" alt="Confidence-gated routing frontier" loading="lazy"><figcaption>E7 &mdash; confidence-gated routing frontier.</figcaption></figure>
-      <figure><img src="assets/figures/fig_e8_recalibration.png" alt="Stability-gated recalibration" loading="lazy"><figcaption>E8 &mdash; stability-gated recalibration.</figcaption></figure>
+      <figure><img src="assets/figures/fig_regime_map.png" alt="Regime map" loading="lazy"><figcaption>Regime map — the "adaptive pays" quadrant is empty in this study.</figcaption></figure>
+      <figure><img src="assets/figures/fig_signal.png" alt="Signal comparison" loading="lazy"><figcaption>Which quantity predicts hard segments, per GPU.</figcaption></figure>
+      <figure><img src="assets/figures/fig_drift.png" alt="Drift trajectories" loading="lazy"><figcaption>Drift accumulation: propagation on T4, reversal on A100.</figcaption></figure>
+      <figure><img src="assets/figures/fig_seam.png" alt="Seam repair and flicker" loading="lazy"><figcaption>Repair frontier and the independent flicker endpoint.</figcaption></figure>
     </div>
   </section>
 
-  <section id="method" class="section">
-    <h2>Method</h2>
-    <p>A pre-generation decision routes each segment to <strong>fine</strong> (<code>c1-1</code>, S steps),
-      <strong>cheap coarse</strong> (<code>c3-3 s1</code>), <strong>expensive coarse</strong>
-      (<code>c3-3 s4</code>), or <strong>hold</strong>, driven by an off-device Jev oracle reading the
-      actual context, stabilized by recovery + hysteresis, and certified by an independent image-grounded
-      endpoint.</p>
-    <pre><code>context &rarr; Jev oracle (text, off-GPU, 0.672 s) &rarr; typed difficulty / drift / motion
-       &#9492;&rarr; controller: threshold &tau; + hysteresis &Lambda; + recovery R
-                 &#9492;&rarr; action &isin; { fine c1-1 | coarse c3-3 | hold } &rarr; causal rollout</code></pre>
-  </section>
-
-  <section id="reproduce" class="section">
-    <h2>Reproduce (0 GPU)</h2>
-    <pre><code>cd papers/jevgag
-python scripts/e1_breakeven.py
-python scripts/e2_image_signal.py &amp;&amp; python scripts/e2_text14.py &amp;&amp; python scripts/e2_hybrid.py &amp;&amp; python scripts/e2_audit.py
-python scripts/e3_online_matched.py
-python scripts/e4_rq3_seam.py
-python scripts/e5_endpoint.py &amp;&amp; python scripts/e5_audit.py
-python scripts/e6_t4_boundary.py
-python scripts/e7_confidence_gate.py
-python scripts/e9_claim_audit.py</code></pre>
-    <p class="muted">Backbone: Causal-rCM Wan2.1-T2V-1.3B (commit <code>ed3cb14</code>) &middot; GPUs: Tesla T4 and A100-SXM4-80GB &middot; Jev <code>jev-1.14.0</code>.</p>
+  <section id="boundaries" class="section">
+    <h2>Achieved &middot; boundary &middot; open</h2>
+    <p class="muted">Every earlier limitation is recorded as a <strong>boundary</strong> — a measured limit
+      of the naive formulation — and each either has a resolution or defines the next experiment.</p>
+    <div class="grid">
+      <div class="card"><span class="k">resolved</span><p>Weak context signals (0.491) → <strong>intrinsic
+        probe 0.798</strong>; the switch seam → <strong>training-free repair −25%</strong>.</p></div>
+      <div class="card"><span class="k">characterised</span><p>Drift propagation: real on T4, linear, and
+        not predictable from the policy.</p></div>
+      <div class="card"><span class="k">open</span><p>Signals do not transfer across GPUs (0.798 → 0.143);
+        a context-free Jev critic is at chance; the repair trades seam for flicker.</p></div>
+    </div>
+    <p><strong>The honest headline:</strong> across two GPUs and every endpoint measured, the cheap mode was
+      <em>never worse</em> — so the optimal policy is a fixed mode, and the map states exactly where a router
+      becomes worth deploying.</p>
   </section>
 
   <section id="cite" class="section">
     <h2>Cite</h2>
     <div class="cite-wrap">
-      <pre id="bibtex"><code>@software{hossen2026jevGAG,
-  title  = {JevGAG: Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation},
+      <pre id="bibtex"><code>@software{hossen2026jevgagddag,
+  title  = {JevGAG + DDAG: Adaptive Temporal Granularity for Causal Video World Models},
   author = {Hossen, Md Jisan},
   year   = {2026},
   url    = {https://github.com/j1s4nn/JevGAG}
@@ -227,10 +175,10 @@ python scripts/e9_claim_audit.py</code></pre>
 </main>
 
 <footer class="footer">
-  <p>&copy; 2026 Md Jisan Hossen &middot; NUIST &middot; MIT License</p>
+  <p>&copy; 2026 Hossen Md Jisan &middot; NUIST, Nanjing &middot; ORCID 0009-0004-9571-1450 &middot; MIT License</p>
   <p class="muted"><a href="https://github.com/j1s4nn/JevGAG">GitHub</a> &middot;
-    <a href="https://github.com/j1s4nn/JevGAG/blob/main/LICENSE">License</a> &middot;
-    <a href="https://github.com/j1s4nn/JevGAG/blob/main/CONTRIBUTING.md">Contributing</a></p>
+    <a href="https://doi.org/10.5281/zenodo.23395414">Prior work (Zenodo)</a> &middot;
+    <a href="https://github.com/j1s4nn/JevGAG/blob/main/LICENSE">License</a></p>
 </footer>
 
 <script src="assets/app.js"></script>

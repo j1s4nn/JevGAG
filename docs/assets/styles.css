@@ -69,3 +69,10 @@ h2{font-size:1.35rem;margin:0 0 1rem}
 .footer a{color:var(--accent)}
 
 @media (max-width:640px){.nav-links{gap:.6rem}.nav-links a{font-size:.85rem}}
+
+/* --- additions for the two-part site --- */
+.heroimg{width:100%;max-width:100%;border-radius:var(--radius);border:1px solid var(--line);display:block;margin:0 0 1.6rem}
+figure.wide{margin:0 0 1rem}
+figure.wide img{width:100%;border:1px solid var(--line);border-radius:var(--radius);background:#fff;display:block}
+figure.wide figcaption{margin-top:.6rem;color:var(--muted);font-size:.9rem}
+.citeblock{border-left:3px solid var(--accent);padding:.35rem 0 .35rem .9rem;color:var(--fg)}
