@@ -55,6 +55,8 @@
       <a href="#report">Report</a>
       <a href="#method">Method</a>
       <a href="#figures">Figures</a>
+      <a href="#fullresults">Results</a>
+      <a href="#data">Data</a>
       <a href="#boundaries">Boundaries</a>
       <a href="#cite">Cite</a>
       <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme">&#9686;</button>
@@ -158,6 +160,127 @@
     <p><strong>The honest headline:</strong> across two GPUs and every endpoint measured, the cheap mode was
       <em>never worse</em> — so the optimal policy is a fixed mode, and the map states exactly where a router
       becomes worth deploying.</p>
+  </section>
+
+  <section id="data" class="section">
+    <h2>Data &amp; artifacts (public)</h2>
+    <p class="muted">Every result, figure and media bundle is published on Kaggle. Nothing is private
+      except the API-key store. Each dataset ships a README and metadata; every headline number
+      re-derives from a stored result file.</p>
+    <table class="tbl">
+      <thead><tr><th>Dataset</th><th>Contents</th><th>Size</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://www.kaggle.com/datasets/ajjisan/ddag-experiments">DDAG — all experiments (consolidated)</a></td><td>results of experiments 01–11 + publication figures (PDF + PNG)</td><td>59 MB</td></tr>
+        <tr><td><a href="https://www.kaggle.com/datasets/ajjisan/ddag-matched-frames">DDAG — matched granularity frames</a></td><td>54 decoded frames: fine / coarse / seam-repaired, matched boundary + noise, plus the composed grid</td><td>28 MB</td></tr>
+        <tr><td><a href="https://www.kaggle.com/datasets/ajjisan/jevgag-results">JevGAG report — audited results</a></td><td>the report's results (E1–E9) + figures</td><td>0.4 MB</td></tr>
+        <tr><td><a href="https://www.kaggle.com/datasets/ajjisan/jev-adaptive-granularity-videos">JevGAG report — result videos</a></td><td>rendered rollout videos for the report's policy arms</td><td>412 MB</td></tr>
+        <tr><td><a href="https://www.kaggle.com/datasets/ajjisan/jev-adaptive-granularity-figures">JevGAG report — result figures</a></td><td>figure bundle for the report</td><td>13 MB</td></tr>
+        <tr><td><a href="https://www.kaggle.com/datasets/ajjisan/jevgag-selfaware-dit">Intrinsic probe (exp 01)</a></td><td>DiT activations + probe results</td><td>11 MB</td></tr>
+        <tr><td><a href="https://www.kaggle.com/datasets/ajjisan/jevgag-seamcontrol">Seam repair (exp 02)</a></td><td>boundary-seam measurements + repair ablation</td><td>0.06 MB</td></tr>
+        <tr><td><a href="https://www.kaggle.com/datasets/ajjisan/jevgag-closedloop-gran">Closed-loop evidence (exp 03)</a></td><td>intrinsic prior + free post-generation evidence</td><td>11 MB</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">Backbone / reproducibility assets (used by the kernels, not results):
+      <a href="https://www.kaggle.com/datasets/ajjisan/causal-rcm-ckpts">causal-rcm-ckpts</a> (13 GB) ·
+      <a href="https://www.kaggle.com/datasets/ajjisan/wan21-causal-rcm-matched">wan21-causal-rcm-matched</a> (4.4 GB).</p>
+  </section>
+
+  <section id="fullresults" class="section">
+    <h2>Full results</h2>
+    <p class="muted">More detail than the manuscript. Confidence intervals are prompt-grouped bootstrap;
+      AUROCs use leave-one-prompt-out cross-validation grouped by prompt.</p>
+
+    <h3>Signals for coarse-unsafe segments (direct AUROC)</h3>
+    <table class="tbl">
+      <thead><tr><th>signal</th><th>Tesla T4</th><th>A100-80GB</th><th>notes</th></tr></thead>
+      <tbody>
+        <tr><td>chance</td><td>0.500</td><td>0.500</td><td>reference</td></tr>
+        <tr><td>hand-crafted context statistics</td><td>0.491</td><td>—</td><td>preregistered formulation; fails</td></tr>
+        <tr><td><strong>Jev text oracle</strong> (prior report)</td><td><strong>0.788</strong></td><td>—</td><td>off-device, 0.672 s/decision</td></tr>
+        <tr><td><strong>intrinsic prefill probe</strong></td><td><strong>0.798</strong></td><td><strong>0.143</strong></td><td>inverts on A100</td></tr>
+        <tr><td>convergence residual <code>v_S/v_1</code></td><td>0.752</td><td>0.485</td><td>CI [0.623, 0.863], p = 0.000 on T4</td></tr>
+        <tr><td><strong>probe + residual</strong></td><td><strong>0.842</strong></td><td>—</td><td>strongest signal measured</td></tr>
+        <tr><td>naive final-step residual</td><td>0.621</td><td>0.493</td><td>weaker than the ratio</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Cost (DiT seconds per segment, wall-clock, synchronised)</h3>
+    <table class="tbl">
+      <thead><tr><th>operating point</th><th>fine</th><th>coarse</th><th>ratio</th><th>break-even</th><th>cheaper?</th></tr></thead>
+      <tbody>
+        <tr><td>T4, fine s2 / coarse s2</td><td>4.394</td><td>4.526</td><td><strong>1.030</strong></td><td>2.33</td><td>no</td></tr>
+        <tr><td>T4, fine s2 / coarse s1</td><td>4.686</td><td>3.411</td><td><strong>0.728</strong></td><td>4.08</td><td>yes (−27%)</td></tr>
+        <tr><td>A100, fine s2 / coarse s2</td><td>1.279</td><td>0.685</td><td><strong>0.536</strong></td><td>2.33</td><td>yes (−46%)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Quality by endpoint (lower is better)</h3>
+    <table class="tbl">
+      <thead><tr><th>endpoint</th><th>T4 fine</th><th>T4 coarse</th><th>A100 fine</th><th>A100 coarse</th></tr></thead>
+      <tbody>
+        <tr><td>latent L1 to s4 reference</td><td>0.807</td><td><strong>0.752</strong></td><td>0.780</td><td><strong>0.721</strong></td></tr>
+        <tr><td>decoded-pixel L1</td><td>0.2686</td><td><strong>0.2511</strong></td><td>—</td><td>—</td></tr>
+        <tr><td>temporal flicker</td><td>0.0254</td><td><strong>0.0213</strong></td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Seam repair (T4, 32 matched segments)</h3>
+    <table class="tbl">
+      <thead><tr><th>variant</th><th>boundary seam</th><th>fidelity</th><th>temporal flicker</th></tr></thead>
+      <tbody>
+        <tr><td>none</td><td>0.614</td><td>0.761</td><td>0.0213</td></tr>
+        <tr><td><strong>blend 0.25</strong></td><td><strong>0.460</strong> (−25%)</td><td><strong>0.754</strong></td><td>0.0218</td></tr>
+        <tr><td>blend 0.50</td><td>0.307</td><td>0.759</td><td>—</td></tr>
+        <tr><td>blend 0.75</td><td>0.153</td><td>0.774</td><td>—</td></tr>
+        <tr><td>anchor (hard)</td><td>0.000</td><td>0.799</td><td>—</td></tr>
+        <tr><td>fine (no switch)</td><td>0.215</td><td>0.807</td><td>0.0254</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Drift propagation (81 frames, 6 segments)</h3>
+    <table class="tbl">
+      <thead><tr><th>GPU</th><th>chain</th><th>drift trajectory (segments 1 → 6)</th></tr></thead>
+      <tbody>
+        <tr><td>T4 (n=32)</td><td>all fine</td><td>0.789 0.826 0.867 0.899 0.929 0.954</td></tr>
+        <tr><td>T4 (n=32)</td><td>all coarse</td><td>0.783 0.804 0.834 0.910 0.911 0.947</td></tr>
+        <tr><td>T4 (n=32)</td><td>one coarse, then fine</td><td>0.783 <strong>0.857 0.898 0.920 0.953 0.975</strong></td></tr>
+        <tr><td>A100 (n=8)</td><td>all fine</td><td>0.822 0.858 0.892 0.917 0.949 0.952</td></tr>
+        <tr><td>A100 (n=8)</td><td>all coarse</td><td>0.756 0.812 0.812 <strong>0.800 0.802 0.812</strong></td></tr>
+      </tbody>
+    </table>
+    <p class="muted"><strong>Propagation on T4</strong> (one-coarse minus all-fine), 95% CIs:
+      seg 2 <strong>+0.0313</strong> [+0.010,+0.052] · seg 3 <strong>+0.0304</strong> [+0.009,+0.051] ·
+      seg 4 <strong>+0.0208</strong> [+0.000,+0.042] · seg 5 <strong>+0.0241</strong> [+0.003,+0.045] ·
+      seg 6 +0.0212 [−0.004,+0.046] — significant at four of five tail segments. On A100 the coarse chain
+      lies <em>below</em> the fine chain.</p>
+
+    <h3>Policies (the regime map)</h3>
+    <table class="tbl">
+      <thead><tr><th>operating point</th><th>policy</th><th>DiT total (s)</th><th>quality</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>T4, s2/s2</td><td>fixed fine</td><td>281.2</td><td>0.807</td><td><strong>dominant</strong></td></tr>
+        <tr><td>T4, s2/s2</td><td>fixed coarse</td><td>289.6</td><td>0.752</td><td>dearer</td></tr>
+        <tr><td>T4, s2/s1</td><td>fixed coarse</td><td><strong>218.3</strong></td><td><strong>0.755</strong></td><td><strong>dominant</strong></td></tr>
+        <tr><td>A100, s2/s2</td><td>fixed coarse</td><td><strong>43.9</strong></td><td><strong>0.721</strong></td><td><strong>dominant</strong></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Jev critic and error-propagation model</h3>
+    <table class="tbl">
+      <thead><tr><th>Jev question (T4, 64 segments)</th><th>AUROC</th><th>95% CI</th><th>perm p</th></tr></thead>
+      <tbody>
+        <tr><td><code>discontinuity</code></td><td>0.497</td><td>[0.359, 0.644]</td><td>0.520</td></tr>
+        <tr><td><code>plausible</code></td><td>0.514</td><td>[0.372, 0.648]</td><td>0.417</td></tr>
+      </tbody>
+    </table>
+    <table class="tbl">
+      <thead><tr><th>error-propagation model</th><th>T4 R²</th><th>A100 R²</th></tr></thead>
+      <tbody>
+        <tr><td>persistence</td><td>0.905</td><td>0.865</td></tr>
+        <tr><td>current drift only</td><td><strong>0.944</strong></td><td><strong>0.891</strong></td></tr>
+        <tr><td>increment from policy/position</td><td><strong>0.008</strong></td><td><strong>0.077</strong></td></tr>
+      </tbody>
+    </table>
   </section>
 
   <section id="cite" class="section">
