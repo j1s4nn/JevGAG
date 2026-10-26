@@ -30,3 +30,13 @@ logs/
 # os
 Thumbs.db
 .DS_Store
+# LaTeX build artifacts
+*.aux
+*.log
+*.blg
+*.bbl
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+page*.png
