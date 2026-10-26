@@ -16,6 +16,7 @@ ddag/experiments/   per-experiment kernels + results + notes
 
 | Dataset | Slug | Contents |
 |---|---|---|
+| **DDAG — all eleven experiments (consolidated)** | [`ajjisan/ddag-experiments`](https://www.kaggle.com/datasets/ajjisan/ddag-experiments) | every experiment's results + the publication figures (PDF + PNG) |
 | JevGAG report — audited results and figures | [`ajjisan/jevgag-results`](https://www.kaggle.com/datasets/ajjisan/jevgag-results) | the report's `results/` (E1–E9) + figures |
 | Intrinsic probe (exp 01) | [`ajjisan/jevgag-selfaware-dit`](https://www.kaggle.com/datasets/ajjisan/jevgag-selfaware-dit) | DiT activations + probe results |
 | Seam repair (exp 02) | [`ajjisan/jevgag-seamcontrol`](https://www.kaggle.com/datasets/ajjisan/jevgag-seamcontrol) | boundary-seam measurements + repair ablation |
