@@ -12,6 +12,10 @@ An empirical audit of the four preconditions that any **adaptive temporal granul
 video generation silently assumes. This is the foundation; the method built on it lives in
 [`../ddag/`](../ddag/).
 
+> **Paper:** *Regime-Aware Temporal Granularity for Causal Video World Models: When Does Adaptivity Pay?* —
+> Md Jisan Hossen, 2026. **https://doi.org/10.5281/zenodo.23693517** (this report is Part 1 of that paper's
+> programme).
+
 > **Read the report:** [Markdown](report/REPORT.md) · [PDF](report/main.pdf) · [LaTeX](report/main.tex)
 
 ---

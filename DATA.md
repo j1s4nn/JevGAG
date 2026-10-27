@@ -1,5 +1,8 @@
 # Data & artifacts
 
+Companion to the paper *Regime-Aware Temporal Granularity for Causal Video World Models: When Does
+Adaptivity Pay?* (Md Jisan Hossen, 2026 — **https://doi.org/10.5281/zenodo.23693517**).
+
 Small, machine-readable result files are versioned in this repository. Large media and full audited
 bundles are published as **public Kaggle datasets** so every reported number can be independently
 checked.

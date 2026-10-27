@@ -4,6 +4,13 @@ Dated, user-facing changes to this repository. Newest first.
 
 ## 2026-10-27
 
+- **Paper released.** *Regime-Aware Temporal Granularity for Causal Video World Models: When Does
+  Adaptivity Pay?* is published as a preprint — **https://doi.org/10.5281/zenodo.23693517**. The README,
+  the site and [`CITATION.cff`](CITATION.cff) now feature it alongside the prior study
+  (**https://doi.org/10.5281/zenodo.23395414**).
+- **Housekeeping.** The `paper/` folder is emptied (the journal submission PDF is added on release); the
+  legacy, non-authoritative `archive/` notes and the internal `STATUS.md` tracker were removed; unused
+  site figures were dropped.
 - **Repository-wide scientific audit completed** (15 reports under [`audit/`](audit/)), run against commit
   `0c725c0`, and its **P0/P1 corrections applied** — all from stored result files, with no new computation.
   - **F-1 (P0).** The convergence residual in Eq. (2) was **sign-inverted**: the direct AUROC of

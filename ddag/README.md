@@ -11,6 +11,10 @@ DDAG turns the report's four preconditions into a **deployable rule**: measure t
 granularity policy that is justified inside that regime. Every claim below is backed by an audited
 experiment folder with its own kernel, analysis and result file.
 
+> **Paper:** *Regime-Aware Temporal Granularity for Causal Video World Models: When Does Adaptivity Pay?* —
+> Md Jisan Hossen, 2026. **https://doi.org/10.5281/zenodo.23693517** (this method is Part 2 of that paper's
+> programme).
+
 ---
 
 ## The method in one paragraph
