@@ -53,19 +53,22 @@ component that resolves it. The Jev thread is highlighted — Jev grounds the au
 
 ## Part 1 · JevGAG — the report
 
-A measured audit of the three preconditions on **two GPUs**, with a matched design, an independent
-endpoint protocol, and a claim-to-artifact audit.
+A measured audit of the four preconditions on **two GPUs**, with a matched design, an independent
+endpoint protocol, and a claim-to-artifact audit (**18/18 PASS**).
 
 | Precondition | What the report measures |
 |---|---|
 | **cost** | the per-forward ratio against the NFE break-even — the same mode pair sits on **opposite sides** of the inequality on T4 and A100 |
-| **signal** | cheap context statistics reach only **0.491** AUROC, while an off-device **Jev** text oracle reaches **0.788** |
-| **endpoint** | the internal reference **flips** between GPUs, so an endpoint independent of the compared modes is mandatory |
+| **signal** | cheap context statistics reach only **0.491** AUROC, while an off-device **Jev** text oracle reaches **0.788** — but an **image**-grounded one is *worse* (**0.667**) |
+| **endpoint** | the internal reference **flips** between GPUs, so an independent endpoint is mandatory — the image-grounded Jev endpoint agrees with CLIP subject consistency at **ρ = +1.000** |
+| **calibration** | confidence gating is **neutral** (\|Δ\| ≤ 0.0013 at every budget) |
 
 Also established: a two-threshold controller with **hysteresis + forced recovery** stabilises switching,
 and a measurable **seam** appears at every switch boundary.
 
-→ Details, code and audited results: [`jevgag/`](jevgag/) · figures: [`jevgag/figures/`](jevgag/figures/)
+→ **Read the report:** [`jevgag/report/REPORT.md`](jevgag/report/REPORT.md) (GitHub-readable) ·
+[PDF](jevgag/report/main.pdf) · code and audited results: [`jevgag/`](jevgag/) ·
+figures: [`jevgag/figures/`](jevgag/figures/)
 
 ---
 
