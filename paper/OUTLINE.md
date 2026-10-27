@@ -1,7 +1,15 @@
 # Paper blueprint (P5)
 
-> Target: **Elsevier CVIU** (`els-cas-templates`, single column). No hard page limit; target **14–16 pages**.
-> Source of truth for the paper; every figure and number is traceable to `jevgag/` or `ddag/`.
+> Target: **Elsevier CVIU** (`els-cas-templates`, single column). **No binding page limit was found** for
+> CVIU Regular Papers; the earlier "14–16 pages" was this project's own target, not a journal rule.
+> The manuscript compiles to **18 pages in the `cas-sc` review format** (line numbers, generous spacing);
+> the typeset length will be shorter. Source of truth for the paper; every figure and number is
+> traceable to `jevgag/` or `ddag/`.
+>
+> **Post-audit revision applied** (see `audit/AUDIT_14_REVISION_ROADMAP.md`): the convergence residual was
+> redefined (`κ = v_1/v_S`; the reciprocal is inverted), two flicker means were corrected, the regime map
+> gained an explicit objective, the cost paragraph was re-attributed, and Limitations / Generalisation /
+> Ablations / Protocol-table / decoded-pixel sections were added.
 
 ---
 

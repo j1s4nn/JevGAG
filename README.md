@@ -100,10 +100,12 @@ leave-one-prompt-out cross-validation grouped by prompt.
 | chance | 0.500 | 0.500 | reference |
 | hand-crafted context statistics | 0.491 | — | the preregistered formulation; fails |
 | **Jev text oracle** (prior report) | **0.788** | — | off-device, 0.672 s/decision |
-| **intrinsic prefill probe** (block 11) | **0.798** | **0.143** | *inverts* on A100 |
-| convergence residual `v_S/v_1` | 0.752 | 0.485 | CI [0.623, 0.863], perm $p$ = 0.000 on T4 |
-| **probe + residual** | **0.842** | — | strongest signal measured |
-| naive final-step residual | 0.621 | 0.493 | weaker than the ratio |
+| **intrinsic prefill probe** (block 11) | **0.798** [0.639, 0.916] | **0.143** [0.018, 0.368] | *inverts* on A100 |
+| convergence residual $\kappa = v_1/v_S$ | **0.760** [0.629, 0.870] | 0.404 [0.223, 0.603] | $p$ = 0.000 on T4 |
+| reciprocal $v_S/v_1$ (the first guess) | 0.240 [0.130, 0.371] | 0.596 | **inverted** — the sign must be measured |
+| **probe + residual** (multi-feature) | **0.842** [0.680, 0.938] | **0.833** [0.605, 0.971] | the only signal that **transfers** |
+| first-step magnitude $v_1$ | 0.710 [0.487, 0.855] | 0.633 | strongest *single* residual |
+| naive final-step residual | 0.662 | 0.683 | weaker than the ratio |
 | `step_std` / `step_range` | 0.507 | 0.674 | chance on T4 |
 
 ### R2 · Cost (DiT seconds per segment, wall-clock, synchronised)
@@ -126,12 +128,16 @@ leave-one-prompt-out cross-validation grouped by prompt.
 
 | variant | boundary seam | fidelity | temporal flicker |
 |---|---|---|---|
-| none | 0.614 | 0.761 | 0.0213 |
+| none | 0.614 | 0.761 | 0.0148 |
 | **blend 0.25** | **0.460** (−25%) | **0.754** (better) | 0.0218 |
 | blend 0.50 | 0.307 | 0.759 | — |
 | blend 0.75 | 0.153 | 0.774 | — |
 | anchor (hard) | 0.000 | 0.799 | — |
-| fine (no switch) | 0.215 | 0.807 | 0.0254 |
+| fine (no switch) | 0.215 | 0.807 | 0.0189 |
+
+> The repair reduces the boundary seam and improves fidelity, but the independent flicker endpoint
+> **rises above both** the unrepaired coarse mode (0.0148) and the fine mode (0.0189) — a boundary
+> discontinuity is traded for interior flicker. (Flicker means corrected per audit finding F-2.)
 
 ### R5 · Drift propagation (81 frames, 6 segments)
 

@@ -21,9 +21,16 @@ Reproduces P2 exactly (same protocol, different sample): **seam −25% at +0.6% 
 
 | signal | mean flicker | 95% CI |
 |---|---|---|
-| fine segment | 0.0254 | [0.0223, 0.0288] |
-| coarse segment (`none`) | 0.0213 | [0.0124, 0.0172] |
+| fine segment | 0.0189 | [0.0168, 0.0211] |
+| coarse segment (`none`) | 0.0148 | [0.0124, 0.0172] |
 | coarse + `blend0.25` | 0.0218 | [0.0196, 0.0241] |
+
+> **Correction (audit F-2).** Earlier versions of this file and of the manuscript reported the `fine`
+> and `none` means as 0.0254 and 0.0213. Those values were wrong; the source
+> `ddag/results/e8_flicker.json` gives **0.0189** (`fine`) and **0.0148** (`none`). The *deltas* were
+> always correct because they are computed from the arrays. The correction makes the trade-off
+> **stronger**: the repaired value (0.0218) is now the highest of the three, i.e. the repair raises
+> interior flicker above both the unrepaired coarse mode *and* the fine mode.
 
 | comparison | Δ | 95% CI | reading |
 |---|---|---|---|

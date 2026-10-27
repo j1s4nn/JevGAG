@@ -1,11 +1,15 @@
 """DDAG E2b (careful) — residual-variant sweep with CIs and a permutation null (0 GPU).
 
-Per coarse segment the captured calls are: [prefill, step1, ..., stepK, append].
-We separate them and test well-defined convergence statistics, with leave-one-prompt-out CV,
-a prompt-grouped bootstrap CI, and a label-permutation null. An inverted-looking AUROC (<0.5)
-is reported as-is: with a 1-D feature and LOO-CV the logistic model learns the sign on the
-training folds, so a value far below 0.5 indicates a *sign-inconsistent* (confounded) feature,
-not a usable signal.
+SUPERSEDED for headline numbers by `signal_combined.py`, which reports **direct** AUROCs (no logistic
+layer). The sweep below passes each 1-D feature through `oof(...)`, a logistic that re-learns the sign;
+for a single scalar that silently reports `max(AUROC, 1-AUROC)` and therefore **hides an inverted
+signal**. The direct AUROCs are:
+
+    v1 (first step) 0.7101 | vS (last step) 0.6618 | mean 0.6896 | std 0.5676
+    vS/v1 0.2403 (INVERTED) | v1/vS 0.7597 | prefill_norm 0.4964 | probe 0.7983
+
+This file is retained for the sign-agnostic (multi-feature) view only; do not quote its single-scalar
+AUROCs. See audit/AUDIT_07_MATHEMATICAL_AUDIT.md (finding M-1).
 """
 
 import argparse

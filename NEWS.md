@@ -2,37 +2,46 @@
 
 Dated, user-facing changes to this repository. Newest first.
 
-## 2026-10-25
+## 2026-10-27
+
+- **Repository-wide scientific audit completed** (15 reports under [`audit/`](audit/)), run against commit
+  `0c725c0`, and its **P0/P1 corrections applied** — all from stored result files, with no new computation.
+  - **F-1 (P0).** The convergence residual in Eq. (2) was **sign-inverted**: the direct AUROC of
+    `v_S/v_1` is **0.240**, not 0.752; the 0.752 came from a single-feature logistic that re-learns the
+    sign, and the manuscript's 0.842 appeared in **no** result file. The residual is now defined as
+    `κ = v_1/v_S` (direct **0.760**), and the multi-feature model is **stored**
+    (`ddag/results/signal_combined.json`): **0.842** on T4 and **0.833** on A100 — the only signal that
+    transfers across GPUs.
+  - **F-2 (P0).** Two flicker means in Table 1 were wrong (`none` 0.0213 → **0.0148**, `fine` 0.0254 →
+    **0.0189**). The trade-off is now *stronger*: the repaired value (0.0218) is the highest of the three.
+  - **F-3 (P0).** The regime map now states an explicit constrained objective, and the oracle-router bound
+    is reported (no better than fixed coarse at any operating point).
+  - **F-4 (P0).** The cost numbers 3.01/1.60/2.33 were the **prior study's**; the paper now uses the
+    matched matrix (π = 2.97 / 1.74, break-even 2.68) and the per-segment cost ratio r.
+  - **P1.** Added: Limitations/threats-to-validity, Generalisation, Ablations, a protocol table with
+    per-experiment sample sizes, the decoded-pixel endpoint result, an ethics statement, corrected
+    captions and axis labels; keywords trimmed to six.
+- **Corrections propagated** to the README, the site, the experiment READMEs and the Kaggle dataset
+  READMEs. `crv_variants.py` now carries an explicit supersession note.
+
+## 2026-10-26
 
 - **DDAG P2 complete** (E2 CRV, E3 drift, E7 Jev critic, E8 seam/flicker), all merged with public
   artifacts. Headline results:
-  - **E2 (CRV, T4):** the free, training-free `step_last/step_first` convergence ratio reaches **0.752**;
-    **probe + ratio = 0.842 AUROC**, the best signal in the project.
-  - **E2 (A100):** the convergence ratio is **hardware-conditional** (0.752 → **0.485**, chance) while the
-    intrinsic probe is **robust** (0.792 → **0.833**).
-  - **E3 (drift):** on T4 one coarse segment leaves a **significant persistent** drift elevation
-    (4/5 tail segments, +0.021..+0.031) → error propagates; on A100 the comparison **reverses**; drift is
-    linear and not predictable.
-  - **E7 (JCD):** a typed Jev critic on two raw frames is at **chance** (0.497/0.514) → **refuted**;
-    consistent with JEVQA. The Jev image API was fixed (multipart + `assets` map): 0/64 → 64/64 calls.
-  - **E8 (flicker):** the seam repair reproduces (−25% seam, +0.6% fidelity) but the independent
-    flicker endpoint reveals a **trade-off** (the repair raises interior flicker).
-- **Infrastructure:** A100 runs are automated through the WSL `colab` CLI (session → upload → exec →
-  download → stop); a private `ajjisan/jev-secrets` dataset supplies the Jev key to kernels.
-- **DDAG plan finalized.** New paper direction: *Deadline- and Drift-Aware Adaptive Temporal Granularity
-  for Interactive Causal Video World Models*, with five new methods (DALG, CRV, DCG, JCD, SDGP), eight
-  research questions, and a both-GPU (T4 + A100) evaluation plan. See `STATUS.md`.
-- **Repository restructured for a clean, journal-ready layout.**
-  - `papers/jevgag/` now holds the JevGAG paper (`paper/`, `scripts/`, `results/`, `colab/`, `jobs/`).
-  - `archive/` holds legacy working notes (kept for provenance, not authoritative).
-  - Root is limited to `README.md`, `STATUS.md`, `NEWS.md`, `DATA.md`, `CITATION.cff`, `LICENSE`, and
-    governance files.
-- **Added** `STATUS.md` (phase, achievements, gaps) and `NEWS.md` (this file).
-- **README rewritten** with umbrella + DDAG framing, a paper table, and follow-on study results.
-- **Follow-on results merged** (all with public Kaggle datasets):
-  - *SelfAware-DiT* — intrinsic pre-generation probe **AUROC 0.798**.
-  - *SeamControl* — training-free seam repair: **−25% seam, +1.1% fidelity**.
-  - *ClosedLoop-Gran* — free post-generation evidence **0.725**; closed loop 0.690 → 0.737.
-  - *Verify-Gran* — 0-GPU go/no-go gate returned **NO-GO**: the **cost model**, not the signal, is the
-    binding constraint.
-- **JevGAG paper artifacts preserved** and still reproducible from `papers/jevgag/`.
+  - **E2 (CRV, T4):** the convergence ratio reaches 0.752 (later corrected — see 27 Oct).
+  - **E2 (A100):** the intrinsic probe inverts (0.798 → 0.143) while the combined model transfers.
+  - **E3 (drift):** on T4 one coarse segment leaves a significant persistent drift elevation; on A100 the
+    comparison reverses.
+  - **E7 (JCD):** a typed Jev critic on two raw frames is at chance (0.497) — consistent with JEVQA.
+  - **E8 (flicker):** the seam repair reproduces but the independent flicker endpoint reveals a trade-off.
+- **Infrastructure:** A100 runs automated through the WSL `colab` CLI; a private `ajjisan/jev-secrets`
+  dataset supplies the Jev key to kernels.
+- **Repository restructured** into two content-named parts: `jevgag/` (report) and `ddag/` (method).
+- **Manuscript** written in the Elsevier CAS format (CVIU target) with a verified bibliography.
+
+## 2026-10-25
+
+- **Repository professionalized** for the new paper: clean root, `papers/` → two-part structure,
+  governance files, rebuilt site with SEO, umbrella thumbnail, and the public dataset
+  `ajjisan/jevgag-results`.
+- **JevGAG report** audited: claim-to-artifact audit **18/18 PASS** (covers the report's claims).
