@@ -1,5 +1,7 @@
 % Cost-quality Pareto frontier (audit REC-1): every verified policy, per GPU.
-% Lower-left is better (less compute, closer to the reference).
+% Lower-left is better (less compute, closer to the reference). Both panels share one y-range.
+% The dashed line in the T4 panel is the fixed-mode frontier between the cheapest coarse
+% point (T4 s2/s1) and the fine baseline (T4 s2/s2); it is explained in the caption.
 \documentclass[border=6pt]{standalone}
 \usepackage[T1]{fontenc}
 \usepackage{helvet}
@@ -22,6 +24,7 @@
   width=7.0cm, height=5.4cm,
   xlabel={DiT seconds (16 prompts, 64 segments)},
   ylabel={endpoint distance (lower is better)},
+  ymin=0.700, ymax=0.820, ytick={0.70,0.72,0.74,0.76,0.78,0.80,0.82},
   tick label style={font=\small,color=mut},
   label style={font=\small,color=mut},
   axis line style={draw=mut!60},
@@ -29,27 +32,28 @@
   legend style={font=\scriptsize,at={(0.02,0.98)},anchor=north west,draw=mut!40,fill=white},
 ]
 
-\nextgroupplot[title={\small\bfseries Tesla T4},xmin=200,xmax=320,ymin=0.718,ymax=0.826,
-  xtick={220,240,260,280,300,320},ytick={0.72,0.74,0.76,0.78,0.80,0.82}]
+\nextgroupplot[title={\small\bfseries Tesla T4},xmin=200,xmax=320,
+  xtick={220,240,260,280,300,320}]
 \addplot[only marks,mark=*,mark size=2.8pt,color=finec]     coordinates {(281.2,0.8074)(299.9,0.8063)};
 \addplot[only marks,mark=square*,mark size=2.6pt,color=coarsec] coordinates {(289.6,0.7524)(218.3,0.7547)};
 \addplot[only marks,mark=triangle*,mark size=3.2pt,color=oraclec] coordinates {(287.3,0.7350)(240.0,0.7327)};
 \addplot[color=mut!60,dashed,line width=0.5pt] coordinates {(218.3,0.7547)(281.2,0.8074)};
-\node[font=\scriptsize,color=coarsec,anchor=north] at (axis cs:218.3,0.7520) {$s_2/s_1$};
-\node[font=\scriptsize,color=coarsec,anchor=south west] at (axis cs:289.6,0.7540) {$s_2/s_2$};
-% Two blue "fine" points are the fine baselines of two operating points; label both.
-\node[font=\scriptsize,color=finec,anchor=south] at (axis cs:281.2,0.8095) {fine $s_2/s_2$};
-\node[font=\scriptsize,color=finec,anchor=north] at (axis cs:299.9,0.8050) {fine $s_2/s_1$};
+\node[font=\scriptsize,color=finec,anchor=south east] at (axis cs:279.5,0.8092) {fine $s_2/s_2$};
+\node[font=\scriptsize,color=finec,anchor=south west] at (axis cs:301.0,0.8078) {fine $s_2/s_1$};
+\node[font=\scriptsize,color=coarsec,anchor=north] at (axis cs:289.6,0.7505) {coarse $s_2/s_2$};
+\node[font=\scriptsize,color=coarsec,anchor=north] at (axis cs:218.3,0.7528) {coarse $s_2/s_1$};
+\node[font=\scriptsize,color=oraclec,anchor=north] at (axis cs:287.3,0.7320) {oracle};
+\node[font=\scriptsize,color=oraclec,anchor=east] at (axis cs:236.0,0.7327) {oracle};
 \legend{fixed fine, fixed coarse, oracle router}
 
-\nextgroupplot[title={\small\bfseries A100-80GB},xmin=35,xmax=95,ymin=0.695,ymax=0.795,
-  xtick={40,50,60,70,80,90},ytick={0.70,0.72,0.74,0.76,0.78}]
+\nextgroupplot[title={\small\bfseries A100-80GB},xmin=35,xmax=95,
+  xtick={40,50,60,70,80,90}]
 \addplot[only marks,mark=*,mark size=2.8pt,color=finec]     coordinates {(81.9,0.7798)};
 \addplot[only marks,mark=square*,mark size=2.6pt,color=coarsec] coordinates {(43.9,0.7212)};
 \addplot[only marks,mark=triangle*,mark size=3.2pt,color=oraclec] coordinates {(49.8,0.7069)};
 \node[font=\scriptsize,color=finec,anchor=south] at (axis cs:81.9,0.7820) {fine};
 \node[font=\scriptsize,color=coarsec,anchor=north] at (axis cs:43.9,0.7190) {coarse};
-\node[font=\scriptsize,color=oraclec,anchor=west] at (axis cs:49.8,0.7055) {oracle};
+\node[font=\scriptsize,color=oraclec,anchor=west] at (axis cs:51.5,0.7069) {oracle};
 
 \end{groupplot}
 \end{tikzpicture}

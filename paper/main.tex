@@ -507,12 +507,14 @@ accordingly.
 \begin{figure}
   \centering
   \includegraphics[width=0.86\textwidth]{figures/fig_pareto.pdf}
-  \caption{Cost--quality plane, lower-left better, one panel per GPU (16 prompts, 64 segments). At every
-  operating point one fixed mode lies at or beyond the oracle on cost: the oracle router is never
-  \emph{cost}-optimal, although it does buy quality along the frontier. The adaptive region of
-  Eq.~\eqref{eq:regime} is empty, which is why a fixed policy is optimal under Eq.~\eqref{eq:objective}.
-  On T4 $s_2/s_2$ the cheaper baseline is fine while the closer one is coarse, so cost- and
-  quality-optimality diverge at that point.}
+  \caption{Cost--quality plane, lower-left better, one panel per GPU (16 prompts, 64 segments); both
+  panels share one $y$-range. At every operating point one fixed mode lies at or beyond the oracle on
+  cost: the oracle router is never \emph{cost}-optimal, although it does buy quality along the frontier.
+  The dashed line in the T4 panel is the fixed-mode frontier between the cheapest coarse point
+  ($s_2/s_1$) and the fine baseline ($s_2/s_2$). The adaptive region of Eq.~\eqref{eq:regime} is empty,
+  which is why a fixed policy is optimal under Eq.~\eqref{eq:objective}. On T4 $s_2/s_2$ the cheaper
+  baseline is fine while the closer one is coarse, so cost- and quality-optimality diverge at that
+  point.}
   \label{fig:pareto}
 \end{figure}
 

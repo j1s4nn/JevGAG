@@ -1,5 +1,7 @@
-% Signal comparison (audit F-1 corrected): DIRECT AUROCs with 95% bootstrap CIs.
-% The convergence residual is kappa = v1/vS (first/last). The original vS/v1 is inverted on our data.
+% Signal comparison (audit F-1 corrected): DIRECT AUROCs with 95% prompt-grouped bootstrap CIs.
+% Bars/whiskers are read from ddag/results/signal_combined.json (probe, residual, combined; both GPUs)
+% and jevgag/results/e2_signal/e2_audit.json (Jev text). hand-crafted (0.491) has no stored CI.
+% The convergence residual is kappa = v1/vS (first/last); the reciprocal vS/v1 is inverted.
 \documentclass[border=6pt]{standalone}
 \usepackage[T1]{fontenc}
 \usepackage{helvet}
@@ -15,50 +17,51 @@
 \begin{document}
 \begin{tikzpicture}
 \begin{axis}[
-  width=13.6cm, height=7.0cm,
+  width=13.6cm, height=7.2cm,
   ybar, bar width=6.5pt, bar shift=0pt,
   ylabel={direct AUROC (leave-one-prompt-out)},
   symbolic x coords={hand-crafted, Jev text, intrinsic probe, residual $\kappa{=}v_1/v_S$, probe + residual},
-  xtick=data, x tick label style={font=\small,rotate=16,anchor=east,color=mut},
-  ymin=0.0, ymax=1.22, ytick={0,0.2,0.4,0.6,0.8,1.0},
+  xtick=data, x tick label style={font=\small,rotate=18,anchor=east,color=mut,yshift=-1pt},
+  ymin=0.0, ymax=1.05, ytick={0,0.2,0.4,0.6,0.8,1.0},
   tick label style={font=\small,color=mut},
   label style={font=\small,color=mut},
   axis line style={draw=mut!60},
-  legend style={font=\small,at={(0.02,0.98)},anchor=north west,draw=mut!40,fill=white},
+  legend style={font=\small,at={(0.02,0.99)},anchor=north west,draw=mut!40,fill=white},
   grid=major, grid style={draw=mut!12},
-  enlarge x limits=0.12,
+  enlarge x limits=0.13,
   error bars/y dir=both, error bars/y explicit,
 ]
 
-% Tesla T4  (bar shift -5pt)
+% Tesla T4  (bar shift -5pt): CIs from signal_combined.json / e2_audit.json
 \addplot[fill=t4c,draw=t4c!80,bar shift=-5pt,
   error bars/.cd, y dir=both, y explicit]
   coordinates {
-  (hand-crafted,0.491) +- (0,0.06)
-  (Jev text,0.788) +- (0,0.10)
-  (intrinsic probe,0.798) +- (0,0.14)
-  (residual $\kappa{=}v_1/v_S$,0.760) +- (0,0.12)
-  (probe + residual,0.842) +- (0,0.13)};
+  (hand-crafted,0.491) += (0,0.000) -= (0,0.000)
+  (Jev text,0.788) += (0,0.159) -= (0,0.223)
+  (intrinsic probe,0.798) += (0,0.117) -= (0,0.160)
+  (residual $\kappa{=}v_1/v_S$,0.760) += (0,0.111) -= (0,0.131)
+  (probe + residual,0.842) += (0,0.097) -= (0,0.162)};
 
 % A100-80GB  (bar shift +5pt)
 \addplot[fill=a100c,draw=a100c!80,bar shift=+5pt,
   error bars/.cd, y dir=both, y explicit]
   coordinates {
-  (intrinsic probe,0.143) +- (0,0.17)
-  (residual $\kappa{=}v_1/v_S$,0.404) +- (0,0.19)
-  (probe + residual,0.833) +- (0,0.18)};
+  (intrinsic probe,0.143) += (0,0.225) -= (0,0.125)
+  (residual $\kappa{=}v_1/v_S$,0.404) += (0,0.200) -= (0,0.181)
+  (probe + residual,0.833) += (0,0.138) -= (0,0.229)};
 
 \draw[mut!75,dashed,line width=0.5pt] (axis cs:hand-crafted,0.5) -- (axis cs:probe + residual,0.5);
-\node[font=\scriptsize,color=mut,anchor=south east] at (axis cs:hand-crafted,0.515) {chance};
+\node[font=\scriptsize,color=mut,anchor=south east] at (axis cs:probe + residual,0.508) {chance};
 
-% Headline values, placed above the error caps so they do not overlap the bars.
-\node[font=\scriptsize,color=t4c,anchor=south]   at (axis cs:probe + residual,1.10) {0.842};
-\node[font=\scriptsize,color=a100c,anchor=south] at (axis cs:probe + residual,1.03) {0.833};
+% Headline values, placed just above their error caps.
+\node[font=\scriptsize,color=t4c,anchor=south]   at ([xshift=-7pt]axis cs:probe + residual,0.952) {0.842};
+\node[font=\scriptsize,color=a100c,anchor=south] at ([xshift=7pt]axis cs:probe + residual,0.988) {0.833};
+
 % The A100 intrinsic-probe bar (0.143) is inverted: flipping the sign gives 1 - AUROC = 0.857.
 \draw[a100c!70,dotted,line width=0.8pt]
   ([xshift=5pt]axis cs:intrinsic probe,0.143) -- ([xshift=5pt]axis cs:intrinsic probe,0.857);
-\node[font=\scriptsize,color=a100c,anchor=south,align=center]
-  at ([xshift=5pt]axis cs:intrinsic probe,0.97)
+\node[font=\scriptsize,color=a100c,anchor=north west,align=left]
+  at ([xshift=4pt]axis cs:intrinsic probe,1.038)
   {0.143: inverted\\$1-\mathrm{AUROC}=0.857$};
 
 \legend{Tesla T4, A100-80GB}

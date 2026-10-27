@@ -27,15 +27,15 @@
 \nextgroupplot[
   title={\small\bfseries (a) repair frontier},
   xlabel={boundary seam (lower is better)},
-  ylabel={fidelity, latent L1 to $s_4$ ref},
+  ylabel={fidelity, latent L1 to $s_4$ ref (lower is better)},
   xmin=-0.03, xmax=0.70, ymin=0.745, ymax=0.806,
 ]
 \addplot[only marks,mark=*,mark size=2.6pt,color=mainc] coordinates {
   (0.6138,0.7607)(0.4604,0.7544)(0.3069,0.7590)(0.1535,0.7742)(0.0000,0.7990)};
 \addplot[color=mut!60,dashed,line width=0.5pt] coordinates {(0.6138,0.7607)(0.4604,0.7544)};
-\node[font=\scriptsize,color=mainc,anchor=north]  at (axis cs:0.6138,0.7585) {none};
-\node[font=\scriptsize,color=mainc,anchor=south]  at (axis cs:0.4604,0.7560) {blend 0.25};
-\node[font=\scriptsize,color=mainc,anchor=south]  at (axis cs:0.3069,0.7615) {blend 0.5};
+\node[font=\scriptsize,color=mainc,anchor=south] at (axis cs:0.6138,0.7622) {none};
+\node[font=\scriptsize,color=mainc,anchor=north east] at (axis cs:0.4560,0.7530) {blend 0.25};
+\node[font=\scriptsize,color=mainc,anchor=south] at (axis cs:0.3069,0.7615) {blend 0.5};
 \node[font=\scriptsize,color=mainc,anchor=south] at (axis cs:0.1535,0.7770) {blend 0.75};
 \node[font=\scriptsize,color=mainc,anchor=west] at (axis cs:0.012,0.7990) {anchor};
 
@@ -45,8 +45,10 @@
   ybar, bar width=9pt,
   ylabel={temporal flicker},
   symbolic x coords={fine, coarse none, coarse blend 0.25},
-  xtick=data, x tick label style={font=\scriptsize,rotate=15,anchor=east,color=mut},
-  ymin=0.0, ymax=0.030, enlarge x limits=0.22,
+  xtick=data, x tick label style={font=\scriptsize,rotate=22,anchor=east,color=mut},
+  ymin=0.0, ymax=0.030, enlarge x limits=0.24,
+  scaled y ticks=false,
+  ytick={0,0.01,0.02,0.03}, yticklabels={0.00,0.01,0.02,0.03},
 ]
 \addplot[fill=mainc,draw=mainc!80] coordinates {
   (fine,0.0189) (coarse none,0.0148) (coarse blend 0.25,0.0218)};
