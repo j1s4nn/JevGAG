@@ -1,30 +1,37 @@
+%% ===========================================================================
+%%  JevGAG — report (Part 1 of the two-part programme)
+%%  Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation
+%%  Compile: pdflatex -> bibtex -> pdflatex x2
+%% ===========================================================================
 \documentclass[journal]{IEEEtran}
 \usepackage{graphicx,booktabs,amsmath,amssymb,url,xcolor,microtype}
 \usepackage[hidelinks]{hyperref}
-\graphicspath{{../assets/figures/}}
+\graphicspath{{../figures/}}
 
 \title{Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation:\\
-An Image-Grounded Off-Device Oracle with Recovery, Recalibration, and an Independent Endpoint}
+An Image-Grounded Off-Device Oracle with Recovery, Recalibration,\\ and an Independent Endpoint}
 
 \author{Hossen Md Jisan\\
-Department of Artificial Intelligence, NUIST\\
+Department of Artificial Intelligence, Nanjing University of Information Science and Technology (NUIST), Nanjing, China\\
 Email: jisanahammed1952@gmail.com}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Adaptive temporal granularity---deciding when a causal video generator should produce one frame at a
-time (fine) versus several frames per chunk (coarse)---requires three preconditions: a real
-mode-dependent cost gap, a pre-generation signal, and an endpoint independent of the compared modes.
-We audit all three with an off-device, image-grounded System One oracle (Jev~1.14). We contribute
-(i)~a matched break-even law over hardware and operating point, (ii)~a paired test of image-grounded
-versus text-grounded routing signals, (iii)~a validated independent image-grounded endpoint, and
-(iv)~two honest negatives: an image signal that does not beat text, and a stability-gated
-recalibration policy that does not help. On a matched factorial (same prompts, same modes, T4 and
-A100) we show the adaptive outcome flips with the coarse operating point alone, explaining a
-confound in prior work. The image-grounded oracle is a poor \emph{signal} but an excellent
-\emph{endpoint} (Spearman $\rho{=}{+}1.000$ against CLIP subject consistency).
+Adaptive temporal granularity --- deciding when a causal video generator should produce one frame at a
+time (\emph{fine}) versus several frames per chunk (\emph{coarse}) --- rests on four preconditions: a real
+mode-dependent cost gap, a pre-generation signal, an endpoint independent of the compared modes, and an
+oracle calibrated well enough to gate on. This report audits all four with an off-device,
+image-grounded System One oracle (Jev~1.14) on a matched factorial over two accelerators (Tesla T4 and
+A100-80GB). We contribute: (i)~a \emph{break-even law} that is conditional on both the hardware and the
+operating point, which resolves a confound in the earlier audit of this problem; (ii)~a paired test
+showing that an \emph{image}-grounded oracle is a \emph{worse} routing signal than a text-grounded one;
+(iii)~a validated independent \emph{endpoint} --- the image-grounded oracle agrees with CLIP subject
+consistency at Spearman $\rho{=}{+}1.000$; and (iv)~two honest negatives (a confidence-gated policy that
+is neutral, and a stability-gated recalibration that is worse on both GPUs). Every headline number is
+re-derived from a stored artifact (18/18 claim-to-artifact checks pass). The reusable output is the
+break-even law plus the endpoint; the routing signal remains an open problem.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -32,93 +39,402 @@ adaptive granularity, temporal granularity, causal video generation, video world
 autoregressive diffusion, off-device oracle, System One, efficient inference.
 \end{IEEEkeywords}
 
+%% ===========================================================================
 \section{Introduction}
-Causal (autoregressive) video generators can trade compute for quality by changing their temporal
-granularity: frame-wise generation is accurate but expensive, while chunk-wise generation is cheaper
-on some hardware but drifts. Prior work adapts \emph{denoising steps} with model-internal signals.
-We ask whether an \emph{off-device}, image-grounded System One model can drive the granularity
-decision and certify its outcome.
+Causal (autoregressive) video generators can trade computation for quality by changing their
+\emph{temporal granularity}: frame-wise generation is accurate but expensive, while chunk-wise generation
+is cheaper on some hardware but drifts. A natural system spends fine computation only on hard segments,
+deciding before each segment is generated. That system is only viable if four things hold, and this
+report measures each of them.
 
-This paper is a \emph{characterization with one strong positive}: we find the image oracle is a poor
-routing signal but an excellent independent endpoint, and we isolate a hardware$\times$operating-point
-break-even law that resolves a confound in the earlier audit of this problem~\cite{jisan2026audit}.
+\paragraph{Contributions.}
+\begin{enumerate}
+  \item \textbf{A matched break-even law} (\S\ref{sec:e1}) over
+  $\{\text{T4},\text{A100}\}\times\{\text{fine }s_1/s_2/s_4\}\times\{\text{coarse }s_1/s_2/s_4\}$.
+  Coarse is cheaper \emph{iff} the measured per-forward ratio falls below the schedule break-even, and
+  the same pair can sit on opposite sides of that inequality on the two GPUs. This resolves a confound
+  in the earlier audit~\cite{jisan2026audit}, which compared an \emph{expensive} coarse mode on T4 with a
+  \emph{cheap} one on A100.
+  \item \textbf{A paired modality test} (\S\ref{sec:e2}). On 80 matched segments, an image-grounded
+  oracle is a \emph{worse} routing signal than a text-grounded one ($\Delta$AUROC $-0.110$ to $-0.195$).
+  \item \textbf{A validated independent endpoint} (\S\ref{sec:e5}). The same image-grounded oracle, used
+  as a quality endpoint, agrees with CLIP subject consistency at Spearman $\rho{=}{+}1.000$.
+  \item \textbf{Two honest negatives} (\S\ref{sec:e7}, \S\ref{sec:e8}): confidence-gated routing is
+  neutral, and stability-gated recalibration is worse on both GPUs.
+\end{enumerate}
 
-\section{Preconditions}
-\textbf{P1 (Cost).} Coarse must be cheaper than fine \emph{on the deployment hardware and at the
-chosen operating point}. \textbf{P2 (Signal).} A pre-generation signal must identify coarse-unsafe
-segments. \textbf{P3 (Endpoint).} Quality must be certified by an endpoint independent of the
-compared modes. \textbf{P4 (Calibration).} The oracle's confidence must be calibrated enough to gate
-on.
+\paragraph{Relationship to the prior study.}
+The prior preprint~\cite{jisan2026audit} framed the problem and reported a conditional trade-off on one
+GPU. This report is the audit that follows: it measures the preconditions on two GPUs with a matched
+design, tests the modality of the oracle, and validates the endpoint. The companion method (DDAG) is a
+separate artifact; neither reuses text or figures from the prior preprint.
 
-\section{Method}
-We use Jev~1.14 as an off-device oracle. Text states pass a caption and motion statistics; image
-states pass the last three context frames as base64 assets with the header
-\texttt{TypeSafe-Danger-Zone-Images:~true}. The backbone is Causal-rCM Wan2.1-T2V-1.3B (commit
-\texttt{ed3cb14}). Modes: fine \texttt{c1-1} ($S$ steps), cheap coarse \texttt{c3-3 s1}, expensive
-coarse \texttt{c3-3 s4}, and hold. Coarse is cheaper iff
-$\;s_{\text{nfe}}^{\text{coarse}}/s_{\text{nfe}}^{\text{fine}} < \mathrm{NFE}_{\text{fine}}/\mathrm{NFE}_{\text{coarse}}$.
+%% ===========================================================================
+\section{Related Work}
+\paragraph{Causal video generation.}
+Streaming generators roll out chunk by chunk, and closing the train--test gap between teacher forcing and
+self-rolling is central~\cite{huang2025self,zhu2026causal}. Few-step causal distillation makes the setting
+interactive~\cite{zheng2026causalrcm}; we treat such a model as fixed and study its granularity.
 
+\paragraph{Adaptive computation.}
+Adaptive computation was introduced for recurrent networks~\cite{graves2016adaptive} and early exiting for
+classification~\cite{teerapittayanon2017branchynet,sun2021early}. In generative video, computation is
+allocated by step~\cite{le2026dsa}, by chunk shape~\cite{ma2026flexforcing}, by
+pruning and routing~\cite{wang2026pare}, and by layer reuse~\cite{adnan2025foresight}. Our object is the
+\emph{temporal chunk size} of a fixed backbone, driven by an \emph{off-device} oracle.
+
+\paragraph{Evaluation.}
+Video generators are evaluated along many axes~\cite{huang2024vbench,zheng2025vbench20}; we adopt CLIP
+subject consistency~\cite{radford2021clip} and a captioner~\cite{li2022blip} as independent endpoints, and
+compare an image-grounded decision-model endpoint against them.
+
+\paragraph{Decision models.}
+System One decision models return typed, calibrated answers~\cite{ling2026jev}; independent evidence
+suggests pixel-only quality prediction with such models is unreliable~\cite{robitza2026jevqa}, which is
+consistent with our signal result.
+
+%% ===========================================================================
+\section{Preconditions and Method}
+\label{sec:method}
+
+\paragraph{Preconditions.}
+\textbf{P1 (cost)} coarse must be cheaper than fine \emph{on the deployment hardware and at the chosen
+operating point}. \textbf{P2 (signal)} a quantity computable \emph{before} a segment is generated must
+identify coarse-unsafe segments. \textbf{P3 (endpoint)} quality must be certified by a measure
+independent of the compared modes. \textbf{P4 (calibration)} the oracle's confidence must be informative
+enough to gate on.
+
+\paragraph{Cost model.}
+With $t_c,t_f$ the seconds per single forward and $\mathrm{NFE}$ the number of forward evaluations per
+segment, coarse is cheaper iff
+\begin{equation}
+\frac{t_c}{t_f} \;<\; \frac{\mathrm{NFE}_f}{\mathrm{NFE}_c} \;\equiv\; \rho_{\text{be}},
+\label{eq:be}
+\end{equation}
+i.e.\ the \emph{measured per-forward ratio} must fall below the \emph{schedule break-even}.
+
+\paragraph{Oracle.}
+Jev~1.14 is queried off-device. A \emph{text} state passes a caption plus motion statistics; an
+\emph{image} state passes the last three context frames as assets in a \texttt{multipart/form-data}
+request with the header \texttt{TypeSafe-Danger-Zone-Images:~true}. The oracle returns typed answers
+(a difficulty score, a drift risk, a motion class) and a confidence.
+
+\paragraph{Backbone, modes and design.}
+Backbone: Causal-rCM Wan2.1-T2V-1.3B (commit \texttt{ed3cb14})~\cite{zheng2026causalrcm}. Modes: fine
+\texttt{c1-1} ($s$ steps), cheap coarse \texttt{c3-3 s1}, expensive coarse \texttt{c3-3 s4}, and
+\texttt{hold} (reuse the previous latent). For every prompt and segment we generate both modes from the
+same boundary and the same noise, so the only difference is the generator; a segment is
+\emph{coarse-unsafe} when the coarse segment is farther from the four-step fine reference than the fine
+segment. Costs are wall-clock DiT seconds with device synchronisation.
+
+%% ===========================================================================
 \section{Results}
 
 \subsection{E1 --- Break-even is hardware- and operating-point-conditional}
-A matched matrix over $\{T4,A100\}\times\{$fine s1/s2/s4$\}\times\{$coarse s1/s2/s4$\}$
-(Fig.~\ref{fig:e1}) shows: on T4 the cheap coarse \texttt{c3-3 s1} beats fine only at fine
-$s2$/$s4$, and the expensive \texttt{c3-3 s4} is never cheaper; on A100 the cheap coarse beats all
-fine modes. This resolves the prior audit's confound, where T4 was tested with the \emph{expensive}
-coarse and A100 with the \emph{cheap} coarse.
+\label{sec:e1}
+Table~\ref{tab:e1} reports the matched matrix; Fig.~\ref{fig:e1} visualises it. On T4 the cheap coarse
+\texttt{c3-3 s1} beats fine only when fine uses $\ge 2$ steps, and the expensive \texttt{c3-3 s4} is
+\emph{never} cheaper; on A100 the cheap coarse beats all three fine modes. The same pair
+(\texttt{fine s2}, \texttt{coarse s2}) therefore lies on opposite sides of Eq.~\eqref{eq:be} on the two
+GPUs ($2.97$ vs.\ break-even $2.68$ on T4; $1.74$ on A100). This is the confound resolved: the prior
+audit compared expensive coarse on T4 with cheap coarse on A100.
+
+\begin{table}[t]
+\centering
+\caption{E1 --- matched break-even matrix. \emph{Ratio} is the measured per-forward ratio; coarse is
+cheaper iff $\text{ratio}<\rho_{\text{be}}$ (Eq.~\eqref{eq:be}).}
+\label{tab:e1}
+\small
+\begin{tabular}{llcccc}
+\toprule
+GPU & fine / coarse & NFE $f/c$ & $\rho_{\text{be}}$ & ratio & cheaper \\
+\midrule
+T4   & $s_1$ / $s_1$ & 19.0/8.33  & 2.28  & 2.694 & no \\
+T4   & $s_1$ / $s_4$ & 19.0/21.33 & 0.891 & 2.197 & no \\
+T4   & $s_2$ / $s_1$ & 34.0/8.33  & 4.08  & 3.301 & \textbf{yes} \\
+T4   & $s_2$ / $s_2$ & 34.0/12.67 & 2.684 & 2.969 & no \\
+T4   & $s_4$ / $s_1$ & 64.0/8.33  & 7.68  & 3.841 & \textbf{yes} \\
+T4   & $s_4$ / $s_4$ & 64.0/21.33 & 3.0   & 3.133 & no \\
+A100 & $s_1$ / $s_1$ & 19.0/8.33  & 2.28  & 1.561 & \textbf{yes} \\
+A100 & $s_2$ / $s_1$ & 34.0/8.33  & 4.08  & 1.95  & \textbf{yes} \\
+A100 & $s_2$ / $s_2$ & 34.0/12.67 & 2.684 & 1.744 & \textbf{yes} \\
+A100 & $s_4$ / $s_4$ & 64.0/21.33 & 3.0   & 1.84  & \textbf{yes} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_e1_breakeven.png}
+\caption{E1 --- break-even over hardware and operating point. Coarse is cheaper only where the measured
+ratio falls below the schedule break-even, and the same pair can sit on opposite sides on the two GPUs.}
+\label{fig:e1}
+\end{figure}
 
 \subsection{E2 --- Image-grounded Jev does not beat text Jev as a signal}
-On the same 80 segments, image and hybrid states are \emph{worse} than the text state
-(paired $\Delta$AUROC: difficulty $-0.110$, drift $-0.108$, motion $-0.195$ with a 95\% CI excluding
-zero). Text-1.13 $\approx$ text-1.14, so the deficit is the modality, not the model version
-(Fig.~\ref{fig:e2}). This is an honest negative.
+\label{sec:e2}
+On 80 matched segments (Table~\ref{tab:e2}) the image and hybrid states are \emph{worse} than the text
+state: paired $\Delta$AUROC of $-0.110$ (difficulty), $-0.108$ (drift) and $-0.195$ (motion), the last
+with a 95\,\% CI excluding zero ($P(\text{image}>\text{text})=0.006$). Text-1.13 $\approx$ text-1.14, so
+the deficit is the \emph{modality}, not the model version. This is an honest negative and it is
+consistent with independent evidence that pixel-only quality prediction with such models is
+unreliable~\cite{robitza2026jevqa}.
+
+\begin{table}[t]
+\centering
+\caption{E2 --- signal audit on 80 paired segments (AUROC). Image and hybrid do not beat text.}
+\label{tab:e2}
+\small
+\begin{tabular}{lcccc}
+\toprule
+signal & text-1.13 & text-1.14 & image-1.14 & hybrid-1.14 \\
+\midrule
+Jev difficulty & 0.788 & 0.777 & 0.667 & 0.687 \\
+Jev drift      & 0.738 & 0.755 & 0.647 & 0.656 \\
+Jev motion     & 0.703 & 0.706 & 0.510 & 0.568 \\
+warp residual  & 0.586 & 0.586 & 0.586 & 0.586 \\
+motion stat    & 0.607 & 0.607 & 0.607 & 0.607 \\
+complexity     & 0.368 & 0.368 & 0.368 & 0.368 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_e2_signal.png}
+\caption{E2 --- image- and hybrid-grounded Jev do not beat text-grounded Jev as a routing signal; the
+motion deficit is significant ($P=0.006$).}
+\label{fig:e2}
+\end{figure}
 
 \subsection{E3 --- The adaptive outcome flips with the operating point alone}
-Same A100, same 12 prompts, only the coarse step differs. With the expensive coarse the online
-policy is forced to 92\% fine; with the cheap coarse it uses 21\% fine and beats \texttt{fixed\_fine}.
+\label{sec:e3}
+Same A100, same 12 prompts, only the coarse step differs (Table~\ref{tab:e3}). With the \emph{expensive}
+coarse the online policy is forced to 92\,\% fine and cannot beat fixed fine
+($4.43$\,s vs.\ $3.81$\,s); with the \emph{cheap} coarse it uses 21\,\% fine and is both cheaper and
+closer to the reference ($2.55$\,s vs.\ $3.95$\,s). The adaptive verdict is therefore a property of the
+operating point, not of the signal alone.
 
-\subsection{E4 --- Recovery$+$hysteresis and the switch seam}
-Recovery$+$hysteresis reduces switches on both GPUs without worsening regret, and a switch
-\emph{seam} exists (switch-adjacent L1 $>$ interior L1, ratio $>1$).
+\begin{table}[t]
+\centering
+\caption{E3 --- matched A100 online factorial (same GPU, same 12 prompts). Only the coarse step changes.}
+\label{tab:e3}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{3}{c}{expensive coarse $s_4$} & \multicolumn{3}{c}{cheap coarse $s_1$} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+policy & DiT (s) & refL1 & fine\% & DiT (s) & refL1 & fine\% \\
+\midrule
+fixed fine   & 3.81 & 0.2812 & 1.00 & 3.95 & 0.2832 & 1.00 \\
+fixed coarse & 4.43 & 0.2874 & 0.00 & 2.55 & 0.2728 & 0.00 \\
+fixed hold   & 0.76 & 0.2824 & 0.00 & 0.77 & 0.2674 & 0.00 \\
+random 50\%  & 4.12 & 0.2868 & 0.50 & 3.24 & 0.2789 & 0.50 \\
+adaptive warp& 3.87 & 0.2820 & 0.92 & 2.85 & 0.2733 & 0.21 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{E4 --- Recovery, hysteresis and the switch seam}
+\label{sec:e4}
+Table~\ref{tab:e4} reports the controller ablation. Adding a hysteresis band and a forced-recovery
+window reduces switches on both GPUs without worsening the area-under-horizon regret, and a switch
+\emph{seam} is measurable: the switch-adjacent $L_1$ exceeds the interior $L_1$ (ratio $1.18$ on T4,
+$1.98$ on A100). The seam is the cost of switching, and it is a target for the companion method.
+
+\begin{table}[t]
+\centering
+\caption{E4 --- controller ablation. Switches fall without worsening AUH regret; a seam exists.}
+\label{tab:e4}
+\small
+\begin{tabular}{llcccc}
+\toprule
+GPU & controller & switches & fine frac & AUH refL1 & seam ratio \\
+\midrule
+T4   & threshold only & 0.50 & 0.50 & 0.3133 & 1.30 \\
+T4   & full (hyst.+rec.) & 0.38 & 0.53 & 0.3116 & 1.18 \\
+T4   & full, noisy & 0.62 & 0.66 & 0.3150 & 1.53 \\
+A100 & threshold only & 0.50 & 0.50 & 0.2767 & 2.20 \\
+A100 & full (hyst.+rec.) & 0.42 & 0.52 & 0.2772 & 1.98 \\
+A100 & full, noisy & 0.50 & 0.56 & 0.2718 & 1.75 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{E5 --- Image-grounded Jev is a validated independent endpoint}
-Across 6 policies and 48 videos, the image-grounded endpoint agrees with CLIP subject consistency at
-Spearman $\rho{=}{+}1.000$ (same-subject) and $+0.943$ (consistency) (Fig.~\ref{fig:e5}).
+\label{sec:e5}
+Across six policies and 48 videos, the image-grounded endpoint agrees with CLIP subject
+consistency~\cite{radford2021clip} at Spearman $\rho{=}{+}1.000$ (same-subject) and $+0.943$
+(consistency); Table~\ref{tab:e5} lists the per-policy values and Fig.~\ref{fig:e5} plots them. This is
+the report's strongest positive: the image oracle cannot \emph{drive} the decision (E2) but it can
+\emph{certify} it, which is exactly what P3 requires.
 
-\subsection{E6 --- Matched T4 boundary}
-With fine \texttt{c1-1 s1} the cheap coarse saves $-4.57$~s on T4, so adaptive routing cannot save
-time regardless of the signal: the T4 negative is an operating-point boundary, not a signal failure.
+\begin{table}[t]
+\centering
+\caption{E5 --- image-grounded Jev endpoint vs.\ CLIP subject consistency (48 videos, 6 policies).}
+\label{tab:e5}
+\small
+\begin{tabular}{lccc}
+\toprule
+policy & Jev consistency & Jev same-subject & CLIP subj.\ cons. \\
+\midrule
+reference     & 3.461 & 0.894 & 0.990 \\
+fixed fine    & 2.151 & 0.416 & 0.984 \\
+adaptive warp & 2.081 & 0.410 & 0.980 \\
+random 50\%   & 1.978 & 0.286 & 0.965 \\
+alternating   & 1.626 & 0.268 & 0.959 \\
+fixed coarse  & 1.775 & 0.230 & 0.949 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_e5_endpoint.png}
+\caption{E5 --- the image-grounded Jev endpoint agrees with CLIP subject consistency at
+$\rho=+1.000$ (same-subject) and $+0.943$ (consistency).}
+\label{fig:e5}
+\end{figure}
+
+\subsection{E6 --- The T4 negative is an operating-point boundary, not a signal failure}
+\label{sec:e6}
+With fine \texttt{c1-1 s1}, the cheap coarse \texttt{c3-3 s1} saves $-4.57$\,s on T4, i.e.\ it is
+\emph{slower}, so adaptive routing cannot save wall-clock time regardless of how good the signal is.
+Coarse only wins on T4 once fine uses $\ge 2$ steps ($+7.01$\,s at $s_2$, $+29.70$\,s at $s_4$). This
+mirrors E1 and completes the confound explanation.
 
 \subsection{E7 --- Confidence-gating is neutral}
-Gating on Jev's confidence does not improve the regret--cost frontier ($|\Delta|<0.005$ at all budgets).
+\label{sec:e7}
+Gating on the oracle's own confidence does not improve the regret--cost frontier
+(Table~\ref{tab:e7}): the confidence-gated policy differs from the difficulty-only policy by
+$|\Delta|\le 0.0013$ at every budget (25\,\%, 50\,\%, 75\,\% fine). Honest negative.
+
+\begin{table}[t]
+\centering
+\caption{E7 --- confidence-gated routing frontier (mean reference regret; lower is better).}
+\label{tab:e7}
+\small
+\begin{tabular}{lccc}
+\toprule
+policy & 25\,\% fine & 50\,\% fine & 75\,\% fine \\
+\midrule
+random           & 0.3044 & 0.2957 & 0.2881 \\
+difficulty only  & 0.2968 & 0.2875 & 0.2781 \\
+confidence gated & 0.2964 & 0.2875 & 0.2794 \\
+oracle           & 0.2734 & 0.2734 & 0.2734 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_e7_frontier.png}
+\caption{E7 --- confidence gating is neutral: the frontier is indistinguishable from the
+difficulty-only policy at every budget.}
+\label{fig:e7}
+\end{figure}
 
 \subsection{E8 --- Stability-gated recalibration does not help}
-Injecting a high-step fine segment on drift is worse on both GPUs: A100 recalibrate minus full
-$=$ refL1 $+0.0112$, DiT $+2.04$~s; T4 recalibrate minus adaptive\_warp $=$ refL1 $+0.0202$,
-DiT $+12.73$~s (Fig.~\ref{fig:e8}). An honest negative.
+\label{sec:e8}
+Injecting a high-step fine segment when drift is detected is worse on both GPUs
+(Table~\ref{tab:e8}, Fig.~\ref{fig:e8}): on A100 recalibration minus full gives refL1 $+0.0112$ at DiT
+$+2.04$\,s; on T4 recalibration minus adaptive\_warp gives refL1 $+0.0202$ at DiT $+12.73$\,s. Honest
+negative.
+
+\begin{table}[t]
+\centering
+\caption{E8 --- stability-gated recalibration. Left: A100 ($n=12$). Right: T4 ($n=8$).}
+\label{tab:e8}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\multicolumn{2}{c}{A100 ($n=12$)} & \multicolumn{2}{c}{T4 ($n=8$)} \\
+\cmidrule(lr){1-2}\cmidrule(lr){3-4}
+controller & refL1 & policy & refL1 \\
+\midrule
+threshold only & 0.2767 & fixed coarse  & 0.3186 \\
+full           & 0.2772 & fixed fine    & 0.2998 \\
+recalibrate    & 0.2884 & adaptive warp & 0.2949 \\
+               &        & recalibrate   & 0.3151 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_e8_recalibration.png}
+\caption{E8 --- recalibration is not beneficial on either GPU: it raises the endpoint distance at higher
+cost.}
+\label{fig:e8}
+\end{figure}
 
 \subsection{E9 --- Claim-to-artifact audit}
-Every headline number is re-derived from stored artifacts: 18/18 PASS.
+\label{sec:e9}
+Every headline number in this report is re-derived from a stored artifact. The audit
+(\texttt{jevgag/results/e9\_audit/claim\_audit.json}) reports \textbf{18/18 PASS}, covering E1 (3 claims),
+E2 (5), E3 (3), E4 (4), E5 (2) and E7 (1). Table~\ref{tab:e9} summarises the coverage.
 
+\begin{table}[t]
+\centering
+\caption{E9 --- claim-to-artifact audit coverage (18/18 PASS).}
+\label{tab:e9}
+\small
+\begin{tabular}{llcc}
+\toprule
+experiment & claims audited & example & result \\
+\midrule
+E1 & 3 & T4 \texttt{c3-3 s4} never cheaper & PASS \\
+E2 & 5 & motion deficit significant ($P=0.006$) & PASS \\
+E3 & 3 & cheap coarse cheaper online on A100 & PASS \\
+E4 & 4 & switches $0.50\to0.38$ (T4) & PASS \\
+E5 & 2 & endpoint $\rho=+1.000$ & PASS \\
+E7 & 1 & confidence gating neutral & PASS \\
+\midrule
+\multicolumn{3}{r}{\textbf{total}} & \textbf{18/18} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ===========================================================================
 \section{Discussion and Limitations}
-The image-grounded oracle is a poor \emph{signal} but an excellent \emph{endpoint}; the break-even
-law is the reusable tool. RQ2 (the cost--quality trade-off) is hardware- and operating-point-
-conditional and is our only headline negative besides E2/E8, which we report openly. Jev~1.14 images
-are ``Dreamer-ready''; we pin the version. The signal test uses 80 paired segments.
+\label{sec:discussion}
 
+\paragraph{What the report establishes.}
+The image-grounded oracle is a \emph{poor routing signal} but an \emph{excellent independent endpoint};
+the break-even law (Eq.~\eqref{eq:be}) is the reusable engineering tool; and the adaptive verdict is
+conditional on hardware \emph{and} operating point, which explains the earlier confound.
+
+\paragraph{Limitations.}
+(i)~\emph{One backbone}: all experiments use a single causal distilled model, so the numbers do not
+transfer to other generators. (ii)~\emph{Two accelerators and one schedule family}: T4 and A100-80GB
+only. (iii)~\emph{Small samples}: the signal test uses 80 paired segments and the recalibration arms use
+$8$--$12$ prompts, so the intervals are wide. (iv)~\emph{Off-device dependency}: the oracle is a versioned
+external service (we pin Jev~1.14) and the results depend on its behaviour; the companion method removes
+this dependency. (v)~\emph{One modality comparison}: text vs.\ image; other modalities (audio, depth) are
+untested. (vi)~\emph{No step-allocation or chunk-shape baseline}: the closest published alternatives
+are discussed but not re-implemented.
+
+\paragraph{Threats to validity.}
+The endpoint result (E5) rests on 48 videos from six policies, all on T4; a larger, multi-GPU endpoint
+study would strengthen it. The recalibration negatives (E8) are measured on a single seed.
+
+%% ===========================================================================
 \section{Conclusion}
-An off-device, image-grounded System One model can certify adaptive temporal granularity even when it
-cannot drive it, and the cost side obeys a matched break-even law over hardware and operating point.
+An off-device, image-grounded System One model can \emph{certify} adaptive temporal granularity even
+when it cannot \emph{drive} it, and the cost side obeys a matched break-even law over hardware and
+operating point. The routing signal remains the open problem, and we report the two failed policies
+openly rather than tuning them to look better.
 
-\begin{figure}[t]\centering\includegraphics[width=\linewidth]{fig_e1_breakeven.png}
-\caption{E1 break-even over hardware and operating point.}\label{fig:e1}\end{figure}
-\begin{figure}[t]\centering\includegraphics[width=\linewidth]{fig_e2_signal.png}
-\caption{E2 image/hybrid Jev do not beat text Jev as a signal.}\label{fig:e2}\end{figure}
-\begin{figure}[t]\centering\includegraphics[width=\linewidth]{fig_e5_endpoint.png}
-\caption{E5 image-Jev endpoint agrees with CLIP.}\label{fig:e5}\end{figure}
-\begin{figure}[t]\centering\includegraphics[width=\linewidth]{fig_e8_recalibration.png}
-\caption{E8 recalibration is not beneficial on either GPU.}\label{fig:e8}\end{figure}
+%% ===========================================================================
+\section*{Declarations}
+\textbf{Competing interests:} none. \textbf{Funding:} none. \textbf{Ethics:} not applicable (no human or
+animal subjects). \textbf{Data availability:} all code, figures and audited result files are public at
+\url{https://github.com/j1s4nn/JevGAG}; the result bundles are published as public Kaggle datasets.
+\textbf{CRediT:} Hossen Md Jisan --- Conceptualization, Methodology, Software, Validation, Formal
+analysis, Investigation, Data curation, Visualization, Writing --- original draft, Writing --- review and
+editing.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
+
 \end{document}
