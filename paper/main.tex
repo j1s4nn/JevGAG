@@ -349,8 +349,7 @@ experiment; all result files, kernels and Colab runners are public.
     \midrule
     intrinsic probe / convergence & T4, A100 & 16 & 57 & latent \\
     seam repair                  & T4       & 8  & 57 & latent, pixel, flicker \\
-    drift propagation            & T4       & 32 & 81 & latent \\
-                                 & A100     & 8  & 81 & latent \\
+    drift propagation            & T4, A100 & T4: 32, A100: 8 & 81 & latent \\
     online policy                & T4, A100 & 16 & 57 & latent \\
     intermediate band            & T4       & 16 & 57 & latent \\
     decoded-pixel endpoint       & T4       & 8  & 57 & latent, pixel \\
@@ -516,7 +515,8 @@ the frontier a deployment sits; the regime decides which mode it should start fr
 
 \subsection{A third endpoint agrees: decoded pixels}
 Table~\ref{tab:policies} rests on the latent endpoint. To check that the conclusion is not an artefact of
-that metric we re-ran the matched design on T4 and decoded every segment, measuring the distance in
+that metric we re-ran the matched design on T4 for a matched subset of $n = 8$ prompts (32 segments,
+the same protocol as Table~\ref{tab:protocol}) and decoded every segment, measuring the distance in
 \emph{pixel} space. The coarse mode is again both cheaper ($0.711$ of the fine cost) and closer to the
 reference ($0.2511$ against $0.2686$). Three independent endpoints --- latent, decoded-pixel and temporal
 flicker --- therefore agree that the cheap mode is not worse, which is what licenses the fixed-mode
@@ -539,9 +539,42 @@ qualitative counterpart of the regime map: the modes differ, but neither dominat
   (twelve pixel frames) following a shared three-frame coarse prefix. Columns: fine ($c_{1\text{-}1}$,
   two steps), coarse ($c_{3\text{-}3}$, two steps), coarse with the 25\,\% seam repair, and the absolute
   difference between fine and coarse amplified $\times 5$. The modes differ in content --- the bird pose
-  and the waterfall foam both change --- yet no independent endpoint ranks coarse as worse.}
+  and the waterfall foam both change --- yet no independent endpoint ranks coarse as worse. The matched
+  rollout videos (all policies, both GPUs) are public at
+  \url{https://www.kaggle.com/datasets/ajjisan/jev-adaptive-granularity-videos}.}
   \label{fig:qual}
 \end{figure*}
+
+Table~\ref{tab:summary} collects every measured quantity for the three operating points in one frame.
+
+\begin{table}
+  \centering
+  \caption{Unified comparison of the three measured operating points in one frame. $\pi$ is the
+  per-forward ratio and $\rho_{\text{be}}$ the schedule break-even (coarse is cheaper iff
+  $\pi < \rho_{\text{be}}$); $r$ is the per-segment cost ratio and $\Delta = q_c - q_f$ the quality gap.
+  ``DiT'' is the total sampling seconds over 16 prompts. The adaptive region of Eq.~\eqref{eq:regime} is
+  empty at every operating point.}
+  \label{tab:summary}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{lccc}
+    \toprule
+     & T4 $s_2/s_2$ & T4 $s_2/s_1$ & A100 $s_2/s_2$ \\
+    \midrule
+    per-forward $\pi$ ($\rho_{\text{be}}$)   & 2.97 (2.68) & 3.30 (4.08) & 1.74 (2.68) \\
+    segment cost ratio $r$                   & 1.030 & 0.728 & 0.536 \\
+    quality gap $\Delta$                     & $-0.055$ & $-0.051$ & $-0.059$ \\
+    intrinsic probe AUROC                    & 0.798 & 0.785 & 0.143$^{\dagger}$ \\
+    residual $\kappa$ AUROC                  & 0.760 & -- & 0.404 \\
+    multi-feature AUROC                      & 0.842 & -- & 0.833 \\
+    DiT total (s), fine / coarse             & 281.2 / 289.6 & 299.9 / 218.3 & 81.9 / 43.9 \\
+    optimal policy                           & fixed fine & fixed coarse & fixed coarse \\
+    adaptive region                          & empty ($r>1$) & empty ($\Delta\le0$) & empty ($\Delta\le0$) \\
+    \bottomrule
+  \end{tabular}
+  \\[2pt]
+  \footnotesize $^{\dagger}$inverted: $1-\mathrm{AUROC} = 0.857$.
+\end{table}
 
 %% ===========================================================================
 \section{Boundaries and guidance}
