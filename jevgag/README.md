@@ -21,7 +21,7 @@ video generation silently assumes. This is the foundation; the method built on i
 | Precondition | Question | Finding |
 |---|---|---|
 | **P1 — cost** | is the cheap mode genuinely faster on *this* GPU at *this* schedule? | **hardware-conditional.** The same pair (fine `s2`, coarse `s2`) has per-forward ratio **2.97** on T4 (break-even 2.68 → coarse dearer) and **1.74** on A100 (→ coarse cheaper) |
-| **P2 — signal** | does a **pre-generation** quantity predict "coarse-unsafe"? | **Jev text works (0.788 AUROC); image does not (0.667).** Hand-crafted context statistics fail (0.491 in the companion study) |
+| **P2 — signal** | does a **pre-generation** quantity predict "coarse-unsafe"? | **Jev text works (0.788 AUROC); image does not (0.667).** Hand-crafted context statistics fail (0.491 in the prior study) |
 | **P3 — endpoint** | is quality certified by a measure **independent** of the compared modes? | the internal reference flips between GPUs; an **image-grounded Jev endpoint** agrees with CLIP subject consistency at **ρ = +1.000** |
 | **P4 — calibration** | is the oracle's confidence informative enough to gate on? | **no.** Confidence-gated routing is neutral (\|Δ\| ≤ 0.0013 at every budget) |
 

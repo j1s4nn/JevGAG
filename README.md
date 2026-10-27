@@ -59,7 +59,7 @@ endpoint protocol, and a claim-to-artifact audit (**18/18 PASS**).
 | Precondition | What the report measures |
 |---|---|
 | **cost** | the per-forward ratio against the NFE break-even — the same mode pair sits on **opposite sides** of the inequality on T4 and A100 |
-| **signal** | cheap context statistics reach only **0.491** AUROC, while an off-device **Jev** text oracle reaches **0.788** — but an **image**-grounded one is *worse* (**0.667**) |
+| **signal** | hand-crafted context statistics reach only **0.491** AUROC, while an off-device **Jev** text oracle reaches **0.788** — but an **image**-grounded one is *worse* (**0.667**) |
 | **endpoint** | the internal reference **flips** between GPUs, so an independent endpoint is mandatory — the image-grounded Jev endpoint agrees with CLIP subject consistency at **ρ = +1.000** |
 | **calibration** | confidence gating is **neutral** (\|Δ\| ≤ 0.0013 at every budget) |
 
@@ -80,7 +80,7 @@ set of calibrated components, each validated by its own experiment.
 | Component | Question | Outcome |
 |---|---|---|
 | **intrinsic probe** | can the generator predict its own granularity safety? | **0.798 AUROC** from its own prefill activations — no external oracle |
-| **convergence residual** | does sampler convergence verify safety? | **0.752** on T4; **probe + residual = 0.842** — the strongest signal in the programme |
+| **convergence residual** | does sampler convergence verify safety? | **0.760** on T4; **probe + residual = 0.842** — the strongest signal in the programme |
 | **seam repair** | can the switch seam be reduced without training? | a **25% latent blend cuts the seam 25%** and improves fidelity |
 | **regime map** | where does adaptivity actually pay? | it pays only when the cheap mode is **cheaper *and* worse** |
 
@@ -245,11 +245,11 @@ each one either has a resolution or defines the next experiment.
 
 | Boundary (measured) | Resolution in this programme | Status |
 |---|---|---|
-| cheap context statistics do not predict hard segments (0.491) | intrinsic pre-generation probe (**0.798**) | **resolved** |
+| hand-crafted context statistics do not predict hard segments (0.491, prior report) | intrinsic pre-generation probe (**0.798**) | **resolved** |
 | the switch seam is a real cost | training-free seam repair (**−25%** seam, better fidelity) | **resolved** |
 | one coarse segment leaves a persistent drift elevation on T4 | drift propagation measured and bounded (linear, not compounding) | **characterised** |
 | verification signals **do not transfer** across GPUs (0.798 → 0.143) | the regime map — signals are **regime properties** | **open** |
-| a typed Jev critic on raw frames is at chance (0.497) | decision-model critics need **context**, not pixels | **open** |
+| a pixel-only critic is at chance (0.497, this work) | decision-model critics need **context**, not pixels | **open** |
 | the repair trades a boundary seam for a small interior flicker | multi-endpoint protocol required | **open** |
 
 **The programme's honest headline:** across two GPUs and every endpoint measured (latent, decoded-pixel,

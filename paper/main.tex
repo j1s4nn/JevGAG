@@ -42,7 +42,7 @@ compute only on hard segments looks attractive. We show that this idea rests on 
 \emph{preconditions} --- cost, signal and endpoint --- and that all three are \emph{regime properties}
 rather than universal facts. On a matched two-GPU study (Tesla T4 and A100-80GB) of a causal diffusion
 backbone we (i) measure the per-forward cost against the schedule break-even and find the same mode pair
-on opposite sides of the inequality; (ii) show that cheap context statistics cannot predict coarse-unsafe
+on opposite sides of the inequality; (ii) show that hand-crafted context statistics cannot predict coarse-unsafe
 segments (AUROC 0.491), that an \emph{intrinsic} probe on the generator's own prefill activations reaches
 0.798 on one GPU and \emph{inverts} to 0.143 on the other, and that only a \emph{multi-feature} model over
 the probe and a sampler convergence residual transfers across both (0.842 and 0.833); and (iii) show that
@@ -53,7 +53,7 @@ independent endpoints (latent, decoded-pixel, temporal flicker) our operating po
 region: the cheap mode was never worse, so the optimal policy is a \emph{fixed} mode and a router is
 unnecessary. We also report a training-free seam repair that reduces the switch-boundary discontinuity by
 25\% while improving fidelity, quantify drift propagation, and record three boundaries: no single signal
-transfers across GPUs, drift is linear and policy-insensitive, and a context-free decision-model critic
+transfers across GPUs, drift is linear and policy-insensitive, and a pixel-only decision-model critic
 is at chance. All results, figures and audited result files are public.
 \end{abstract}
 
@@ -205,7 +205,7 @@ segment and $d(\cdot)$ is its endpoint distance to the reference. The symbol $q$
 
 \paragraph{The report.}
 On T4 the report finds that coarse is \emph{not} cheaper for a two-step coarse schedule, that hand-crafted
-context statistics reach only 0.491 AUROC while a decision-model text oracle reaches 0.788, and that the
+context statistics reach only 0.491 AUROC while the Jev text oracle reaches 0.788, and that the
 internal reference flips between GPUs. On A100 the cost ordering reverses. The report also shows that a
 two-threshold controller with a hysteresis band and a forced-recovery window stabilises switching, and
 that switching leaves a measurable \emph{seam}. Full details, code and audited result files are in the
@@ -559,11 +559,11 @@ status. We treat a boundary as a result: it delimits the region in which a formu
     \toprule
     boundary (measured) & resolution & status \\
     \midrule
-    cheap context statistics do not predict hard segments (0.491, prior report) & intrinsic prefill probe (0.798, this work) & resolved \\
+    hand-crafted context statistics do not predict hard segments (0.491, prior report) & intrinsic prefill probe (0.798, this work) & resolved \\
     switching costs a boundary discontinuity & training-free repair ($-25\%$) & resolved \\
     coarse error propagates on T4 & quantified: linear, not compounding & characterised \\
     signals do not transfer across GPUs (0.798 $\rightarrow$ 0.143) & signals are regime properties & open \\
-    a context-free critic is at chance (0.497) & critics need context, not pixels & open \\
+    a pixel-only critic is at chance (0.497, this work) & critics need context, not pixels & open \\
     the repair raises interior flicker & multi-endpoint protocol required & open \\
     \bottomrule
   \end{tabular}

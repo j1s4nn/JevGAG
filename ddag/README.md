@@ -38,7 +38,7 @@ update magnitudes, (iii) routes to a cheap or fine mode through a **calibrated g
 | 07 | [`07_online_policy`](experiments/07_online_policy) | does routing beat a fixed mode? | **boundary** — on A100 coarse dominates (**−46 %** cost, 43.9 s vs 81.9 s) |
 | 08 | [`08_intermediate_band`](experiments/08_intermediate_band) | does routing pay inside the band? | coarse **27 %** cheaper (218.3 s vs 299.9 s); the latent endpoint does not penalise it |
 | 09 | [`09_pixel_endpoint`](experiments/09_pixel_endpoint) | does a decoded-pixel endpoint change the verdict? | **no** — coarse is cheaper (0.711×) *and* closer by pixels (0.2511 vs 0.2686) |
-| 10 | [`10_jev_critic`](experiments/10_jev_critic) | can a typed Jev critic certify safety from pixels? | **boundary** — chance (**0.497**); context, not the model, is the limit |
+| 10 | [`10_jev_critic`](experiments/10_jev_critic) | can a pixel-only Jev critic certify safety from pixels? | **boundary** — chance (**0.497**); context, not the model, is the limit |
 | 11 | [`11_flicker_endpoint`](experiments/11_flicker_endpoint) | does the repair trade seam for flicker? | **yes** — the repair raises flicker to 0.0218, above both fine (0.0189) and coarse (0.0148) |
 | 12 | [`12_qualitative`](experiments/12_qualitative) | what do the modes actually look like? | all six matched cases rendered in one frame (see Fig. 7 of the paper) |
 
@@ -108,11 +108,11 @@ adds nothing. The oracle bound shows the headroom is not merely small but *negat
 
 | Boundary | Resolution / status |
 |---|---|
-| cheap context statistics do not predict hard segments (0.491) | intrinsic prefill probe (**0.798**) — **resolved** |
+| hand-crafted context statistics do not predict hard segments (0.491, prior report) | intrinsic prefill probe (**0.798**) — **resolved** |
 | switching costs a boundary discontinuity | training-free repair (**−25 %**) — **resolved** |
 | coarse error propagates on T4 | quantified: linear, not compounding — **characterised** |
 | signals do **not** transfer across GPUs (0.798 → 0.143) | signals are regime properties — **open** |
-| a context-free critic is at chance (0.497) | critics need context, not pixels — **open** |
+| a pixel-only critic is at chance (0.497, this work) | critics need context, not pixels — **open** |
 | the repair raises interior flicker | multi-endpoint protocol required — **open** |
 
 ---
