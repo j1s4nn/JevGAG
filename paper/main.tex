@@ -9,21 +9,31 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{caption}
 \usepackage{xcolor}
 % --- float placement: keep figures near their references in a dense single-column layout ---
 \setcounter{topnumber}{4}
 \setcounter{totalnumber}{8}
 \setcounter{dbltopnumber}{3}
-\renewcommand{\topfraction}{0.92}
-\renewcommand{\bottomfraction}{0.5}
-\renewcommand{\textfraction}{0.06}
-\renewcommand{\floatpagefraction}{0.85}
-\renewcommand{\dbltopfraction}{0.92}
-\renewcommand{\dblfloatpagefraction}{0.85}
+\renewcommand{\topfraction}{1.0}
+\renewcommand{\bottomfraction}{1.0}
+\renewcommand{\textfraction}{0.0}
+\renewcommand{\floatpagefraction}{0.6}
+\renewcommand{\dbltopfraction}{1.0}
+\renewcommand{\dblfloatpagefraction}{0.6}
+
+% --- tighten the bibliography to keep the paper within the 18-page budget ---
+\AtBeginDocument{\renewcommand{\bibfont}{\fontsize{7.1pt}{8.7pt}\selectfont}}
+\let\oldbibliography\thebibliography
+\renewcommand{\thebibliography}[1]{%
+  \oldbibliography{#1}%
+  \setlength{\itemsep}{0pt}%
+  \setlength{\parsep}{0pt}%
+}
 
 
 \shorttitle{Regime-Aware Temporal Granularity}
-\shortauthors{H. M. Jisan}
+\shortauthors{M. J. Hossen}
 
 \begin{document}
 
@@ -48,10 +58,10 @@ segments (AUROC 0.491), that an \emph{intrinsic} probe on the generator's own pr
 the probe and a sampler convergence residual transfers across both (0.842 and 0.833); and (iii) show that
 an endpoint independent of the compared modes is mandatory, because the internal reference reverses
 between GPUs. We then derive a \emph{regime map} that states exactly when adaptivity pays --- only when
-the cheap mode is cheaper \emph{and} worse --- for a stated objective. Across two GPUs and three
-independent endpoints (latent, decoded-pixel, temporal flicker) our operating points fall outside that
-region: the cheap mode was never worse, so the optimal policy is a \emph{fixed} mode and a router is
-unnecessary. We also report a training-free seam repair that reduces the switch-boundary discontinuity by
+the cheap mode is cheaper \emph{and} worse --- for a stated objective. Across two GPUs (the latent
+endpoint) and on T4 for two further endpoints (decoded-pixel and temporal flicker), our operating points
+fall outside that region: the coarse mode was never worse in quality, so under the stated objective the
+optimal policy is a \emph{fixed} mode and a router is unnecessary. We also report a training-free seam repair that reduces the switch-boundary discontinuity by
 25\% while improving fidelity, quantify drift propagation, and record three boundaries: no single signal
 transfers across GPUs, drift is linear and policy-insensitive, and a pixel-only decision-model critic
 is at chance. All results, figures and audited result files are public.
@@ -92,10 +102,11 @@ contributions.
   the cheap mode must be \emph{cheaper} \emph{and} \emph{worse}.
   \item \textbf{An intrinsic signal --- and the limit of single signals.} A probe on the generator's own
   prefill activations predicts coarse-unsafe segments at AUROC 0.798 with no external oracle, against
-  0.491 for hand-crafted context statistics. The same probe \emph{inverts} on the second GPU (0.143), and
-  so does a free sampler \emph{convergence residual} (the ratio of the first to the last denoising-step
-  update magnitude: 0.760 on T4, 0.404 on A100). Only a \emph{multi-feature} model over the two transfers
-  across both GPUs (0.842 and 0.833).
+  0.491 for hand-crafted context statistics. The same probe \emph{inverts} on the second GPU (0.143,
+  CI $[0.018, 0.368]$), while a free sampler \emph{convergence residual} (the ratio of the first to the
+  last denoising-step update magnitude) merely \emph{falls to chance} there (0.760 on T4, 0.404 on A100,
+  whose interval $[0.223, 0.603]$ contains $0.5$). Only a \emph{multi-feature} model over the two
+  transfers across both GPUs (0.842 and 0.833).
   \item \textbf{A training-free seam repair.} Switching modes creates a measurable discontinuity at the
   boundary. Blending the first latent frame of the new segment toward the boundary by 25\% reduces the
   seam by 25\% \emph{and} improves fidelity, with no training.
@@ -134,14 +145,13 @@ preprint is reused here.
 \paragraph{Causal and autoregressive video generation.}
 Streaming video generators produce a rollout chunk by chunk, and the train--test gap between teacher
 forcing and self-rolling is a central difficulty~\citep{huang2025self,zhu2026causal,zhao2026causal}.
-Recent recipes distil few-step causal diffusion models for interactive use~\citep{zheng2026causalrcm,zhao2026minwm},
-and autoregressive transformer generators scale similar ideas~\citep{ai2025magi1}. Our backbone is a
-causal distilled diffusion model of this family; we treat it as a black box and study its
-\emph{granularity}, not its training.
+Recent recipes distil few-step causal diffusion models for interactive
+use~\citep{zheng2026causalrcm,zhao2026minwm,ai2025magi1}. Our backbone is one of this family; we treat
+it as a black box and study its \emph{granularity}, not its training.
 
 \paragraph{Adaptive compute and routing.}
-Adaptive computation was introduced for recurrent networks~\citep{graves2016adaptive} and early exiting for
-classification~\citep{teerapittayanon2017branchynet,wang2017skipnet}. In generative video, recent work
+Adaptive computation was introduced for recurrent networks~\citep{graves2016adaptive}, early exiting for
+classification~\citep{teerapittayanon2017branchynet}, and dynamic routing~\citep{wang2017skipnet}. In generative video, recent work
 allocates computation by step or by token: dynamic step allocation~\citep{le2026dsa}, learned flexible
 chunking~\citep{ma2026flexforcing}, pruning and routing~\citep{wang2026pare}, layer reuse~\citep{adnan2025foresight},
 and caching of attention or flow state~\citep{ma2026flow,xu2026motionaware,wang2026inflight,song2026trac}.
@@ -153,9 +163,9 @@ and --- crucially --- we do not assume that routing pays; we characterise the re
 Ensembles of internal classifiers and early-exit policies read a network's own intermediate
 representations~\citep{sun2021early,xu2023lgvit,yoo2026adept,zeng2023consistentee,zhou2020bert}. We adapt this
 idea to \emph{generation-mode safety}: a probe on a diffusion transformer's prefill activations predicts
-whether a cheap mode is unsafe for the upcoming segment. Verification-first policies are related to
-speculative decoding~\citep{chen2026dflash,liu2024pearl,li2026is}, but speculation there
-operates over tokens; here it operates over the temporal-chunking axis.
+whether a cheap mode is unsafe for the upcoming segment. Speculative decoding is
+related~\citep{chen2026dflash,liu2024pearl,li2026is}, but speculates over tokens; here the axis is
+temporal chunking.
 
 \paragraph{Evaluation of generative video.}
 Video generative models are evaluated along many axes, including temporal
@@ -166,7 +176,8 @@ artefact of one metric.
 
 \paragraph{Decision models.}
 System One decision models return typed, calibrated answers rather than generated
-text~\citep{ling2026jev,geuter2026releasing,li2026llmasjev}. Our earlier study used such a model
+text~\citep{ling2026jev,geuter2026releasing,li2026llmasjev}. We refer to the decision model used here and
+in the earlier study as \emph{Jev} (a System One model, \texttt{jev-1.14.0}). The earlier study used Jev
 as an off-device routing oracle; here we test it as a \emph{critic} and report the boundary we find,
 consistent with independent evidence that pixel-only quality prediction with such models is
 unreliable~\citep{robitza2026jevqa}.
@@ -179,14 +190,22 @@ unreliable~\citep{robitza2026jevqa}.
 A causal generator with two granularity modes is rolled out over $T$ segments. A \emph{fine} mode emits
 one latent frame per chunk; a \emph{coarse} mode emits $K$ frames jointly. A policy chooses a mode per
 segment. We write $c_f, c_c$ for the per-segment cost of the two modes and $q_f, q_c$ for a quality
-functional (lower is better).
+functional (lower is better). We write $s_a/s_b$ for a \emph{schedule pair}: the fine generator runs $a$
+denoising steps per latent frame and the coarse generator $b$ steps per chunk. The one-frame-per-chunk
+fine mode is written $c_{1\text{-}1}$ and the three-frame-per-chunk coarse mode $c_{3\text{-}3}$; both run
+two steps by default, so the matched two-step pair is $s_2/s_2$, and a two-step-fine / one-step-coarse
+pair is $s_2/s_1$.
 
 \paragraph{The three preconditions.}
 \begin{description}
   \item[P1 (cost).] The cheap mode must satisfy $c_c < c_f$ on the deployment hardware at the chosen
   schedule. Because a coarse forward is heavier than a fine forward, the condition is a comparison of the
   measured per-forward ratio against the \emph{break-even} set by the number of function evaluations of
-  each schedule, $\rho_\text{be} = \mathrm{NFE}_f / \mathrm{NFE}_c$.
+  each schedule, $\rho_\text{be} = \mathrm{NFE}_f / \mathrm{NFE}_c$. Coarse is cheaper iff the measured
+  per-forward ratio $\pi$ is \emph{below} $\rho_\text{be}$.\footnote{For the matched two-step pair
+  ($\mathrm{NFE}_f = 34$, $\mathrm{NFE}_c = 12.67$) $\rho_\text{be} = 2.68$; for the two-step-fine /
+  one-step-coarse pair ($\mathrm{NFE}_c = 8.33$) $\rho_\text{be} = 4.08$. The prior study's single-step
+  break-even ($2.33$) is a different schedule and is not used for any claim in this paper.}
   \item[P2 (signal).] A quantity computable \emph{before} a segment is generated must separate segments
   for which the cheap mode is unsafe. The earlier study found that hand-crafted context statistics fail
   this test and that an off-device decision model passes it.
@@ -197,19 +216,20 @@ functional (lower is better).
 \paragraph{Matched design and label.}
 For every prompt and segment we generate \emph{both} modes from the same boundary and the same noise, so
 that the only difference is the generator. A segment is \emph{coarse-unsafe} when the coarse segment is
-farther from a high-quality reference than the fine segment. Unless stated otherwise the reference is a
-four-step fine rollout, and the label is
-$y = \mathbb{1}[\,d(m_c) > d(m_f)\,]$, where $m \in \{\text{fine},\text{coarse}\}$ is the generated
-segment and $d(\cdot)$ is its endpoint distance to the reference. The symbol $q$ denotes the
-\emph{expectation} of $d$ over segments, so $q_f = \mathbb{E}[d(m_f)]$.
+farther from a high-quality reference (a four-step fine rollout) than the fine segment, and the label is
+$y = \mathbb{1}[\,d(m_c) > d(m_f)\,]$, with $d(\cdot)$ the endpoint distance of a generated segment
+$m \in \{\text{fine},\text{coarse}\}$. The symbol $q$ denotes the \emph{expectation} of $d$, so
+$q_f = \mathbb{E}[d(m_f)]$.
 
 \paragraph{The report.}
-On T4 the report finds that coarse is \emph{not} cheaper for a two-step coarse schedule, that hand-crafted
-context statistics reach only 0.491 AUROC while the Jev text oracle reaches 0.788, and that the
-internal reference flips between GPUs. On A100 the cost ordering reverses. The report also shows that a
-two-threshold controller with a hysteresis band and a forced-recovery window stabilises switching, and
-that switching leaves a measurable \emph{seam}. Full details, code and audited result files are in the
-repository accompanying this paper.
+We call the audit of the preconditions the \emph{JevGAG report}, and the regime-aware method of
+\S\ref{sec:method} \emph{DDAG} (Deadline- and Drift-Aware Adaptive Temporal Granularity); the title
+frames the same method as \emph{regime-aware}. On T4 the report finds that coarse is \emph{not} cheaper
+for a two-step coarse schedule, that hand-crafted context statistics reach only 0.491 AUROC while the Jev
+text oracle reaches 0.788, and that the internal reference flips between GPUs. On A100 the cost ordering
+reverses. The report also shows that a two-threshold controller with a hysteresis band and a
+forced-recovery window stabilises switching, and that switching leaves a measurable \emph{seam}. Full
+details, code and audited result files are in the repository accompanying this paper.
 
 %% ===========================================================================
 \section{Method: regime-aware granularity}
@@ -238,17 +258,18 @@ Under Eq.~\eqref{eq:objective} the plane is partitioned into three policies:
 \end{equation}
 Equation~\eqref{eq:regime} is the method's core: a router is worth deploying \emph{only} in the middle
 region. Outside it, one mode dominates and the routing machinery is pure overhead. Figure~\ref{fig:regime}
-plots our operating points in this plane. Note that at every operating point we measure the
-cost-optimal, quality-optimal and constrained-optimal policies \emph{coincide} --- which is exactly why
-the adaptive region is empty here, and why the regime map is a statement about the regime rather than
-about a particular objective.
+plots our operating points in this plane. At two of our three operating points the cost-optimal and
+quality-optimal modes coincide; at T4 $s_2/s_2$ they do not, because the fine mode is cheaper while the
+coarse mode is closer to the reference. In every case the adaptive region is empty --- the coarse mode is
+either dearer ($r>1$) or no worse ($\Delta\le0$) --- which is why the regime map is a statement about the
+regime rather than about a particular objective.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_regime_map.pdf}
+  \includegraphics[width=0.86\textwidth]{figures/fig_regime_map.pdf}
   \caption{The regime map. The adaptive region (upper left, shaded) is empty at every operating point we
-  measured: across both GPUs the cheap mode was never worse, so the optimal policy is a fixed mode.
-  Markers are labelled with the schedule pair and the intrinsic-probe AUROC at that point.}
+  measured: across both GPUs the coarse mode was never worse in quality, so the optimal policy is a fixed
+  mode. Markers are labelled with the schedule pair and the intrinsic-probe AUROC at that point.}
   \label{fig:regime}
 \end{figure}
 
@@ -277,9 +298,11 @@ relative to its final one is a segment the coarse mode has not yet resolved. Bec
 from quantities the sampler already produces, it is free. Two cautions apply, and both matter for
 reproducibility. First, $\kappa$ must be scored by its \emph{direct} AUROC: passing a single scalar
 through a logistic regression re-learns its sign and silently reports $\max(\text{AUROC}, 1-\text{AUROC})$,
-which hides an inverted signal. Second, the reciprocal $v_S/v_1$ --- the natural first guess --- is
-\emph{inverted} on our data (direct AUROC $0.240$ on T4); we report this explicitly because the sign of
-a convergence statistic is not obvious \emph{a priori}.
+which hides an inverted signal. Second, a scalar and its reciprocal carry exactly complementary
+information: $\mathrm{AUROC}(v_S/v_1) = 1 - \mathrm{AUROC}(\kappa)$ holds identically, so the reciprocal
+$v_S/v_1$ is \emph{inverted by construction} on any data (direct AUROC $0.240$ on T4). The direction of a
+convergence statistic therefore cannot be read off the quantity itself; the sign must be fixed by
+definition and checked by direct AUROC.
 
 \subsection{Calibrated gating}
 \label{sec:gate}
@@ -287,11 +310,13 @@ a convergence statistic is not obvious \emph{a priori}.
 Given a score $u$ that increases with expected unsafety, a gate escalates a segment to the fine mode when
 $u > \tau$. Two regimes are distinguished. In \emph{routing} the gate chooses the mode before generation;
 in \emph{escalation} the cheap mode is always generated and the fine mode is recomputed when the gate
-fires. Let $c_p$ be the cost of obtaining the score once per segment (for the intrinsic probe this is the
-prefill forward the rollout already performs, so $c_p$ is one fine-mode forward). Escalation then costs
-$c_c + c_p + \rho c_f$ against $c_f$ for fixed fine, so a saving requires
+fires. Let $c_p$ be the \emph{incremental} cost of obtaining the score once per segment. For the intrinsic
+probe $c_p \approx 0$: the probe reads the prefill forward the rollout performs anyway (\S\ref{sec:probe}),
+so it adds no measurable latency, whereas a score that needs a separate forward would cost $c_p = c_f$.
+Escalation then costs $c_c + c_p + \rho c_f$ against $c_f$ for fixed fine, so a saving requires
 $\rho < 1 - r - c_p/c_f$; routing costs $c_p + (1-\rho)c_c + \rho c_f$ and saves whenever
-$r < 1 - c_p/c_f$. This is why the cost precondition, not the signal, is the binding constraint.
+$r < 1 - c_p/\bigl((1-\rho)c_f\bigr)$. This is why the cost precondition, not the signal, is the binding
+constraint.
 
 \subsection{Training-free seam repair}
 \label{sec:seam}
@@ -304,8 +329,10 @@ the boundary frame (Eq.~\eqref{eq:blend}),
 \tilde{x}_1 = (1-\alpha)\,x_1 + \alpha\,b ,
 \label{eq:blend}
 \end{equation}
-with $b$ the boundary latent and $\alpha$ a scalar. We sweep $\alpha$ and report the seam--fidelity
-frontier.
+with $b$ the boundary latent and $\alpha$ a scalar. Because the first frame is blended a fraction
+$\alpha$ toward the boundary, the boundary seam is $(1-\alpha)$ of its unrepaired value \emph{by
+construction}; the empirical questions are therefore fidelity and flicker, not the seam itself. We sweep
+$\alpha$ and report the seam--fidelity frontier.
 
 %% ===========================================================================
 \section{Experimental protocol}
@@ -343,7 +370,7 @@ experiment; all result files, kernels and Colab runners are public.
   \caption{Protocol per experiment. ``Prompts'' is the number of prompts; each prompt contributes four
   segments at a 57-frame horizon (six at 81 frames). The decoded-pixel endpoint was run on T4 only.}
   \label{tab:protocol}
-  \begin{tabular}{llcccc}
+  \begin{tabular}{llccc}
     \toprule
     experiment & GPU(s) & prompts & horizon & endpoints \\
     \midrule
@@ -353,7 +380,7 @@ experiment; all result files, kernels and Colab runners are public.
     online policy                & T4, A100 & 16 & 57 & latent \\
     intermediate band            & T4       & 16 & 57 & latent \\
     decoded-pixel endpoint       & T4       & 8  & 57 & latent, pixel \\
-    decision-model critic        & T4       & 16 & 57 & -- \\
+    decision-model critic        & T4       & 16 & 57 & pixel frames \\
     qualitative                  & T4       & 3  & 57 & pixel \\
     \bottomrule
   \end{tabular}
@@ -366,32 +393,29 @@ experiment; all result files, kernels and Colab runners are public.
 \subsection{Cost is hardware-conditional}
 Two ratios must be kept apart. The \emph{per-forward} ratio $\pi$ (seconds per single forward, coarse vs.\
 fine) is a hardware property; the \emph{per-segment cost} ratio $r = c_c/c_f$ used by
-Eq.~\eqref{eq:regime} depends on both the hardware and the schedule. For the prior study's single-step
-pair, $\pi = 3.01$ on T4 and $1.60$ on A100 against a break-even of $2.33$. In the matched two-step
-matrix of this work, $\pi = 2.97$ on T4 and $\pi = 1.74$ on A100 against a schedule break-even of
-$2.68$: the \emph{same} mode pair therefore sits on opposite sides of the inequality on the two GPUs.
-Consistently, the measured per-segment cost ratio is $r = 1.030$ for T4 $s_2/s_2$ (coarse $3\%$ dearer),
-$r = 0.728$ for T4 $s_2/s_1$ (coarse $27\%$ cheaper) and $r = 0.536$ for A100 $s_2/s_2$ (coarse $46\%$
-cheaper). The cost precondition is thus a property of the (schedule, accelerator) pair, exactly as
-Eq.~\eqref{eq:regime} requires.
+Eq.~\eqref{eq:regime} depends on the hardware and the schedule. In the matched two-step matrix,
+$\pi = 2.97$ on T4 and $1.74$ on A100 against a break-even of $2.68$, so the \emph{same} mode pair sits on
+opposite sides of the inequality on the two GPUs (the prior study's single-step pair gave $3.01$ and
+$1.60$ against $2.33$). Consistently, $r = 1.030$ for T4 $s_2/s_2$ (coarse $3\%$ dearer), $0.728$ for
+T4 $s_2/s_1$ (coarse $27\%$ cheaper) and $0.536$ for A100 $s_2/s_2$ (coarse $46\%$ cheaper). The cost
+precondition is thus a property of the (schedule, accelerator) pair, as Eq.~\eqref{eq:regime} requires.
 
 \subsection{An intrinsic signal, and the limit of single signals}
 Figure~\ref{fig:signal} summarises the signal study; every value is a \emph{direct} AUROC with a 95\,\%
 prompt-grouped bootstrap interval ($n = 64$ segments per GPU). Hand-crafted context statistics reach
-$0.491$. The intrinsic prefill probe reaches $\mathbf{0.798}$ $[0.639, 0.916]$ on T4, and the convergence
-residual of Eq.~\eqref{eq:kappa} reaches $\mathbf{0.760}$ $[0.629, 0.870]$; a multi-feature model over the
-two reaches $\mathbf{0.842}$ $[0.680, 0.938]$, the strongest signal we measure. The transfer result is the
-informative part. On A100 the probe \emph{inverts} to $0.143$ $[0.018, 0.368]$ and the residual falls to
-$0.404$ $[0.223, 0.603]$, yet the \emph{combined} model still reaches $\mathbf{0.833}$
-$[0.605, 0.971]$: no single signal transfers, the combination does. We record two methodological
-cautions. The reciprocal $v_S/v_1$ --- the natural first guess for a convergence statistic --- is
-\emph{inverted} on our data ($0.240$ $[0.130, 0.371]$), so the sign of such a statistic must be measured
-rather than assumed; and a scalar signal must never be scored through a single-feature logistic, which
-re-learns the sign and hides the inversion.
+$0.491$; the intrinsic prefill probe reaches $\mathbf{0.798}$ $[0.639, 0.916]$ on T4, the convergence
+residual of Eq.~\eqref{eq:kappa} reaches $\mathbf{0.760}$ $[0.629, 0.870]$, and a multi-feature model over
+the two reaches $\mathbf{0.842}$ $[0.680, 0.938]$. The transfer result is the informative part: on A100
+the probe \emph{inverts} to $0.143$ $[0.018, 0.368]$ and the residual merely \emph{falls to chance}, at
+$0.404$ $[0.223, 0.603]$ (interval contains $0.5$), yet the \emph{combined} model still reaches
+$\mathbf{0.833}$ $[0.605, 0.971]$ --- no single signal transfers, the combination does. Two cautions: the
+reciprocal $v_S/v_1$ is inverted \emph{by construction} ($\mathrm{AUROC}(v_S/v_1) =
+1-\mathrm{AUROC}(\kappa)$ identically), giving $0.240$ $[0.130, 0.371]$ on T4; and a scalar signal must
+never be scored through a single-feature logistic, which re-learns the sign and hides any inversion.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_signal.pdf}
+  \includegraphics[width=0.86\textwidth]{figures/fig_signal.pdf}
   \caption{Signal study: direct AUROCs with 95\,\% prompt-grouped bootstrap intervals ($n = 64$ segments
   per GPU). On T4 the intrinsic probe (0.798) and the convergence residual (0.760) both beat hand-crafted
   context statistics (0.491), and their combination reaches 0.842. On A100 the probe \emph{inverts}
@@ -403,7 +427,7 @@ re-learns the sign and hides the inversion.
 \subsection{Seam repair}
 Table~\ref{tab:seam} reports the repair sweep and Fig.~\ref{fig:seam} visualises it. A 25\,\% blend reduces the boundary seam by $25\,\%$
 ($0.614 \rightarrow 0.460$; $\Delta = -0.153$, CI $[-0.162, -0.145]$) and \emph{improves} latent fidelity
-($0.761 \rightarrow 0.754$; $\Delta = -0.0062$, CI $[-0.0121, -0.0050]$); a hard anchor removes the seam
+($0.761 \rightarrow 0.754$; $\Delta = -0.0062$, CI $[-0.0084, -0.0039]$); a hard anchor removes the seam
 entirely but costs fidelity ($0.799$). The independent flicker endpoint moves the other way: the coarse
 mode flickers \emph{less} than fine ($0.0148$ vs.\ $0.0189$), and the repair raises flicker to $0.0218$,
 above \emph{both}. The repair therefore trades a boundary discontinuity for interior flicker, and we
@@ -433,7 +457,7 @@ is mandatory: optimising the seam alone would have hidden the cost.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_seam.pdf}
+  \includegraphics[width=0.86\textwidth]{figures/fig_seam.pdf}
   \caption{Seam repair. (a) The seam--fidelity frontier: every $\alpha$ lowers the boundary
   discontinuity, and $\alpha = 0.25$ also improves fidelity, so the repair is a strict improvement on
   those two axes. (b) The independent flicker endpoint, which moves the other way: the coarse mode
@@ -446,17 +470,20 @@ is mandatory: optimising the seam alone would have hidden the cost.
 \subsection{Drift propagates on one GPU and reverses on the other}
 Figure~\ref{fig:drift} shows drift trajectories for three chains: all-fine, all-coarse, and one coarse
 segment followed by fine. On T4 ($n = 32$ prompts) the one-coarse chain remains above the all-fine chain
-for the rest of the rollout, and the elevation is significant at four of five tail segments
-($+0.031$, $+0.030$, $+0.021$, $+0.024$; every 95\,\% CI excludes zero); coarse error therefore
-\emph{propagates}. On A100 the coarse chain falls \emph{below} the fine chain and the comparison
-reverses; that arm rests on $n = 8$ prompts, which we record as a limitation. Drift is approximately
-linear in the segment index, and a transition model fitted on $(d_t, \text{mode}, t)$ predicts the next
-drift level at $R^2 = 0.944$ only because drift is smooth; the granularity choice adds nothing
-($R^2 = 0.008$ for the increment), so a lookahead controller has little headroom.
+for the rest of the rollout, with a significant elevation at four of five tail segments
+($+0.031$, $+0.030$, $+0.021$, $+0.024$); the fourth excludes zero only marginally (lower bound
+$0.000$), so we treat ``four of five'' as an upper bound. Coarse error therefore \emph{propagates}. One
+caveat: part of the elevation may be a \emph{switch-seam} effect rather than propagated coarse error,
+because on T4 the all-coarse chain lies \emph{below} the all-fine chain at five of six segments --- the
+coarse mode alone is not uniformly worse. On A100 the coarse chain falls \emph{below} the fine chain;
+that arm rests on $n = 8$ prompts, which we record as a limitation. Drift is approximately linear, and a
+transition model fitted on $(d_t, \text{mode}, t)$ predicts the next drift level at $R^2 = 0.944$ only
+because drift is smooth; the granularity choice adds nothing ($R^2 = 0.008$), so a lookahead controller
+has little headroom.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_drift.pdf}
+  \includegraphics[width=0.86\textwidth]{figures/fig_drift.pdf}
   \caption{Drift accumulation (81-frame horizon; $n = 32$ prompts on T4, $n = 8$ on A100, six segments
   each). On T4 a single coarse segment leaves a persistent elevation --- significant at four of five tail
   segments --- so coarse error propagates. On A100 the coarse chain lies below the fine chain: the
@@ -466,37 +493,43 @@ drift level at $R^2 = 0.944$ only because drift is smooth; the granularity choic
 
 \subsection{The regime map is empty: adaptivity does not pay here}
 Figure~\ref{fig:pareto} places every verified policy in the cost--quality plane, and
-Table~\ref{tab:policies} reports the numbers. On T4 with the two-step pair, fixed fine is both cheaper
-and better. On A100, and on T4 with a one-step coarse schedule, fixed coarse is both cheaper and closer to
-the reference. In all three cases the adaptive region of Eq.~\eqref{eq:regime} is empty, so the policy that
-is optimal under Eq.~\eqref{eq:objective} --- and simultaneously cost-optimal and quality-optimal --- is a
-fixed mode. This is the paper's central finding, and it is a \emph{design rule}: a practitioner computes
-$r$ and $\Delta$ once and deploys accordingly.
+Table~\ref{tab:policies} reports the numbers. On T4 with the two-step pair, fixed fine is cheaper but the
+coarse mode is closer to the reference (0.752 against 0.807) at $3\%$ extra cost.\footnote{The two T4
+fine-$s_2$ baselines ($281.2$\,s in the $s_2/s_2$ run and $299.9$\,s in the $s_2/s_1$ run) come from two
+separate capture runs of 16 prompts each, and differ by run-to-run wall-clock variance.} On A100, and on
+T4 with a one-step coarse schedule, fixed coarse is both cheaper and closer to the reference. In all
+three cases the adaptive region of Eq.~\eqref{eq:regime} is empty, so a fixed mode is optimal under
+Eq.~\eqref{eq:objective}: at T4 $s_2/s_2$ the cost- and quality-optimal modes differ (fine is cheaper,
+coarse is closer) whereas at the other two operating points they coincide. This is the paper's central
+finding, and it is a \emph{design rule}: a practitioner computes $r$ and $\Delta$ once and deploys
+accordingly.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_pareto.pdf}
+  \includegraphics[width=0.86\textwidth]{figures/fig_pareto.pdf}
   \caption{Cost--quality plane, lower-left better, one panel per GPU (16 prompts, 64 segments). At every
   operating point one fixed mode lies at or beyond the oracle on cost: the oracle router is never
   \emph{cost}-optimal, although it does buy quality along the frontier. The adaptive region of
-  Eq.~\eqref{eq:regime} is empty, which is why a fixed policy is optimal under Eq.~\eqref{eq:objective}.}
+  Eq.~\eqref{eq:regime} is empty, which is why a fixed policy is optimal under Eq.~\eqref{eq:objective}.
+  On T4 $s_2/s_2$ the cheaper baseline is fine while the closer one is coarse, so cost- and
+  quality-optimality diverge at that point.}
   \label{fig:pareto}
 \end{figure}
 
 An oracle router that knows the true coarse-unsafe label in advance bounds what any signal could buy. It
-is never \emph{cost}-optimal: it always spends more seconds than the cheapest fixed mode
-(T4 $s_2/s_2$: $287.3$ vs.\ $281.2$; T4 $s_2/s_1$: $240.0$ vs.\ $218.3$; A100: $49.8$ vs.\ $43.9$),
-because a router must pay both for the decision and for the segments it escalates. It does buy
-\emph{quality} --- a perfect signal moves along the frontier (A100: $+5.9$\,s for $-0.014$ endpoint
-distance) --- but it never changes which fixed mode is cost-optimal under Eq.~\eqref{eq:objective}. That
-is the precise sense in which the map, not the router, is the contribution: the signal decides where on
-the frontier a deployment sits; the regime decides which mode it should start from.
+is never \emph{cost}-optimal --- it always spends more seconds than the cheapest fixed mode
+(T4 $s_2/s_2$: $287.3$ vs.\ $281.2$; T4 $s_2/s_1$: $240.0$ vs.\ $218.3$; A100: $49.8$ vs.\ $43.9$) ---
+because it must pay both for the decision and for escalated segments. It does buy \emph{quality} (A100:
+$+5.9$\,s for $-0.014$ endpoint distance), but it never changes which fixed mode is cost-optimal. The
+signal decides where on the frontier a deployment sits; the regime decides which mode it should start
+from.
 
 \begin{table}
   \centering
   \caption{Policies per operating point. ``Quality'' is the mean endpoint distance (lower is better);
   ``DiT'' is total sampling seconds over 16 prompts (64 segments). All values are verified against the
-  stored result files.}
+  stored result files. At T4 $s_2/s_2$ the cheaper mode (fine) is not the closer mode (coarse); the
+  oracle router is never cost-optimal because it pays for the decision and for escalated segments.}
   \label{tab:policies}
   \begin{tabular}{llccc}
     \toprule
@@ -504,8 +537,10 @@ the frontier a deployment sits; the regime decides which mode it should start fr
     \midrule
     T4, $s_2/s_2$  & fixed fine   & \textbf{281.2} & \textbf{0.807} & \textbf{yes} \\
                    & fixed coarse & 289.6 & 0.752 & no (dearer) \\
+                   & oracle route & 287.3 & 0.735 & no (adds cost) \\
     T4, $s_2/s_1$  & fixed fine   & 299.9 & 0.806 & no (dearer) \\
                    & fixed coarse & \textbf{218.3} & \textbf{0.755} & \textbf{yes} \\
+                   & oracle route & 240.0 & 0.733 & no (adds cost) \\
     A100, $s_2/s_2$& fixed fine   & 81.9  & 0.780 & no (dearer) \\
                    & fixed coarse & \textbf{43.9} & \textbf{0.721} & \textbf{yes} \\
                    & oracle route & 49.8  & 0.707 & no (adds cost) \\
@@ -516,12 +551,14 @@ the frontier a deployment sits; the regime decides which mode it should start fr
 \subsection{A third endpoint agrees: decoded pixels}
 Table~\ref{tab:policies} rests on the latent endpoint. To check that the conclusion is not an artefact of
 that metric we re-ran the matched design on T4 for a matched subset of $n = 8$ prompts (32 segments,
-the same protocol as Table~\ref{tab:protocol}) and decoded every segment, measuring the distance in
-\emph{pixel} space. The coarse mode is again both cheaper ($0.711$ of the fine cost) and closer to the
-reference ($0.2511$ against $0.2686$). Three independent endpoints --- latent, decoded-pixel and temporal
-flicker --- therefore agree that the cheap mode is not worse, which is what licenses the fixed-mode
-conclusion. The decoded-pixel endpoint was run on T4 only; the A100 quality axis is latent-only, which we
-record as a limitation.
+the same protocol as Table~\ref{tab:protocol}) and decoded every segment. This run uses the $s_2/s_1$
+pair of Table~\ref{tab:summary} (fine $c_{1\text{-}1}$ at two steps, coarse $c_{3\text{-}3}$ at one step);
+in this smaller run the coarse mode is both cheaper ($0.711$ of the fine cost --- the $s_2/s_1$ cost
+ratio \emph{of this $8$-prompt run}, against $r = 0.728$ in the $16$-prompt run of
+Table~\ref{tab:summary}) and closer by decoded pixels ($0.2511$ against $0.2686$). Three independent
+endpoints --- latent, decoded-pixel and flicker --- therefore agree that the coarse mode is not worse,
+which licenses the fixed-mode conclusion. The decoded-pixel endpoint was run on T4 only, which we record
+as a limitation.
 
 \subsection{Qualitative behaviour}
 Figure~\ref{fig:qual} shows \emph{every} generated image of the study in one frame: all six matched cases
@@ -531,10 +568,11 @@ visibly \emph{different} content --- for the bird prompt the wing pose differs s
 waterfall foam is reorganised --- yet no independent endpoint ranks the coarse mode worse. This is the
 qualitative counterpart of the regime map: the modes differ, but neither dominates on quality.
 
-\begin{figure*}
-  \centering
+\clearpage
+\begin{center}
   \includegraphics[width=\textwidth]{figures/fig_qualitative.png}
-  \caption{All generated images of the study in one frame: six matched cases (three prompts $\times$ two
+\end{center}
+\captionof{figure}{All generated images of the study in one frame: six matched cases (three prompts $\times$ two
   segments), each from the same boundary and the same noise, on T4. A segment is three latent frames
   (twelve pixel frames) following a shared three-frame coarse prefix. Columns: fine ($c_{1\text{-}1}$,
   two steps), coarse ($c_{3\text{-}3}$, two steps), coarse with the 25\,\% seam repair, and the absolute
@@ -542,8 +580,7 @@ qualitative counterpart of the regime map: the modes differ, but neither dominat
   and the waterfall foam both change --- yet no independent endpoint ranks coarse as worse. The matched
   rollout videos (all policies, both GPUs) are public at
   \url{https://www.kaggle.com/datasets/ajjisan/jev-adaptive-granularity-videos}.}
-  \label{fig:qual}
-\end{figure*}
+\label{fig:qual}
 
 Table~\ref{tab:summary} collects every measured quantity for the three operating points in one frame.
 
@@ -553,7 +590,9 @@ Table~\ref{tab:summary} collects every measured quantity for the three operating
   per-forward ratio and $\rho_{\text{be}}$ the schedule break-even (coarse is cheaper iff
   $\pi < \rho_{\text{be}}$); $r$ is the per-segment cost ratio and $\Delta = q_c - q_f$ the quality gap.
   ``DiT'' is the total sampling seconds over 16 prompts. The adaptive region of Eq.~\eqref{eq:regime} is
-  empty at every operating point.}
+  empty at every operating point because the coarse mode is either dearer ($r>1$) or no worse
+  ($\Delta\le0$); at T4 $s_2/s_2$ the cost-optimal and quality-optimal modes differ (fine is cheaper,
+  coarse is closer).}
   \label{tab:summary}
   \footnotesize
   \setlength{\tabcolsep}{3pt}
@@ -577,6 +616,37 @@ Table~\ref{tab:summary} collects every measured quantity for the three operating
 \end{table}
 
 %% ===========================================================================
+\subsection{Boundaries from the remaining experiments}
+\label{sec:boundaries-extra}
+
+Several further experiments bound the scope of the method; Table~\ref{tab:extra} summarises them so that
+every claim in the abstract and in Fig.~\ref{fig:arch} points to a section or table.
+
+\begin{table}
+  \centering
+  \caption{Remaining experiments and the boundary each establishes. All values are from the stored result
+  files. ``Status'' is the disposition of the naive formulation.}
+  \label{tab:extra}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{p{0.22\columnwidth}p{0.56\columnwidth}c}
+    \toprule
+    experiment & result & status \\
+    \midrule
+    decision-model critic & a Jev critic shown only pixels is at chance: discontinuity $0.497$, plausible
+    $0.514$, combined $0.500$ (perm $p \ge 0.42$) & open \\
+    online policy (T4, A100) & the probe-routed policy never beats the best fixed mode; the oracle router
+    is never cost-optimal & boundary \\
+    intermediate band (T4 $s_2/s_1$) & coarse $27\%$ cheaper and the latent endpoint does not penalise it,
+    so the best policy is still fixed coarse & boundary \\
+    closed loop (T4, 48 pairs) & free post-generation evidence alone $0.725$; prior + previous-segment
+    evidence $0.690 \rightarrow 0.737$ & bounded \\
+    escalation gate & NO-GO: the cost model, not the signal, binds & boundary \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+%% ===========================================================================
 \section{Boundaries and guidance}
 \label{sec:boundaries}
 
@@ -586,18 +656,20 @@ status. We treat a boundary as a result: it delimits the region in which a formu
 \begin{table}
   \centering
   \caption{Boundary ledger. Each entry is a measured limit of a naive formulation, with its resolution or
-  status.}
+  status and the section or table that establishes it.}
   \label{tab:boundary}
-  \begin{tabular}{p{0.42\columnwidth}p{0.42\columnwidth}c}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{p{0.33\columnwidth}p{0.30\columnwidth}c p{0.17\columnwidth}}
     \toprule
-    boundary (measured) & resolution & status \\
+    boundary (measured) & resolution & status & where \\
     \midrule
-    hand-crafted context statistics do not predict hard segments (0.491, prior report) & intrinsic prefill probe (0.798, this work) & resolved \\
-    switching costs a boundary discontinuity & training-free repair ($-25\%$) & resolved \\
-    coarse error propagates on T4 & quantified: linear, not compounding & characterised \\
-    signals do not transfer across GPUs (0.798 $\rightarrow$ 0.143) & signals are regime properties & open \\
-    a pixel-only critic is at chance (0.497, this work) & critics need context, not pixels & open \\
-    the repair raises interior flicker & multi-endpoint protocol required & open \\
+    hand-crafted context statistics do not predict hard segments (0.491, prior report) & intrinsic prefill probe (0.798, this work) & resolved & \S\ref{sec:probe}; \S\ref{sec:results} \\
+    switching costs a boundary discontinuity & training-free repair ($-25\%$) & resolved & \S\ref{sec:seam}; Table~\ref{tab:seam} \\
+    coarse error propagates on T4 & quantified: linear, not compounding & characterised & \S\ref{sec:results}; Fig.~\ref{fig:drift} \\
+    signals do not transfer across GPUs (0.798 $\rightarrow$ 0.143) & signals are regime properties & open & \S\ref{sec:results}; Fig.~\ref{fig:signal} \\
+    a pixel-only critic is at chance (0.497, this work) & critics need context, not pixels & open & \S\ref{sec:boundaries-extra}; Table~\ref{tab:extra} \\
+    the repair raises interior flicker & multi-endpoint protocol required & open & \S\ref{sec:seam}; Table~\ref{tab:seam} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -610,31 +682,29 @@ the endpoint used to fit it.
 
 \paragraph{Limitations and threats to validity.}
 The paper's own thesis is that everything here is regime-dependent, so the scope of the claims matters.
-(i)~\emph{One backbone}: every experiment uses a single causal distilled diffusion model
-(Wan2.1-1.3B, Causal-rCM); the regime map is a method, not a claim about other backbones.
-(ii)~\emph{Two accelerators, one schedule family}: T4 and A100-80GB were tested, and the probe inversion
+(i)~\emph{One backbone}: a single causal distilled diffusion model (Wan2.1-1.3B, Causal-rCM); the regime
+map is a method, not a claim about other backbones.
+(ii)~\emph{Two accelerators, one schedule family}: the probe inversion
 ($0.798 \rightarrow 0.143$) is direct evidence that \emph{no} number here should be assumed to transfer.
 (iii)~\emph{Small samples and a single seed}: the A100 drift arm uses $n = 8$ prompts against $n = 32$ on
-T4, and all experiments use one seed, so the intervals are wide.
+T4, so the intervals are wide.
 (iv)~\emph{Asymmetric endpoint coverage}: the decoded-pixel endpoint was run on T4 only.
 (v)~\emph{No step-allocation or chunk-shape baseline}: the closest published alternatives are discussed
-but not re-implemented, so that comparison is qualitative.
-(vi)~\emph{One signal family}: only prefill activations and sampler update magnitudes are probed; other
-internal signals may transfer where these do not. None of these affects the central negative result ---
-the cheap mode was not worse at any measured operating point --- but each bounds its generalisation.
+but not re-implemented.
+(vi)~\emph{One signal family}: only prefill activations and sampler update magnitudes are probed. None of
+these affects the central negative result --- the coarse mode was not worse in quality at any measured
+operating point --- but each bounds its generalisation.
 
 \paragraph{Generalisation.}
-What generalises is the \emph{procedure}: measure $r$ and $\Delta$ on the target (accelerator, schedule);
-audit any candidate signal \emph{per GPU} and by direct AUROC; prefer a multi-feature model when single
-signals invert; and never certify with the endpoint used to fit. What does not generalise is any
-\emph{number} reported here.
+The \emph{procedure} generalises: measure $r$ and $\Delta$ on the target (accelerator, schedule); audit
+any candidate signal \emph{per GPU} and by direct AUROC; prefer a multi-feature model when single signals
+invert; never certify with the endpoint used to fit. The \emph{numbers} do not.
 
 \paragraph{Ablations.}
-Two design choices are evaluated from stored results without new computation. \emph{Probe depth}: the
-30-block sweep underlying Fig.~\ref{fig:signal} gives AUROC between $0.71$ and $0.80$ for every block on
-T4, so the result is not an artefact of block $11$. \emph{Gate threshold}: the escalation-rate sweep
-underlying Table~\ref{tab:policies} traces the whole $\rho$--quality frontier, and no point on it beats
-the fixed policy at any operating point.
+From stored results: the 30-block sweep underlying Fig.~\ref{fig:signal} gives AUROC $0.71$--$0.80$ for
+every block on T4, so the result is not an artefact of block $11$; and the escalation-rate sweep
+underlying Table~\ref{tab:policies} traces the whole $\rho$--quality frontier, where no point beats the
+fixed policy.
 
 %% ===========================================================================
 \section{Conclusion}
@@ -644,10 +714,13 @@ Adaptive temporal granularity for causal video world models is not a universal w
 depends on the accelerator, the schedule and the endpoint. We measured the three preconditions on two
 GPUs, built an intrinsic signal that needs no external oracle, repaired the switch seam without training,
 and derived a regime map that states exactly when a router is worth deploying. At every operating point we
-measured, the cheap mode was cheaper and no worse, so a fixed policy is optimal and the adaptive region is
-empty. We regard the boundary analysis --- the non-transfer of signals, the linearity of drift, and the
-context requirement of decision-model critics --- as the paper's most reusable output, because each
-boundary is a design constraint that can be checked before deployment.
+measured, the coarse mode was never worse in quality --- on the latent endpoint for both GPUs and on the
+decoded-pixel and flicker endpoints for T4 --- so a fixed policy is optimal under the stated objective and
+the adaptive region is empty. Where the coarse mode was also dearer (T4 $s_2/s_2$), fine is the
+cost-optimal choice even though coarse is closer to the reference. We regard the boundary analysis --- the
+non-transfer of signals, the linearity of drift, and the context requirement of decision-model critics ---
+as the paper's most reusable output, because each boundary is a design constraint that can be checked
+before deployment.
 
 %% ===========================================================================
 \section*{Declaration of competing interest}
