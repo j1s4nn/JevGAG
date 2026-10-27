@@ -1,0 +1,54 @@
+% Cost-quality Pareto frontier (audit REC-1): every verified policy, per GPU.
+% Lower-left is better (less compute, closer to the reference).
+\documentclass[border=6pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
+\usepackage{xcolor}
+\definecolor{finec}{HTML}{1668D6}
+\definecolor{coarsec}{HTML}{B26A00}
+\definecolor{oraclec}{HTML}{0F9D76}
+\definecolor{mut}{HTML}{5A6B80}
+
+\begin{document}
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=1.9cm},
+  width=7.0cm, height=5.4cm,
+  xlabel={DiT seconds (16 prompts, 64 segments)},
+  ylabel={endpoint distance (lower is better)},
+  tick label style={font=\small,color=mut},
+  label style={font=\small,color=mut},
+  axis line style={draw=mut!60},
+  grid=major, grid style={draw=mut!12},
+  legend style={font=\scriptsize,at={(0.02,0.98)},anchor=north west,draw=mut!40,fill=white},
+]
+
+\nextgroupplot[title={\small\bfseries Tesla T4},xmin=200,xmax=320,ymin=0.718,ymax=0.826,
+  xtick={220,240,260,280,300,320},ytick={0.72,0.74,0.76,0.78,0.80,0.82}]
+\addplot[only marks,mark=*,mark size=2.8pt,color=finec]     coordinates {(281.2,0.8074)(299.9,0.8063)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=coarsec] coordinates {(289.6,0.7524)(218.3,0.7547)};
+\addplot[only marks,mark=triangle*,mark size=3.2pt,color=oraclec] coordinates {(287.3,0.7350)(240.0,0.7327)};
+\addplot[color=mut!60,dashed,line width=0.5pt] coordinates {(218.3,0.7547)(281.2,0.8074)};
+\node[font=\scriptsize,color=coarsec,anchor=north] at (axis cs:218.3,0.7520) {$s_2/s_1$};
+\node[font=\scriptsize,color=coarsec,anchor=south west] at (axis cs:289.6,0.7540) {$s_2/s_2$};
+\node[font=\scriptsize,color=finec,anchor=west] at (axis cs:281.2,0.8080) {fine};
+\legend{fixed fine, fixed coarse, oracle router}
+
+\nextgroupplot[title={\small\bfseries A100-80GB},xmin=35,xmax=95,ymin=0.695,ymax=0.795,
+  xtick={40,50,60,70,80,90},ytick={0.70,0.72,0.74,0.76,0.78}]
+\addplot[only marks,mark=*,mark size=2.8pt,color=finec]     coordinates {(81.9,0.7798)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=coarsec] coordinates {(43.9,0.7212)};
+\addplot[only marks,mark=triangle*,mark size=3.2pt,color=oraclec] coordinates {(49.8,0.7069)};
+\node[font=\scriptsize,color=finec,anchor=south] at (axis cs:81.9,0.7820) {fine};
+\node[font=\scriptsize,color=coarsec,anchor=north] at (axis cs:43.9,0.7190) {coarse};
+\node[font=\scriptsize,color=oraclec,anchor=west] at (axis cs:49.8,0.7055) {oracle};
+
+\end{groupplot}
+\end{tikzpicture}
+\end{document}

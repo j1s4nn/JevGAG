@@ -10,6 +10,17 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{xcolor}
+% --- float placement: keep figures near their references in a dense single-column layout ---
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{8}
+\setcounter{dbltopnumber}{3}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.5}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.85}
+\renewcommand{\dbltopfraction}{0.92}
+\renewcommand{\dblfloatpagefraction}{0.85}
+
 
 \shorttitle{Regime-Aware Temporal Granularity}
 \shortauthors{H. M. Jisan}
@@ -106,7 +117,7 @@ seam repair, and derives the regime map. The audit summarised in \S\ref{sec:back
 \emph{report}) is an unpublished artifact of the accompanying repository; no text or figure of the prior
 preprint is reused here.
 
-\begin{figure*}[t]
+\begin{figure*}
   \centering
   \includegraphics[width=\textwidth]{figures/fig_architecture.pdf}
   \caption{The programme. The earlier study established three preconditions; the report in this work
@@ -232,7 +243,7 @@ cost-optimal, quality-optimal and constrained-optimal policies \emph{coincide} -
 the adaptive region is empty here, and why the regime map is a statement about the regime rather than
 about a particular objective.
 
-\begin{figure}[t]
+\begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/fig_regime_map.pdf}
   \caption{The regime map. The adaptive region (upper left, shaded) is empty at every operating point we
@@ -327,7 +338,7 @@ evaluated leave-one-prompt-out. Costs are wall-clock DiT seconds around the samp
 device synchronisation. Table~\ref{tab:protocol} records the sample size and endpoint coverage of every
 experiment; all result files, kernels and Colab runners are public.
 
-\begin{table}[t]
+\begin{table}
   \centering
   \caption{Protocol per experiment. ``Prompts'' is the number of prompts; each prompt contributes four
   segments at a 57-frame horizon (six at 81 frames). The decoded-pixel endpoint was run on T4 only.}
@@ -379,7 +390,7 @@ cautions. The reciprocal $v_S/v_1$ --- the natural first guess for a convergence
 rather than assumed; and a scalar signal must never be scored through a single-feature logistic, which
 re-learns the sign and hides the inversion.
 
-\begin{figure}[t]
+\begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/fig_signal.pdf}
   \caption{Signal study: direct AUROCs with 95\,\% prompt-grouped bootstrap intervals ($n = 64$ segments
@@ -400,7 +411,7 @@ above \emph{both}. The repair therefore trades a boundary discontinuity for inte
 report the trade rather than a single metric. This is why an endpoint independent of the compared modes
 is mandatory: optimising the seam alone would have hidden the cost.
 
-\begin{table}[t]
+\begin{table}
   \centering
   \caption{Seam repair (T4, 32 matched segments). Lower is better in every column; \emph{fidelity} is the
   distance to the reference, so a lower value is closer. The 25\,\% blend reduces the seam and improves
@@ -421,6 +432,18 @@ is mandatory: optimising the seam alone would have hidden the cost.
   \end{tabular}
 \end{table}
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_seam.pdf}
+  \caption{Seam repair. (a) The seam--fidelity frontier: every $\alpha$ lowers the boundary
+  discontinuity, and $\alpha = 0.25$ also improves fidelity, so the repair is a strict improvement on
+  those two axes. (b) The independent flicker endpoint, which moves the other way: the coarse mode
+  flickers \emph{less} than fine, and the repair raises flicker above both. The two panels together are
+  the argument for a multi-endpoint protocol --- the metric being optimised is not the metric that
+  certifies.}
+  \label{fig:seam}
+\end{figure}
+
 \subsection{Drift propagates on one GPU and reverses on the other}
 Figure~\ref{fig:drift} shows drift trajectories for three chains: all-fine, all-coarse, and one coarse
 segment followed by fine. On T4 ($n = 32$ prompts) the one-coarse chain remains above the all-fine chain
@@ -432,7 +455,7 @@ linear in the segment index, and a transition model fitted on $(d_t, \text{mode}
 drift level at $R^2 = 0.944$ only because drift is smooth; the granularity choice adds nothing
 ($R^2 = 0.008$ for the increment), so a lookahead controller has little headroom.
 
-\begin{figure}[t]
+\begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/fig_drift.pdf}
   \caption{Drift accumulation (81-frame horizon; $n = 32$ prompts on T4, $n = 8$ on A100, six segments
@@ -443,20 +466,34 @@ drift level at $R^2 = 0.944$ only because drift is smooth; the granularity choic
 \end{figure}
 
 \subsection{The regime map is empty: adaptivity does not pay here}
-Table~\ref{tab:policies} reports the policies. On T4 with the two-step pair, fixed fine is both cheaper
+Figure~\ref{fig:pareto} places every verified policy in the cost--quality plane, and
+Table~\ref{tab:policies} reports the numbers. On T4 with the two-step pair, fixed fine is both cheaper
 and better. On A100, and on T4 with a one-step coarse schedule, fixed coarse is both cheaper and closer to
 the reference. In all three cases the adaptive region of Eq.~\eqref{eq:regime} is empty, so the policy that
 is optimal under Eq.~\eqref{eq:objective} --- and simultaneously cost-optimal and quality-optimal --- is a
 fixed mode. This is the paper's central finding, and it is a \emph{design rule}: a practitioner computes
 $r$ and $\Delta$ once and deploys accordingly.
 
-The headroom is not merely small, it is \emph{negative}: an oracle router that knows the true
-coarse-unsafe label in advance is no better than fixed coarse at any operating point (A100: $49.8$\,s
-against $43.9$\,s, because escalation only adds computation when the cheap mode already dominates). No
-signal, however accurate, can recover what the regime does not offer. This is the cleanest statement of
-why the map --- not the router --- is the contribution.
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_pareto.pdf}
+  \caption{Cost--quality plane, lower-left better, one panel per GPU (16 prompts, 64 segments). At every
+  operating point one fixed mode lies at or beyond the oracle on cost: the oracle router is never
+  \emph{cost}-optimal, although it does buy quality along the frontier. The adaptive region of
+  Eq.~\eqref{eq:regime} is empty, which is why a fixed policy is optimal under Eq.~\eqref{eq:objective}.}
+  \label{fig:pareto}
+\end{figure}
 
-\begin{table}[t]
+An oracle router that knows the true coarse-unsafe label in advance bounds what any signal could buy. It
+is never \emph{cost}-optimal: it always spends more seconds than the cheapest fixed mode
+(T4 $s_2/s_2$: $287.3$ vs.\ $281.2$; T4 $s_2/s_1$: $240.0$ vs.\ $218.3$; A100: $49.8$ vs.\ $43.9$),
+because a router must pay both for the decision and for the segments it escalates. It does buy
+\emph{quality} --- a perfect signal moves along the frontier (A100: $+5.9$\,s for $-0.014$ endpoint
+distance) --- but it never changes which fixed mode is cost-optimal under Eq.~\eqref{eq:objective}. That
+is the precise sense in which the map, not the router, is the contribution: the signal decides where on
+the frontier a deployment sits; the regime decides which mode it should start from.
+
+\begin{table}
   \centering
   \caption{Policies per operating point. ``Quality'' is the mean endpoint distance (lower is better);
   ``DiT'' is total sampling seconds over 16 prompts (64 segments). All values are verified against the
@@ -487,19 +524,22 @@ conclusion. The decoded-pixel endpoint was run on T4 only; the A100 quality axis
 record as a limitation.
 
 \subsection{Qualitative behaviour}
-Figure~\ref{fig:qual} shows matched fine, coarse and repaired segments with an amplified difference map.
-The modes produce visibly \emph{different} content --- for the bird prompt the wing pose differs
-substantially --- yet no endpoint ranks the coarse mode worse. This is the qualitative counterpart of the
-regime map: the modes differ, but neither dominates on quality.
+Figure~\ref{fig:qual} shows \emph{every} generated image of the study in one frame: all six matched cases
+(three prompts $\times$ two segments), each rendered in the fine, coarse and repaired modes from the same
+boundary and the same noise, with the amplified difference between fine and coarse. The modes produce
+visibly \emph{different} content --- for the bird prompt the wing pose differs substantially, and the
+waterfall foam is reorganised --- yet no independent endpoint ranks the coarse mode worse. This is the
+qualitative counterpart of the regime map: the modes differ, but neither dominates on quality.
 
-\begin{figure*}[t]
+\begin{figure*}
   \centering
   \includegraphics[width=\textwidth]{figures/fig_qualitative.png}
-  \caption{Matched segments (T4) generated from the same boundary and the same noise. A segment is three
-  latent frames (twelve pixel frames) following a shared three-frame coarse prefix. Columns: fine, coarse,
-  coarse with the 25\,\% seam repair, and the absolute difference between fine and coarse, amplified
-  $\times 5$. The modes differ in content --- for the bird prompt the wing pose differs substantially ---
-  yet no independent endpoint ranks coarse as worse.}
+  \caption{All generated images of the study in one frame: six matched cases (three prompts $\times$ two
+  segments), each from the same boundary and the same noise, on T4. A segment is three latent frames
+  (twelve pixel frames) following a shared three-frame coarse prefix. Columns: fine ($c_{1\text{-}1}$,
+  two steps), coarse ($c_{3\text{-}3}$, two steps), coarse with the 25\,\% seam repair, and the absolute
+  difference between fine and coarse amplified $\times 5$. The modes differ in content --- the bird pose
+  and the waterfall foam both change --- yet no independent endpoint ranks coarse as worse.}
   \label{fig:qual}
 \end{figure*}
 
@@ -510,7 +550,7 @@ regime map: the modes differ, but neither dominates on quality.
 Table~\ref{tab:boundary} lists the boundaries this study establishes, each with its resolution or its
 status. We treat a boundary as a result: it delimits the region in which a formulation is valid.
 
-\begin{table}[t]
+\begin{table}
   \centering
   \caption{Boundary ledger. Each entry is a measured limit of a naive formulation, with its resolution or
   status.}
