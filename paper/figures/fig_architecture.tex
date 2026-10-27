@@ -54,9 +54,9 @@
 
 % ---------------- row 2: SIGNAL ----------------
 \node[cell,text width=4.5cm,draw=priorc!60,fill=rowbg,below=3mm of l1] (l2)
-  {\textbf{signal}\\[1pt] cheap context statistics do \emph{not} predict coarse-unsafe segments};
+  {\textbf{signal}\\[1pt] hand-crafted context statistics do \emph{not} predict coarse-unsafe segments};
 \node[cell,text width=4.9cm,draw=reportc!55,below=3mm of r1] (r2)
-  {\textbf{P2 \textperiodcentered\ signal}\\[1pt] hand-crafted 0.491 (fails) \textperiodcentered\ \textbf{Jev text 0.788}};
+  {\textbf{P2 \textperiodcentered\ signal}\\[1pt] hand-crafted context 0.491 (fails) \textperiodcentered\ \textbf{Jev text oracle 0.788}};
 \node[cell,text width=5.4cm,draw=methodc!55,below=3mm of m1] (m2)
   {\textbf{intrinsic probe}\\[1pt] prefill activations \textbf{0.798}; with residual \textbf{0.842}};
 
@@ -83,7 +83,7 @@
    \textbf{JevGAG} grounds the audit on a System One oracle:
    \textbf{Jev text} is the only pre-generation signal that works in the report ($0.788$);
    \textbf{Jev image} certifies identity independently ($\rho=+1.000$ vs.\ CLIP);
-   a \textbf{typed Jev critic} on raw frames is \emph{bounded} --- decision models need context, not pixels alone.};
+   a \textbf{pixel-only Jev critic} is at chance (\textbf{0.497}) --- decision models need context, not pixels alone.};
 
 % ---------------- OUTCOME ----------------
 \node[rounded corners=2pt,draw=methodc!70,fill=methodc!6,align=center,inner sep=5pt,

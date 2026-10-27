@@ -54,13 +54,15 @@
   coordinates {(0.728,-0.0516)};
 \legend{T4 $s_2/s_2$ (probe 0.798), A100 $s_2/s_2$ (0.143), T4 $s_2/s_1$ (0.785)}
 
-% ---- point labels, placed to avoid every marker and region label ----
-\node[font=\scriptsize,color=bluec,anchor=south east] at (axis cs:1.020,-0.060)
-  {T4, small gap};
-\node[font=\scriptsize,color=greenc,anchor=west] at (axis cs:0.552,-0.062)
-  {A100};
-\node[font=\scriptsize,color=orangec,anchor=south] at (axis cs:0.728,-0.047)
-  {T4, large gap};
+% ---- point labels, disambiguated: r = cost ratio, Delta = quality gap ----
+% (an earlier draft labelled these "small gap" / "large gap", which referred to the
+%  cost gap on the x-axis rather than the plotted quality gap on the y-axis.)
+\node[font=\scriptsize,color=bluec,anchor=north,align=center] at (axis cs:1.030,-0.061)
+  {T4 $s_2/s_2$\\$r{=}1.03$, $\Delta{=}{-}0.055$};
+\node[font=\scriptsize,color=greenc,anchor=west,align=left] at (axis cs:0.554,-0.0586)
+  {A100 $s_2/s_2$\\$r{=}0.54$, $\Delta{=}{-}0.059$};
+\node[font=\scriptsize,color=orangec,anchor=south,align=center] at (axis cs:0.728,-0.045)
+  {T4 $s_2/s_1$\\$r{=}0.73$, $\Delta{=}{-}0.051$};
 
 \end{axis}
 \end{tikzpicture}

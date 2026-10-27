@@ -108,7 +108,7 @@
     <div class="grid">
       <div class="card"><span class="k">cost</span><p>The same mode pair sits on <strong>opposite sides</strong>
         of the NFE break-even inequality on T4 and A100.</p></div>
-      <div class="card"><span class="k">signal</span><p>Cheap context statistics reach only <strong>0.491</strong>
+      <div class="card"><span class="k">signal</span><p>Hand-crafted context statistics reach only <strong>0.491</strong>
         AUROC; an off-device <strong>Jev</strong> text oracle reaches <strong>0.788</strong>.</p></div>
       <div class="card"><span class="k">endpoint</span><p>The internal reference <strong>flips</strong> between
         GPUs, so an endpoint independent of the compared modes is mandatory.</p></div>
@@ -125,7 +125,7 @@
     <div class="grid">
       <div class="card"><span class="k">intrinsic probe</span><p><strong>0.798 AUROC</strong> from the
         generator's own prefill activations — no external oracle.</p></div>
-      <div class="card"><span class="k">convergence residual</span><p><strong>0.752</strong> on T4;
+      <div class="card"><span class="k">convergence residual</span><p><strong>0.760</strong> on T4;
         <strong>probe + residual = 0.842</strong>, the strongest signal in the programme.</p></div>
       <div class="card"><span class="k">seam repair</span><p>A <strong>25% latent blend</strong> cuts the
         seam <strong>25%</strong> and improves fidelity — training-free.</p></div>
@@ -150,12 +150,12 @@
     <p class="muted">Every earlier limitation is recorded as a <strong>boundary</strong> — a measured limit
       of the naive formulation — and each either has a resolution or defines the next experiment.</p>
     <div class="grid">
-      <div class="card"><span class="k">resolved</span><p>Weak context signals (0.491) → <strong>intrinsic
+      <div class="card"><span class="k">resolved</span><p>Hand-crafted context signals (0.491) → <strong>intrinsic
         probe 0.798</strong>; the switch seam → <strong>training-free repair −25%</strong>.</p></div>
       <div class="card"><span class="k">characterised</span><p>Drift propagation: real on T4, linear, and
         not predictable from the policy.</p></div>
       <div class="card"><span class="k">open</span><p>Signals do not transfer across GPUs (0.798 → 0.143);
-        a context-free Jev critic is at chance; the repair trades seam for flicker.</p></div>
+        a pixel-only Jev critic is at chance; the repair trades seam for flicker.</p></div>
     </div>
     <p><strong>The honest headline:</strong> across two GPUs and every endpoint measured, the cheap mode was
       <em>never worse</em> — so the optimal policy is a fixed mode, and the map states exactly where a router
