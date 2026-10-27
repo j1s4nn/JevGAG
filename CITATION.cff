@@ -25,7 +25,24 @@ keywords:
   - off-device oracle
   - System One
   - efficient inference
+  - regime map
 references:
+  - type: article
+    title: "Regime-Aware Temporal Granularity for Causal Video World Models: When Does Adaptivity Pay?"
+    authors:
+      - family-names: Hossen
+        given-names: Md Jisan
+    year: 2026
+    doi: 10.5281/zenodo.23693517
+    notes: "Preprint; the paper that this repository accompanies."
+  - type: article
+    title: "Jev-Routed Temporal Granularity with Recovery and Hysteresis for Causal Video Generation"
+    authors:
+      - family-names: Hossen
+        given-names: Md Jisan
+    year: 2026
+    doi: 10.5281/zenodo.23395414
+    notes: "Prior preprint; cited as prior work."
   - type: article
     title: "Hardware-Conditional Adaptive Temporal Granularity for Causal Video World Models: A Cost, Quality, and Uncertainty Audit"
     authors:

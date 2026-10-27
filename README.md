@@ -1,4 +1,4 @@
-# JevGAG · DDAG — Adaptive Temporal Granularity for Causal Video World Models
+# JevGAG · DDAG — Regime-Aware Adaptive Temporal Granularity for Causal Video World Models
 
 ![thumbnail](assets/figures/thumbnail.png)
 
@@ -8,19 +8,21 @@
 [![Data](https://img.shields.io/badge/data-Kaggle%20%287%20public%20datasets%29-20beff)](DATA.md)
 [![Audited](https://img.shields.io/badge/claim--to--artifact%20audit-18%2F18%20PASS-brightgreen)](jevgag/results/e9_audit/)
 [![GPU](https://img.shields.io/badge/GPUs-Tesla%20T4%20%C2%B7%20A100--80GB-6f42c1)](#hardware)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.23693517-blue)](https://doi.org/10.5281/zenodo.23693517)
+[![Prior DOI](https://img.shields.io/badge/prior%20DOI-10.5281%2Fzenodo.23395414-lightgrey)](https://doi.org/10.5281/zenodo.23395414)
 
 A two-part research programme on **adaptive temporal granularity** for **causal video generation** and
 **interactive video world models**: when should a generator spend fine per-frame compute, and when is a
 cheaper chunked mode enough?
 
 > **Keywords:** causal video generation · video world models · autoregressive diffusion · adaptive compute
-> · temporal granularity · efficient inference · System One / Jev · regime map · boundary analysis.
+> · temporal granularity · efficient inference · regime map · boundary analysis · System One / Jev.
 
 ---
 
 ## Contents
 
-- [Prior work](#prior-work) · [The programme in one figure](#the-programme-in-one-figure)
+- [The paper](#the-paper) · [Prior work](#prior-work) · [The programme in one figure](#the-programme-in-one-figure)
 - [Part 1 · JevGAG — the report](#part-1--jevgag--the-report)
 - [Part 2 · DDAG — the method](#part-2--ddag--the-method)
 - [Full results](#full-results) · [Datasets (public)](#datasets-public) · [Figures and videos](#figures-and-videos)
@@ -29,11 +31,51 @@ cheaper chunked mode enough?
 
 ---
 
+## The paper
+
+> **Regime-Aware Temporal Granularity for Causal Video World Models: When Does Adaptivity Pay?**
+> **Md Jisan Hossen** (Department of Artificial Intelligence, NUIST, Nanjing, China).
+> Preprint, 2026. **https://doi.org/10.5281/zenodo.23693517**
+
+Causal video generators produce a rollout one temporal chunk at a time, so spending expensive per-frame
+compute only on hard segments looks attractive. We show that this idea rests on three **preconditions** —
+cost, signal and endpoint — and that all three are **regime properties** rather than universal facts. On a
+matched two-GPU study (**Tesla T4** and **A100-80GB**) of a causal diffusion backbone we (i) measure the
+per-forward cost against the schedule break-even and find the *same* mode pair on **opposite sides** of the
+inequality; (ii) show that hand-crafted context statistics cannot predict coarse-unsafe segments (AUROC
+**0.491**), that an **intrinsic** probe on the generator's own prefill activations reaches **0.798** on one
+GPU and **inverts** to **0.143** on the other, and that only a **multi-feature** model over the probe and a
+sampler convergence residual transfers across both (**0.842** and **0.833**); and (iii) show that an endpoint
+independent of the compared modes is mandatory. We then derive a **regime map** that states exactly when
+adaptivity pays — only when the cheap mode is **cheaper *and* worse** — and find our operating points fall
+outside that region: the coarse mode was never worse in quality, so under the stated objective the optimal
+policy is a **fixed** mode and a router is unnecessary.
+
+**Contributions**
+
+- **A two-GPU regime map** partitioning the (cost-ratio, quality-gap) plane into three policies — fixed
+  fine, fixed coarse and adaptive — with the adaptive region defined by a conjunction: the cheap mode must
+  be **cheaper *and* worse**.
+- **An intrinsic signal — and the limit of single signals.** A probe on the generator's own prefill
+  activations predicts coarse-unsafe segments at **0.798** AUROC with no external oracle (vs **0.491** for
+  hand-crafted context statistics); it **inverts** on the second GPU (**0.143**), and only a **multi-feature**
+  model over the probe and a **convergence residual** transfers across both GPUs (**0.842** / **0.833**).
+- **A training-free seam repair.** A 25 % latent blend reduces the switch-boundary discontinuity by **25 %**
+  *and* improves fidelity, with no training.
+- **A boundary analysis.** Signals are regime properties; drift is linear and policy-insensitive; and a
+  decision-model critic shown only pixels is at chance. Each boundary is stated with the experiment that
+  produced it.
+
+**Links:** paper [`doi.org/10.5281/zenodo.23693517`](https://doi.org/10.5281/zenodo.23693517) ·
+figures [`assets/figures/`](assets/figures/) · website [j1s4nn.github.io/JevGAG](https://j1s4nn.github.io/JevGAG/).
+
+---
+
 ## Prior work
 
 This programme builds directly on the earlier study
 
-> **Hossen Md Jisan**, *Jev-Routed Temporal Granularity with Recovery and Hysteresis for Causal Video
+> **Md Jisan Hossen**, *Jev-Routed Temporal Granularity with Recovery and Hysteresis for Causal Video
 > Generation*, preprint, 2026. **https://doi.org/10.5281/zenodo.23395414**
 
 That study framed adaptive granularity as resting on **three preconditions** (cost, signal, endpoint) and
@@ -115,9 +157,12 @@ leave-one-prompt-out cross-validation grouped by prompt.
 
 | operating point | fine | coarse | ratio | break-even | coarse cheaper? |
 |---|---|---|---|---|---|
-| T4, fine $s_2$ / coarse $s_2$ | 4.394 | 4.526 | **1.030** | 2.33 | ❌ no |
+| T4, fine $s_2$ / coarse $s_2$ | 4.394 | 4.526 | **1.030** | 2.68 | ❌ no |
 | T4, fine $s_2$ / coarse $s_1$ | 4.686 | 3.411 | **0.728** | 4.08 | ✅ yes (−27%) |
-| A100, fine $s_2$ / coarse $s_2$ | 1.279 | 0.685 | **0.536** | 2.33 | ✅ yes (−46%) |
+| A100, fine $s_2$ / coarse $s_2$ | 1.279 | 0.685 | **0.536** | 2.68 | ✅ yes (−46%) |
+
+> The break-even is the matched two-step value **2.68** used in the paper (the earlier single-step 2.33 is a
+> different schedule). The per-forward ratios are π = **2.97** (T4) and **1.74** (A100).
 
 ### R3 · Quality by endpoint (lower is better)
 
@@ -229,6 +274,7 @@ They were drawn in LaTeX (TikZ / pgfplots) and each one was visually checked for
 | Signals | [`assets/figures/fig_signal.pdf`](assets/figures/fig_signal.pdf) | AUROC per signal on T4 vs A100 |
 | Drift | [`assets/figures/fig_drift.pdf`](assets/figures/fig_drift.pdf) | propagation on T4, reversal on A100 |
 | Seam + flicker | [`assets/figures/fig_seam.pdf`](assets/figures/fig_seam.pdf) | repair frontier and the independent endpoint |
+| Pareto | [`assets/figures/fig_pareto.pdf`](assets/figures/fig_pareto.pdf) | cost–quality plane, one panel per GPU |
 | Qualitative | [`assets/figures/fig_qualitative.png`](assets/figures/fig_qualitative.png) | matched fine / coarse / repaired + amplified difference |
 
 **Media:** the rollout videos are on Kaggle
@@ -262,7 +308,7 @@ regime map states **exactly where** a router becomes worth deploying.
 
 ```
 jevgag/        Part 1 — the report
-├─ report/       LaTeX source + PDF
+├─ report/       LaTeX source + PDF + REPORT.md
 ├─ code/         one audit script per experiment (e1 … e9)
 ├─ results/      audited result files
 ├─ figures/      report figures
@@ -274,10 +320,10 @@ ddag/          Part 2 — the method
 ├─ results/      consolidated machine-readable results
 └─ compute/      Colab A100 runners
 
-paper/         the manuscript (Elsevier CAS / CVIU)
+paper/         the manuscript PDF (Elsevier CAS / CVIU) — journal submission PDF added here on release
 assets/        thumbnail + publication figures
 docs/          GitHub Pages site
-archive/       legacy notes (kept for provenance, not authoritative)
+audit/         repository-wide scientific audit (15 reports) and applied corrections
 ```
 
 ## Hardware
@@ -300,9 +346,29 @@ runners are in `*/compute/`.
 
 ## Citation
 
+If you use this work, please cite the paper and the prior study.
+
 ```bibtex
+@misc{hossen2026regimeaware,
+  title        = {Regime-Aware Temporal Granularity for Causal Video World Models: When Does Adaptivity Pay?},
+  author       = {Hossen, Md Jisan},
+  year         = {2026},
+  howpublished = {Preprint},
+  doi          = {10.5281/zenodo.23693517},
+  url          = {https://doi.org/10.5281/zenodo.23693517}
+}
+
+@misc{hossen2026jevRouted,
+  title        = {Jev-Routed Temporal Granularity with Recovery and Hysteresis for Causal Video Generation},
+  author       = {Hossen, Md Jisan},
+  year         = {2026},
+  howpublished = {Preprint},
+  doi          = {10.5281/zenodo.23395414},
+  url          = {https://doi.org/10.5281/zenodo.23395414}
+}
+
 @software{hossen2026jevgagddag,
-  title  = {JevGAG + DDAG: Adaptive Temporal Granularity for Causal Video World Models},
+  title  = {JevGAG + DDAG: Regime-Aware Adaptive Temporal Granularity for Causal Video World Models},
   author = {Hossen, Md Jisan},
   year   = {2026},
   url    = {https://github.com/j1s4nn/JevGAG}
