@@ -11,7 +11,7 @@ Dated, user-facing changes to this repository. Newest first.
 - **Housekeeping.** The `paper/` folder is emptied (the journal submission PDF is added on release); the
   legacy, non-authoritative `archive/` notes and the internal `STATUS.md` tracker were removed; unused
   site figures were dropped.
-- **Repository-wide scientific audit completed** (15 reports under [`audit/`](audit/)), run against commit
+- **Repository-wide scientific audit completed** (15 reports; archived outside this repo), run against commit
   `0c725c0`, and its **P0/P1 corrections applied** — all from stored result files, with no new computation.
   - **F-1 (P0).** The convergence residual in Eq. (2) was **sign-inverted**: the direct AUROC of
     `v_S/v_1` is **0.240**, not 0.752; the 0.752 came from a single-feature logistic that re-learns the

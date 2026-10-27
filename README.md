@@ -323,7 +323,6 @@ ddag/          Part 2 — the method
 paper/         the manuscript PDF (Elsevier CAS / CVIU) — journal submission PDF added here on release
 assets/        thumbnail + publication figures
 docs/          GitHub Pages site
-audit/         repository-wide scientific audit (15 reports) and applied corrections
 ```
 
 ## Hardware

@@ -9,7 +9,7 @@ signal**. The direct AUROCs are:
     vS/v1 0.2403 (INVERTED) | v1/vS 0.7597 | prefill_norm 0.4964 | probe 0.7983
 
 This file is retained for the sign-agnostic (multi-feature) view only; do not quote its single-scalar
-AUROCs. See audit/AUDIT_07_MATHEMATICAL_AUDIT.md (finding M-1).
+AUROCs. See AUDIT_07_MATHEMATICAL_AUDIT.md (finding M-1; archived outside this repo).
 """
 
 import argparse
