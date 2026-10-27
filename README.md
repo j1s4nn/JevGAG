@@ -122,7 +122,7 @@ leave-one-prompt-out cross-validation grouped by prompt.
 |---|---|---|---|---|
 | latent $L_1$ to $s_4$ reference | 0.807 | **0.752** | 0.780 | **0.721** |
 | decoded-pixel $L_1$ | 0.2686 | **0.2511** | — | — |
-| temporal flicker | 0.0254 | **0.0213** | — | — |
+| temporal flicker | 0.0189 | **0.0148** | — | — |
 
 ### R4 · Seam repair (T4, 32 matched segments)
 
