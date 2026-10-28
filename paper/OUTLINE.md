@@ -18,7 +18,7 @@
 **Working title:** *Regime-Aware Temporal Granularity for Causal Video World Models: When Does
 Adaptivity Pay?*
 
-**Author:** Hossen Md Jisan — Department of Artificial Intelligence, NUIST, Nanjing, China ·
+**Author:** Md Jisan Hossen — Department of Artificial Intelligence, NUIST, Nanjing, China ·
 jisanahammed1952@gmail.com · ORCID 0009-0004-9571-1450 · sole author.
 
 ---

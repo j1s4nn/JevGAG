@@ -9,7 +9,7 @@ Source: `paper/main.tex` (479 lines) + `jevgag/report/main.tex` (the second, unp
 | § | Content | Status | Reason |
 |---|---|---|---|
 | Title | *Regime-Aware Temporal Granularity for Causal Video World Models: When Does Adaptivity Pay?* | **Complete** | Accurate and specific. |
-| Authorship | Hossen Md Jisan, sole author, NUIST, ORCID present | **Complete** | — |
+| Authorship | Md Jisan Hossen, sole author, NUIST, ORCID present | **Complete** | — |
 | Abstract | 250-word-style summary; claims: ratio inversion, 0.491/0.798/0.842, endpoint reversal, empty adaptive region, −25 % seam, three boundaries | **Present but incomplete** | No sample sizes, no CIs, and the flicker number is absent (correctly) but the **cost ratio quoted (none) is regime-ambiguous**. |
 | Keywords | 7 | **Complete** | Elsevier prefers ≤ 6; minor. |
 | 1 Introduction | motivation, prior work, 4 contributions | **Complete** | Clear. Missing: an explicit *research-question* statement and a statement of what would falsify the central claim. |

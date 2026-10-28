@@ -3,7 +3,7 @@
 **Jev-Grounded Adaptive Temporal Granularity for Causal Video Generation: An Audit of the Cost, Signal
 and Endpoint Preconditions**
 
-Hossen Md Jisan · Department of Artificial Intelligence, NUIST, Nanjing, China ·
+Md Jisan Hossen · Department of Artificial Intelligence, NUIST, Nanjing, China ·
 jisanahammed1952@gmail.com · ORCID [0009-0004-9571-1450](https://orcid.org/0009-0004-9571-1450)
 
 > This is the **GitHub-readable rendering** of the report. The LaTeX source and the compiled PDF are in
@@ -282,7 +282,7 @@ tuning them to look better.
 
 **Competing interests:** none · **Funding:** none · **Ethics:** not applicable · **Data availability:**
 all code, figures and audited result files are public at https://github.com/j1s4nn/JevGAG, and the result
-bundles are published as public Kaggle datasets · **CRediT:** Hossen Md Jisan — Conceptualization,
+bundles are published as public Kaggle datasets · **CRediT:** Md Jisan Hossen — Conceptualization,
 Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Visualization,
 Writing — original draft, Writing — review and editing.
 

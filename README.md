@@ -33,7 +33,7 @@ cheaper chunked mode enough?
 
 This programme builds directly on the earlier study
 
-> **Hossen Md Jisan**, *Jev-Routed Temporal Granularity with Recovery and Hysteresis for Causal Video
+> **Md Jisan Hossen**, *Jev-Routed Temporal Granularity with Recovery and Hysteresis for Causal Video
 > Generation*, preprint, 2026. **https://doi.org/10.5281/zenodo.23395414**
 
 That study framed adaptive granularity as resting on **three preconditions** (cost, signal, endpoint) and

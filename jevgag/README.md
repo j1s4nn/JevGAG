@@ -95,7 +95,7 @@ Oracle: **Jev `jev-1.14.0`**.
 
 ## Prior work
 
-Hossen Md Jisan. *Jev-Routed Temporal Granularity with Recovery and Hysteresis for Causal Video
+Md Jisan Hossen. *Jev-Routed Temporal Granularity with Recovery and Hysteresis for Causal Video
 Generation.* Preprint, 2026. **https://doi.org/10.5281/zenodo.23395414**
 
 ## Citation
