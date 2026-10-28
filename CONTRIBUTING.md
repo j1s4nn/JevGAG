@@ -29,10 +29,10 @@ every change is reviewable and reproducible.
 
 Large media and audited bundles are published as **public Kaggle datasets**:
 
-- slug convention: `ajjisan/jevgag-<scope>` (e.g. `ajjisan/jevgag-results`).
+- slug convention: `ajjisan/jevgag-<scope>` for the report and `ajjisan/ddag-<scope>` for the method (e.g. `ajjisan/jevgag-results`).
 - each dataset ships a `dataset-metadata.json` and a `README.md` describing provenance, license, and
   the exact scripts that produced it.
-- the repo keeps the small, machine-readable result files in `results/` and links the Kaggle dataset
+- the repo keeps the small, machine-readable result files in `jevgag/results/` and `ddag/results/`, and links the Kaggle dataset
   from `DATA.md`.
 
 See [`DATA.md`](DATA.md) for the current datasets.
